@@ -82,7 +82,7 @@ namespace Maple.MonoGameAssistant.Core
         T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoField pMonoField)
            where T_STRUCT : unmanaged
            => this.Runtime.IL2CPP_FIELD_STATIC_GET_VALUE.Invoke<T_STRUCT>(pMonoField);
-        bool GetMonoStaticFieldValue_Buffer(PMonoField pMonoField, Span<byte> buffer)
+        bool GetMonoStaticFieldValueAsBuffer(PMonoField pMonoField, Span<byte> buffer)
         {
             if (buffer.Length == 0)
             {
@@ -95,14 +95,14 @@ namespace Maple.MonoGameAssistant.Core
 
         public sealed override T_STRUCT GetMonoEnumFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoField pMonoField)
             => GetMonoStaticFieldValue<T_STRUCT>(pMonoField);
-        public sealed override bool GetMonoEnumFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer)
-             => GetMonoStaticFieldValue_Buffer(pMonoField, buffer);
+        public sealed override bool GetMonoEnumFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer)
+             => GetMonoStaticFieldValueAsBuffer(pMonoField, buffer);
 
 
         public sealed override T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField)
             => GetMonoStaticFieldValue<T_STRUCT>(pMonoField);
-        public sealed override bool GetMonoStaticFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
-            => GetMonoStaticFieldValue_Buffer(pMonoField, buffer);
+        public sealed override bool GetMonoStaticFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
+            => GetMonoStaticFieldValueAsBuffer(pMonoField, buffer);
 
 
         public sealed override PMonoAddress GetMonoStaticFieldAddress(PMonoDomain pMonoDomain, PMonoClass pMonoClass, int fieldOffset)

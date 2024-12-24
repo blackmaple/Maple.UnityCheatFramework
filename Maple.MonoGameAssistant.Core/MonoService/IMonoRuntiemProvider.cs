@@ -81,13 +81,11 @@ namespace Maple.MonoGameAssistant.Core
 
         #region MonoField->Enum&Const&Static
         T_Value GetMonoEnumFieldValue<T_Value>(PMonoDomain pMonoDomain, PMonoField pMonoField) where T_Value : unmanaged;
-        bool GetMonoEnumFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer);
+        bool GetMonoEnumFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer);
         PMonoAddress GetMonoStaticFieldAddress(PMonoDomain pMonoDomain, PMonoClass pMonoClass, int fieldOffset);
-        //ref T_STRUCT GetMonoStaticFieldValue_Ref<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField) where T_STRUCT : unmanaged;
         public T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField) where T_STRUCT : unmanaged;
-        bool GetMonoStaticFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer);
-        string? GetMonoStaticFieldValue_String(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1);
-        public nint GetMonoStaticFieldPointer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField);
+        bool GetMonoStaticFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer);
+        string? GetMonoStaticFieldValueAsString(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1);
         #endregion
 
         #region MonoType

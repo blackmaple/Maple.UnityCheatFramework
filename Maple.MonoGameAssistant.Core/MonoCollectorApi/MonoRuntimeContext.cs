@@ -219,11 +219,11 @@ namespace Maple.MonoGameAssistant.Core
             return this.RuntiemProvider.GetMonoEnumFieldValue<T_Value>(this.RootDomain, pMonoField);
         }
 
-        public string GetMonoEnumFieldValue_String(PMonoField pMonoField, int size)
+        public string GetMonoEnumFieldValueAsString(PMonoField pMonoField, int size)
         {
             //考虑缓存区溢出的情况
             var buffer = (stackalloc byte[size]);
-            if (this.RuntiemProvider.GetMonoEnumFieldValue_Buffer(this.RootDomain, pMonoField, buffer))
+            if (this.RuntiemProvider.GetMonoEnumFieldValueAsBuffer(this.RootDomain, pMonoField, buffer))
             {
                 ulong val;
                 //if size == 0x14   enum:uint
@@ -260,23 +260,23 @@ namespace Maple.MonoGameAssistant.Core
 
         }
 
-        public T_Struct GetMonoStaticFieldValue_Unmanaged<T_Struct>(PMonoClass pMonoClass, PMonoField pMonoField)
+        public T_Struct GetMonoStaticFieldValueAsUnmanaged<T_Struct>(PMonoClass pMonoClass, PMonoField pMonoField)
             where T_Struct : unmanaged
         {
             return this.RuntiemProvider.GetMonoStaticFieldValue<T_Struct>(this.RootDomain, pMonoClass, pMonoField);
         }
-        public bool GetMonoStaticFieldValue_Buffer(PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
+        public bool GetMonoStaticFieldValueAsBuffer(PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
         {
-            return this.RuntiemProvider.GetMonoStaticFieldValue_Buffer(this.RootDomain, pMonoClass, pMonoField, buffer);
+            return this.RuntiemProvider.GetMonoStaticFieldValueAsBuffer(this.RootDomain, pMonoClass, pMonoField, buffer);
         }
-        public string? GetMonoStaticFieldValue_String(PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1)
+        public string? GetMonoStaticFieldValueAsString(PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1)
         {
-            return this.RuntiemProvider.GetMonoStaticFieldValue_String(this.RootDomain, pMonoClass, pMonoField, readSize);
+            return this.RuntiemProvider.GetMonoStaticFieldValueAsString(this.RootDomain, pMonoClass, pMonoField, readSize);
         }
 
-        public nint GetMonoStaticFieldPointer(PMonoClass pMonoClass, PMonoField pMonoField)
+        public nint GetMonoStaticFieldValueAsPointer(PMonoClass pMonoClass, PMonoField pMonoField)
         {
-            return this.RuntiemProvider.GetMonoStaticFieldPointer(this.RootDomain, pMonoClass, pMonoField);
+            return this.RuntiemProvider.GetMonoStaticFieldValue<nint>(this.RootDomain, pMonoClass, pMonoField);
         }
 
         private MonoFieldInfoDTO GetMonoFieldInfoDTO(PMonoClass pMonoClass, PMonoField pMonoField, EnumMonoFieldOptions fieldOptions)
@@ -354,7 +354,7 @@ namespace Maple.MonoGameAssistant.Core
             if (fieldTypeClass.IsEnum && (fieldOptions & EnumMonoFieldOptions.Enum) == EnumMonoFieldOptions.Enum)
             {
                 //fixed read Enum Size 
-                return this.GetMonoEnumFieldValue_String(pMonoField, fieldTypeClass.Size);
+                return this.GetMonoEnumFieldValueAsString(pMonoField, fieldTypeClass.Size);
             }
             if (isConst)
             {
@@ -378,46 +378,46 @@ namespace Maple.MonoGameAssistant.Core
 
                 //默认读<=64字符
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_STRING }
-                => this.GetMonoStaticFieldValue_String(pMonoClass, pMonoField, 64),
+                => this.GetMonoStaticFieldValueAsString(pMonoClass, pMonoField, 64),
 
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_BOOLEAN }
-                => this.GetMonoStaticFieldValue_Unmanaged<bool>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<bool>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_CHAR }
-                => this.GetMonoStaticFieldValue_Unmanaged<char>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<char>(pMonoClass, pMonoField).ToString(),
 
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_I1 }
-                => this.GetMonoStaticFieldValue_Unmanaged<sbyte>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<sbyte>(pMonoClass, pMonoField).ToString(),
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_U1 }
-                => this.GetMonoStaticFieldValue_Unmanaged<byte>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<byte>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_I2 }
-                => this.GetMonoStaticFieldValue_Unmanaged<short>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<short>(pMonoClass, pMonoField).ToString(),
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_U2 }
-                => this.GetMonoStaticFieldValue_Unmanaged<ushort>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<ushort>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_I4 }
-                => this.GetMonoStaticFieldValue_Unmanaged<int>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<int>(pMonoClass, pMonoField).ToString(),
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_U4 }
-                => this.GetMonoStaticFieldValue_Unmanaged<uint>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<uint>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_I8 }
-                => this.GetMonoStaticFieldValue_Unmanaged<long>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<long>(pMonoClass, pMonoField).ToString(),
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_U8 }
-                => this.GetMonoStaticFieldValue_Unmanaged<ulong>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<ulong>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_R4 }
-                => this.GetMonoStaticFieldValue_Unmanaged<float>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<float>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_R8 }
-                => this.GetMonoStaticFieldValue_Unmanaged<double>(pMonoClass, pMonoField).ToString(),
+                => this.GetMonoStaticFieldValueAsUnmanaged<double>(pMonoClass, pMonoField).ToString(),
 
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_I }
-                => this.GetMonoStaticFieldValue_Unmanaged<nint>(pMonoClass, pMonoField).ToString("x8"),
+                => this.GetMonoStaticFieldValueAsUnmanaged<nint>(pMonoClass, pMonoField).ToString("x8"),
                 { TypeEnum: (uint)EnumMonoType.MONO_TYPE_U }
-                => this.GetMonoStaticFieldValue_Unmanaged<nuint>(pMonoClass, pMonoField).ToString("x8"),
+                => this.GetMonoStaticFieldValueAsUnmanaged<nuint>(pMonoClass, pMonoField).ToString("x8"),
 
 
 
@@ -454,7 +454,7 @@ namespace Maple.MonoGameAssistant.Core
                 //fixed 缓存区溢出的情况?
                 //read custom struct data  
                 var buffer = (stackalloc byte[fieldTypeClass.Size]);
-                if (false == this.GetMonoStaticFieldValue_Buffer(pMonoClass, pMonoField, buffer))
+                if (false == this.GetMonoStaticFieldValueAsBuffer(pMonoClass, pMonoField, buffer))
                 {
                     return default;
                 }
@@ -476,7 +476,7 @@ namespace Maple.MonoGameAssistant.Core
 
             string? GetReferenceTypePointer_String()
             {
-                return this.GetMonoStaticFieldValue_Unmanaged<PMonoAddress>(pMonoClass, pMonoField).ToString();
+                return this.GetMonoStaticFieldValueAsUnmanaged<PMonoAddress>(pMonoClass, pMonoField).ToString();
             }
 
 

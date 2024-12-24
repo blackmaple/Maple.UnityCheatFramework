@@ -29,7 +29,4 @@ namespace Maple.MonoGameAssistant.Core
 
     }
 
-
-
-
 }

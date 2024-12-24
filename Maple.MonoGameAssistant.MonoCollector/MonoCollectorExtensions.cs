@@ -307,7 +307,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
             if (collectorClassInfo.TryGetFirstStaticFieldInfo(math, out var static_field))
             {
                 //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
-                return @this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
+                return @this.GetMonoStaticFieldValueAsUnmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
             }
             return default;
         }
@@ -318,7 +318,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
             if (collectorClassInfo.TryGetFirstStaticFieldInfo(staticFieldName, out var static_field))
             {
                 //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
-                return @this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
+                return @this.GetMonoStaticFieldValueAsUnmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
             }
             return default;
         }

@@ -459,8 +459,7 @@ namespace Maple.MonoGameAssistant.Core
             var pMonoAddress = this.Runtime.MONO_OBJECT_UNBOX.Invoke(pObject);
             return pMonoAddress.ReadValue<T_STRUCT>();
         }
-
-        public virtual bool GetMonoEnumFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer)
+        public virtual bool GetMonoEnumFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoField pMonoField, Span<byte> buffer)
         {
             if (buffer.Length == 0)
             {
@@ -480,15 +479,21 @@ namespace Maple.MonoGameAssistant.Core
             return true;
         }
 
-
+        private PMonoVirtualTable GetMonoVirtualTable(PMonoDomain pMonoDomain, PMonoClass pMonoClass)
+        {
+            return this.Runtime.MONO_CLASS_VTABLE.Invoke(pMonoDomain, pMonoClass);
+        }
+        private PMonoStaticFieldData GetMonoStaticFieldData(PMonoVirtualTable pMonoVirtualTable)
+        {
+            return this.Runtime.MONO_VTABLE_GET_STATIC_FIELD_DATA.Invoke(pMonoVirtualTable);
+        }
         public virtual PMonoAddress GetMonoStaticFieldAddress(PMonoDomain pMonoDomain, PMonoClass pMonoClass, int fieldOffset)
         {
             var pMonoVirtualTable = this.GetMonoVirtualTable(pMonoDomain, pMonoClass);
             var pMonoStaticFieldData = this.GetMonoStaticFieldData(pMonoVirtualTable);
             return new nint(pMonoStaticFieldData + fieldOffset);
         }
-
-        public virtual bool GetMonoStaticFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
+        public virtual bool GetMonoStaticFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer)
         {
             if (buffer.Length == 0)
             {
@@ -496,35 +501,42 @@ namespace Maple.MonoGameAssistant.Core
             }
             var pMonoVirtualTable = this.GetMonoVirtualTable(pMonoDomain, pMonoClass);
             var pMonoStaticFieldData = this.GetMonoStaticFieldData(pMonoVirtualTable);
-            PMonoStaticFieldData minStaticFieldData = new(0x10000);
-            if (pMonoStaticFieldData <= minStaticFieldData)
+            if (!pMonoStaticFieldData.TryCanRead())
             {
-                return false;
+                return default;
             }
-            else if (pMonoStaticFieldData > minStaticFieldData)
-            {
-                //ref T_STRUCT ref_data = ref this.Runtime.MONO_FIELD_STATIC_GET_VALUE.Invoke<T_STRUCT>(pMonoVirtualTable, pMonoField);
-                //return ref ref_data;
-            }
+            //PMonoStaticFieldData minStaticFieldData = new(0x10000);
+            //if (pMonoStaticFieldData <= minStaticFieldData)
+            //{
+            //    return false;
+            //}
+            //else if (pMonoStaticFieldData > minStaticFieldData)
+            //{
+            //    //ref T_STRUCT ref_data = ref this.Runtime.MONO_FIELD_STATIC_GET_VALUE.Invoke<T_STRUCT>(pMonoVirtualTable, pMonoField);
+            //    //return ref ref_data;
+            //}
             this.Runtime.MONO_FIELD_STATIC_GET_VALUE.Invoke_Buffer(pMonoVirtualTable, pMonoField, buffer);
             return true;
         }
-
         public virtual unsafe T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField)
             where T_STRUCT : unmanaged
         {
             var pMonoVirtualTable = this.GetMonoVirtualTable(pMonoDomain, pMonoClass);
             var pMonoStaticFieldData = this.GetMonoStaticFieldData(pMonoVirtualTable);
-            PMonoStaticFieldData minStaticFieldData = new(0x10000);
-            if (pMonoStaticFieldData <= minStaticFieldData)
+            if (!pMonoStaticFieldData.TryCanRead())
             {
                 return default;
             }
-            else if (pMonoStaticFieldData > minStaticFieldData)
-            {
-                //T_STRUCT ref_data = this.Runtime.MONO_FIELD_STATIC_GET_VALUE.Invoke<T_STRUCT>(pMonoVirtualTable, pMonoField);
-                //return ref_data;
-            }
+            //PMonoStaticFieldData minStaticFieldData = new(0x10000);
+            //if (pMonoStaticFieldData <= minStaticFieldData)
+            //{
+            //    return default;
+            //}
+            //else if (pMonoStaticFieldData > minStaticFieldData)
+            //{
+            //    //T_STRUCT ref_data = this.Runtime.MONO_FIELD_STATIC_GET_VALUE.Invoke<T_STRUCT>(pMonoVirtualTable, pMonoField);
+            //    //return ref_data;
+            //}
 
 
 
@@ -533,13 +545,9 @@ namespace Maple.MonoGameAssistant.Core
 
 
         }
-        public string? GetMonoStaticFieldValue_String(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1)
+        public string? GetMonoStaticFieldValueAsString(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1)
         {
             var pMonoString = this.GetMonoStaticFieldValue<PMonoString>(pMonoDomain, pMonoClass, pMonoField);
-            if (pMonoString.Valid() == false)
-            {
-                return default;
-            }
             if (readSize == -1)
             {
                 return pMonoString.GetString();
@@ -547,18 +555,6 @@ namespace Maple.MonoGameAssistant.Core
             return pMonoString.GetString(readSize);
 
 
-        }
-        public nint GetMonoStaticFieldPointer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField)
-        {
-            return this.GetMonoStaticFieldValue<nint>(pMonoDomain, pMonoClass, pMonoField);
-        }
-        private PMonoVirtualTable GetMonoVirtualTable(PMonoDomain pMonoDomain, PMonoClass pMonoClass)
-        {
-            return this.Runtime.MONO_CLASS_VTABLE.Invoke(pMonoDomain, pMonoClass);
-        }
-        private PMonoStaticFieldData GetMonoStaticFieldData(PMonoVirtualTable pMonoVirtualTable)
-        {
-            return this.Runtime.MONO_VTABLE_GET_STATIC_FIELD_DATA.Invoke(pMonoVirtualTable);
         }
 
         #endregion

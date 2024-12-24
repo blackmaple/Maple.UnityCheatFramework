@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Maple.MonoGameAssistant.Core
@@ -17,6 +18,23 @@ namespace Maple.MonoGameAssistant.Core
         }
 
         public bool Valid() => _ptr != IntPtr.Zero;
+
+        public unsafe bool TryCanRead()
+        {
+            if (Valid())
+            {
+                try
+                {
+                    _ = *(nint*)_ptr;
+                    return true;
+                }
+                catch
+                {
+
+                }
+            }
+            return false;
+        }
     }
 
 }
