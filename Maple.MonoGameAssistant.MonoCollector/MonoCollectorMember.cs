@@ -1,12 +1,11 @@
-﻿using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
+﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.Model;
 using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
-
-namespace Maple.MonoGameAssistant.Core
+namespace Maple.MonoGameAssistant.MonoCollector
 {
     /// <summary>
     /// 源生成器约定请勿修改 可追加 2024年1月4日21点41分
@@ -14,16 +13,16 @@ namespace Maple.MonoGameAssistant.Core
     public partial class MonoCollectorMember
     {
         public MonoRuntimeContext RuntimeContext => CollectorContext.RuntimeContext;
-        internal ILogger Logger => this.RuntimeContext.Logger;
+        internal ILogger Logger => RuntimeContext.Logger;
         internal MonoCollectorContext CollectorContext { get; }
         public MonoCollectorClassInfo ClassInfo { get; }
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.MemberCtor)]
         public MonoCollectorMember(MonoCollectorContext collectorContext, MonoCollectorClassInfo classInfo)
         {
-            this.CollectorContext = collectorContext;
-            this.ClassInfo = classInfo;
-            this.InitMember();
+            CollectorContext = collectorContext;
+            ClassInfo = classInfo;
+            InitMember();
         }
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.InitMember)]
@@ -34,7 +33,7 @@ namespace Maple.MonoGameAssistant.Core
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.GetMethodPointer)]
         protected nint GetMethodPointer(string methodName, Func<MonoMethodInfoDTO, bool> math)
-            => this.CollectorContext.GetMethodPointer(this.ClassInfo, methodName, math);
+            => CollectorContext.GetMethodPointer(ClassInfo, methodName, math);
         [MonoCollectorFlag(EnumMonoCollectorFlag.GetMethodPointer)]
         protected nint GetMethodPointer(string methodName) => GetMethodPointer(methodName, (p) => p.Name == methodName);
 
@@ -43,7 +42,7 @@ namespace Maple.MonoGameAssistant.Core
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.GetStaticMethodInvoker)]
         protected MonoStaticMethodInvoker GetStaticMethodInvoker(string methodName, Func<MonoMethodInfoDTO, bool> math)
-            => this.CollectorContext.GetStaticMethodInvoker(this.ClassInfo, methodName, math);
+            => CollectorContext.GetStaticMethodInvoker(ClassInfo, methodName, math);
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.GetStaticMethodInvoker)]
         protected MonoStaticMethodInvoker GetStaticMethodInvoker(string methodName)
@@ -53,7 +52,7 @@ namespace Maple.MonoGameAssistant.Core
         protected T_MonoObject GetMonoStaticFieldValue<T_MonoObject>(string staticFieldName)
             where T_MonoObject : unmanaged
         {
-            return this.RuntimeContext.GetMonoStaticFieldValue<T_MonoObject>(ClassInfo, staticFieldName);
+            return RuntimeContext.GetMonoStaticFieldValue<T_MonoObject>(ClassInfo, staticFieldName);
         }
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.TryGetModuleBaseAddress)]
@@ -91,14 +90,14 @@ namespace Maple.MonoGameAssistant.Core
         public T_MonoObject New<T_MonoObject>(bool execDefCtor)
             where T_MonoObject : unmanaged
         {
-            return this.RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, execDefCtor);
+            return RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, execDefCtor);
         }
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.Ctor)]
         public T_MonoObject Ctor<T_MonoObject>()
             where T_MonoObject : unmanaged
         {
-            return this.RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, true);
+            return RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, true);
         }
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.Ctor)]
@@ -106,7 +105,7 @@ namespace Maple.MonoGameAssistant.Core
         where T_MonoObject : unmanaged
         {
             var pMonoClass = pMonoObject.MonoClass;
-            if (pMonoClass == this.ClassInfo.ClassInfoDTO.Pointer)
+            if (pMonoClass == ClassInfo.ClassInfoDTO.Pointer)
             {
                 return pMonoObject.To<T_MonoObject>();
             }
@@ -124,25 +123,25 @@ namespace Maple.MonoGameAssistant.Core
         public Span<T_ARRAY> NewArray<T_ARRAY>(int count, out PMonoArray ptrRawArray)
             where T_ARRAY : unmanaged
         {
-            return this.RuntimeContext.CreateMonoArray<T_ARRAY>(ClassInfo.ClassInfoDTO.Pointer, count, out ptrRawArray);
+            return RuntimeContext.CreateMonoArray<T_ARRAY>(ClassInfo.ClassInfoDTO.Pointer, count, out ptrRawArray);
 
         }
 
-        public PMonoString T(string str) => this.RuntimeContext.GetMonoString(str);
-        public PMonoString T(in ReadOnlySpan<char> str) => this.RuntimeContext.GetMonoString(str);
+        public PMonoString T(string str) => RuntimeContext.GetMonoString(str);
+        public PMonoString T(in ReadOnlySpan<char> str) => RuntimeContext.GetMonoString(str);
 
         public MonoGCHandle<T_MonoObject> GCNew<T_MonoObject>(bool execDefCtor)
             where T_MonoObject : unmanaged
         {
-            var pMonoObject = this.RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, execDefCtor);
-            return new MonoGCHandle<T_MonoObject>(this.RuntimeContext, pMonoObject);
+            var pMonoObject = RuntimeContext.CreateMonoClass<T_MonoObject>(ClassInfo.ClassInfoDTO.Pointer, execDefCtor);
+            return new MonoGCHandle<T_MonoObject>(RuntimeContext, pMonoObject);
         }
 
         public Span<T_ARRAY> GCNewArray<T_ARRAY>(int count, out MonoGCHandle<PMonoArray> gchandle)
             where T_ARRAY : unmanaged
         {
-            var ptrRawArray = this.RuntimeContext.CreateMonoArray(ClassInfo.ClassInfoDTO.Pointer, count);
-            gchandle = new MonoGCHandle<PMonoArray>(this.RuntimeContext, ptrRawArray);
+            var ptrRawArray = RuntimeContext.CreateMonoArray(ClassInfo.ClassInfoDTO.Pointer, count);
+            gchandle = new MonoGCHandle<PMonoArray>(RuntimeContext, ptrRawArray);
             return gchandle.Target.AsSpan<T_ARRAY>();
         }
 
@@ -150,7 +149,7 @@ namespace Maple.MonoGameAssistant.Core
 
         [MonoCollectorFlag(EnumMonoCollectorFlag.GetMemberFieldOffset)]
         public int GetMemberFieldOffset(string? fieldName)
-            => this.CollectorContext.GetMemberFieldOffset(this.ClassInfo, fieldName);
+            => CollectorContext.GetMemberFieldOffset(ClassInfo, fieldName);
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

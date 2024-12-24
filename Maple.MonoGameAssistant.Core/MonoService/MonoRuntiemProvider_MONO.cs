@@ -301,10 +301,9 @@ namespace Maple.MonoGameAssistant.Core
         //        }
         //    }
         //}
-        public string? GetMonoMethodName(PMonoMethod pMonoMethod)
+        public PMonoUtf8Char GetMonoMethodName(PMonoMethod pMonoMethod)
         {
-            var pMethodName = this.Runtime.MONO_METHOD_GET_NAME.Invoke(pMonoMethod);
-            return pMethodName.ToString();
+            return this.Runtime.MONO_METHOD_GET_NAME.Invoke(pMonoMethod);
         }
         public uint GetMonoMethodFlags(PMonoMethod pMonoMethod)
         {
@@ -548,6 +547,10 @@ namespace Maple.MonoGameAssistant.Core
             return pMonoString.GetString(readSize);
 
 
+        }
+        public nint GetMonoStaticFieldPointer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField)
+        {
+            return this.GetMonoStaticFieldValue<nint>(pMonoDomain, pMonoClass, pMonoField);
         }
         private PMonoVirtualTable GetMonoVirtualTable(PMonoDomain pMonoDomain, PMonoClass pMonoClass)
         {

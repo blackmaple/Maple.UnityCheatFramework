@@ -1,4 +1,6 @@
-﻿using Maple.MonoGameAssistant.Model;
+﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.Model;
+using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -50,7 +52,6 @@ namespace Maple.MonoGameAssistant.MonoCollector
 
 
         #endregion
-
 
         #region MonoMethodInfoDTO
         public static IEnumerable<MonoMethodInfoDTO> GetStaticMethodInfos(this MonoCollectorClassInfo collectorClassInfo)
@@ -204,12 +205,12 @@ namespace Maple.MonoGameAssistant.MonoCollector
 
         #region TryGet
 
-        public static bool TryGetFirstImageClasses<T>(this T imageInfos, string imageName, [MaybeNullWhen(false)] out IReadOnlyList<MonoCollectorClassInfo> classInfos)
-            where T : IReadOnlyList<MonoCollectorImageInfo>
-        {
-            classInfos = imageInfos.FirstOrDefault(p => p.ImageInfoDTO.Name == imageName)?.ListClassInfo;
-            return classInfos is not null;
-        }
+        //public static bool TryGetFirstImageClasses<T>(this T imageInfos, string imageName, [MaybeNullWhen(false)] out IReadOnlyList<MonoCollectorClassInfo> classInfos)
+        //    where T : IReadOnlyList<MonoCollectorImageInfo>
+        //{
+        //    classInfos = imageInfos.FirstOrDefault(p => p.ImageInfoDTO.Name == imageName)?.ListClassInfo;
+        //    return classInfos is not null;
+        //}
 
         public static bool TryGetFirstClass<T>(this T classInfos, string nameSpace, string className, [MaybeNullWhen(false)] out MonoCollectorClassInfo classInfo)
             where T : IReadOnlyList<MonoCollectorClassInfo>
@@ -297,5 +298,76 @@ namespace Maple.MonoGameAssistant.MonoCollector
             }
         }
         #endregion
+
+        #region MonoDataCollector
+
+        public static T_Struct GetMonoStaticFieldValue<T_Struct>(this MonoRuntimeContext @this, MonoCollectorClassInfo collectorClassInfo, Func<MonoFieldInfoDTO, bool> math)
+            where T_Struct : unmanaged
+        {
+            if (collectorClassInfo.TryGetFirstStaticFieldInfo(math, out var static_field))
+            {
+                //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
+                return @this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
+            }
+            return default;
+        }
+
+        public static T_Struct GetMonoStaticFieldValue<T_Struct>(this MonoRuntimeContext @this, MonoCollectorClassInfo collectorClassInfo, string staticFieldName = "Instance")
+            where T_Struct : unmanaged
+        {
+            if (collectorClassInfo.TryGetFirstStaticFieldInfo(staticFieldName, out var static_field))
+            {
+                //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
+                return @this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
+            }
+            return default;
+        }
+
+        public static bool TryGetFirstClassInfo(this MonoRuntimeContext @this, MonoImageInfoDTO imageInfoDTO, MonoCollecotrClassSettings classSettings, [MaybeNullWhen(false)] out MonoCollectorClassInfo collectorClassInfo)
+        {
+            Unsafe.SkipInit(out collectorClassInfo);
+            if (@this.RuntiemProvider.TryGetMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out var pMonoClass)
+                || @this.TryGetFirstMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out pMonoClass))
+            {
+                collectorClassInfo = @this.GetMonoCollectorClassInfo(pMonoClass);
+                return true;
+            }
+
+            return false;
+
+
+        }
+
+        //参考CE直接遍历
+        static bool TryGetFirstMonoClass(this MonoRuntimeContext @this, PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
+        {
+            Unsafe.SkipInit(out pMonoClass);
+            foreach (var ptrClass in @this.RuntiemProvider.EnumMonoClasses(pMonoImage))
+            {
+                var nameSpace = @this.RuntiemProvider.GetMonoClassNamespace(ptrClass).AsReadOnlySpan();
+                if (nameSpace.SequenceEqual(utf8Namespace))
+                {
+                    var className = @this.RuntiemProvider.GetMonoClassName(ptrClass).AsReadOnlySpan();
+                    if (className.SequenceEqual(utf8ClassName))
+                    {
+                        pMonoClass = ptrClass;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static MonoCollectorClassInfo GetMonoCollectorClassInfo(this MonoRuntimeContext @this, PMonoClass pMonoClass)
+        {
+            var classInfoDTO = @this.GetMonoClassInfoDTO(pMonoClass);
+
+            var collectorClassInfo = new MonoCollectorClassInfo(classInfoDTO);
+            collectorClassInfo.MethodInfos.AddRange(@this.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType));
+            collectorClassInfo.FieldInfos.AddRange(@this.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None));
+            return collectorClassInfo;
+        }
+        #endregion
+
     }
 }

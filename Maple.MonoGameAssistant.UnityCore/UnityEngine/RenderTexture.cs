@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Maple.MonoGameAssistant.MonoCollector;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -2872,7 +2873,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
 
     }
 
-    partial class RenderTexture(Maple.MonoGameAssistant.Core.MonoCollectorContext collectorContext, Maple.MonoGameAssistant.MonoCollector.MonoCollectorClassInfo classInfo) : Maple.MonoGameAssistant.Core.MonoCollectorMember(collectorContext, classInfo)
+    partial class RenderTexture(MonoCollectorContext collectorContext, MonoCollectorClassInfo classInfo) : MonoCollectorMember(collectorContext, classInfo)
     {
 
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.RenderTexture.Ptr_RenderTexture New(bool execDefCtor)

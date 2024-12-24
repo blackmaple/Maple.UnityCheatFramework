@@ -1,10 +1,9 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions
 {
@@ -20,7 +19,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             Unsafe.SkipInit(out imageNameDTO);
             foreach (var data in this.ImageNames)
             {
-                if (SequenceEqual(data.Utf8Name, searchClassDTO.Utf8ImageName))
+                if (data.EqualImageName(searchClassDTO))
                 {
                     imageNameDTO = data;
                     return true;
@@ -28,24 +27,71 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             }
             return false;
 
-            static bool SequenceEqual(ReadOnlySpan<byte> dest, ReadOnlySpan<byte> findSearch)
-            {
-                if (MemoryExtensions.SequenceEqual(dest, findSearch))
-                {
-                    return true;
-                }
-                return findSearch.EndsWith(".dll"u8) && MemoryExtensions.SequenceEqual(dest, findSearch[..^4]);
-            }
+
         }
 
-        public bool TryGetClassMetadata(string code, [MaybeNullWhen(false)] out MonoMetadataCollection classMetadata)
+        public bool TryGetClassMetadata(long code, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
-            Unsafe.SkipInit(out classMetadata);
+            Unsafe.SkipInit(out classMetadataCollection);
             if (!this.SearchService.TryGetClass(code, out var searchClassDTO))
             {
                 return false;
             }
-            this.RuntimeContext.TryGetFirstClassInfo(searchClassDTO.ImageName, searchClassDTO.Namespace, searchClassDTO.ClassName, out var classInfo);
+            if (!this.TryGetImageMetadata(searchClassDTO, out var imageNameDTO))
+            {
+                return false;
+            }
+            return this.RuntimeContext.TryGetFirstClassInfo(imageNameDTO, searchClassDTO, out classMetadataCollection);
+        }
+
+        public bool TryGetMethodMetadata(long code, MonoClassMetadataCollection classMetadataCollection, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
+        {
+            Unsafe.SkipInit(out methodInfoDTO);
+            if (!this.SearchService.TryGetMethod(code, out var searchMethodDTO))
+            {
+                return false;
+            }
+
+            foreach (var method in classMetadataCollection.MethodInfos)
+            {
+                if (method.EqualMethodName(searchMethodDTO)
+                    && method.EqualMethodReturnType(searchMethodDTO)
+                    && method.EqualMethodParameterTypes(searchMethodDTO))
+                {
+                    methodInfoDTO = method;
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+
+        public bool TryGetFieldMetadata(long code, MonoClassMetadataCollection classMetadataCollection, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
+        {
+            Unsafe.SkipInit(out fieldInfoDTO);
+            if (!this.SearchService.TryGetField(code, out var searchFieldDTO))
+            {
+                return false;
+            }
+            IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
+                searchFieldDTO.IsStatic
+                ? classMetadataCollection.EnumStaticFieldInfos()
+                : classMetadataCollection.EnumMemberFieldInfos();
+            foreach (var field in fieldInfoDTOs)
+            {
+                if (field.EqualFieldName(searchFieldDTO)
+                    && field.EqualFieldType(searchFieldDTO))
+                {
+                    fieldInfoDTO = field;
+                    return true;
+                }
+            }
+            return false;
+        }
+        public nint GetMonoStaticFieldPointer(MonoFieldInfoDTO fieldInfoDTO) 
+        {
+            return this.RuntimeContext.GetMonoStaticFieldPointer(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer);
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Maple.MonoGameAssistant.MonoCollector
 {
+    [Obsolete("remove...")]
     public class MonoCollectorImageInfo(MonoImageInfoDTO imageInfoDTO)
     {
         public MonoImageInfoDTO ImageInfoDTO { get; } = imageInfoDTO;

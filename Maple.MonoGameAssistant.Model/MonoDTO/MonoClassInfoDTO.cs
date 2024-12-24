@@ -28,7 +28,7 @@ namespace Maple.MonoGameAssistant.Model
 
         public uint TypeEnum { set; get; }
         public string? TypeName { set; get; }
-
+        public byte[]? Utf8TypeName { set; get; }
         //public string? ToDisplayName()
         //{
         //    if (string.IsNullOrEmpty(this.Namespace))
@@ -40,6 +40,9 @@ namespace Maple.MonoGameAssistant.Model
         //}
         [JsonIgnore]
         public string? FullName => TypeName;
+
+        [JsonIgnore]
+        public byte[]? Utf8FullName => Utf8TypeName;
 
         [JsonIgnore]
         public bool IsRefType => !IsValueType && !IsInterface;

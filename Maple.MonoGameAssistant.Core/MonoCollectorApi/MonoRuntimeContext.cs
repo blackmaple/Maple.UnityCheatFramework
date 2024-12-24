@@ -1,17 +1,9 @@
-﻿using Maple.MonoGameAssistant.Common;
-using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Xml.Schema;
 
 namespace Maple.MonoGameAssistant.Core
 {
@@ -282,6 +274,11 @@ namespace Maple.MonoGameAssistant.Core
             return this.RuntiemProvider.GetMonoStaticFieldValue_String(this.RootDomain, pMonoClass, pMonoField, readSize);
         }
 
+        public nint GetMonoStaticFieldPointer(PMonoClass pMonoClass, PMonoField pMonoField)
+        {
+            return this.RuntiemProvider.GetMonoStaticFieldPointer(this.RootDomain, pMonoClass, pMonoField);
+        }
+
         private MonoFieldInfoDTO GetMonoFieldInfoDTO(PMonoClass pMonoClass, PMonoField pMonoField, EnumMonoFieldOptions fieldOptions)
         {
             //      using (this.Logger.Running())
@@ -527,8 +524,9 @@ namespace Maple.MonoGameAssistant.Core
             //  var pMonoType = this.RuntimeService.GetMonoClassType(pMonoClass);
             var typeEnum = this.RuntiemProvider.GetMonoTypeEnum(pMonoType);
             classInfoDTO.TypeEnum = (uint)typeEnum;
-            classInfoDTO.TypeName = this.RuntiemProvider.GetMonoTypeName(pMonoType).ToString();
-
+            var utf8TypeName = this.RuntiemProvider.GetMonoTypeName(pMonoType);
+            classInfoDTO.TypeName = utf8TypeName.GetRawString();
+            classInfoDTO.Utf8TypeName = utf8TypeName.ToArray();
 
             var classFlags = this.RuntiemProvider.GetMonoClassFlags(pMonoClass);
             classInfoDTO.Flags = classFlags;
@@ -616,7 +614,8 @@ namespace Maple.MonoGameAssistant.Core
             return new MonoMethodInfoDTO()
             {
                 Pointer = pMonoMethod,
-                Name = methodName,
+                Name = methodName.GetRawString(),
+                Utf8Name = methodName.ToArray(),
                 Flags = methodFlags,
 
                 ParameterTypes = parameterTypes,
@@ -633,8 +632,9 @@ namespace Maple.MonoGameAssistant.Core
 
         #endregion
 
-        #region MonoDataCollector
 
+
+        #region Matedata
 
         public IEnumerable<MonoImageInfoDTO> EnumMonoImages()
         {
@@ -767,76 +767,8 @@ namespace Maple.MonoGameAssistant.Core
             return monoClassDetail;
         }
 
-        public T_Struct GetMonoStaticFieldValue<T_Struct>(MonoCollectorClassInfo collectorClassInfo, Func<MonoFieldInfoDTO, bool> math)
-            where T_Struct : unmanaged
-        {
-            if (collectorClassInfo.TryGetFirstStaticFieldInfo(math, out var static_field))
-            {
-                //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
-                return this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
-            }
-            return default;
-        }
-
-        public T_Struct GetMonoStaticFieldValue<T_Struct>(MonoCollectorClassInfo collectorClassInfo, string staticFieldName = "Instance")
-            where T_Struct : unmanaged
-        {
-            if (collectorClassInfo.TryGetFirstStaticFieldInfo(staticFieldName, out var static_field))
-            {
-                //fixed 2024年1月2日12点59分 获取字段值 使用字段成员SourceClass
-                return this.GetMonoStaticFieldValue_Unmanaged<T_Struct>(static_field.SourceClass, static_field.Pointer);
-            }
-            return default;
-        }
-
-        public bool TryGetFirstClassInfo(MonoImageInfoDTO imageInfoDTO, MonoCollecotrClassSettings classSettings, [MaybeNullWhen(false)] out MonoCollectorClassInfo collectorClassInfo)
-        {
-            Unsafe.SkipInit(out collectorClassInfo);
-            if (this.RuntiemProvider.TryGetMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out var pMonoClass)
-                || this.TryGetFirstMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out pMonoClass))
-            {
-                collectorClassInfo = GetMonoCollectorClassInfo(pMonoClass);
-                return true;
-            }
-
-            return false;
 
 
-        }
-
-        //参考CE直接遍历
-        bool TryGetFirstMonoClass(PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
-        {
-            Unsafe.SkipInit(out pMonoClass);
-            foreach (var ptrClass in this.RuntiemProvider.EnumMonoClasses(pMonoImage))
-            {
-                var nameSpace = this.RuntiemProvider.GetMonoClassNamespace(ptrClass).AsReadOnlySpan();
-                if (nameSpace.SequenceEqual(utf8Namespace))
-                {
-                    var className = this.RuntiemProvider.GetMonoClassName(ptrClass).AsReadOnlySpan();
-                    if (className.SequenceEqual(utf8ClassName))
-                    {
-                        pMonoClass = ptrClass;
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public MonoCollectorClassInfo GetMonoCollectorClassInfo(PMonoClass pMonoClass)
-        {
-            var classInfoDTO = this.GetMonoClassInfoDTO(pMonoClass);
-
-            var collectorClassInfo = new MonoCollectorClassInfo(classInfoDTO);
-            collectorClassInfo.MethodInfos.AddRange(this.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType));
-            collectorClassInfo.FieldInfos.AddRange(this.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None));
-            return collectorClassInfo;
-        }
-        #endregion
-
-
-        #region Matedata
         public IEnumerable<MonoObjectNameDTO> EnumMonoImageNames()
         {
             var listAsm = this.RuntiemProvider.EnumMonoAssemblies(this.RootDomain);
@@ -847,11 +779,11 @@ namespace Maple.MonoGameAssistant.Core
             }
         }
 
-        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoSearchClassDTO searchClassDTO, [MaybeNullWhen(false)] out MonoMetadataCollection metadataCollection)
+        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoSearchClassDTO searchClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
         {
             Unsafe.SkipInit(out metadataCollection);
             if (this.RuntiemProvider.TryGetMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8Namespace, searchClassDTO.Utf8ClassName, out var pMonoClass)
-                || this.TryGetFirstMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8FullName, out pMonoClass))
+                || this.TryGetFirstMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8Name, out pMonoClass))
             {
                 metadataCollection = GetMonoMetadataCollection(pMonoClass);
                 return true;
@@ -878,19 +810,22 @@ namespace Maple.MonoGameAssistant.Core
         }
 
 
-        public MonoMetadataCollection GetMonoMetadataCollection(PMonoClass pMonoClass)
+        public MonoClassMetadataCollection GetMonoMetadataCollection(PMonoClass pMonoClass)
         {
             var classInfoDTO = this.GetMonoClassInfoDTO(pMonoClass);
 
-            var metadataCollection = new MonoMetadataCollection()
+            var metadataCollection = new MonoClassMetadataCollection()
             {
                 ClassInfo = classInfoDTO,
-                MethodInfos = this.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType).ToArray(),
-                FieldInfos = this.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None).ToArray(),
+                MethodInfos = [.. this.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
+                FieldInfos = [.. this.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
             };
             return metadataCollection;
         }
         #endregion
+
+
+
 
     }
 }

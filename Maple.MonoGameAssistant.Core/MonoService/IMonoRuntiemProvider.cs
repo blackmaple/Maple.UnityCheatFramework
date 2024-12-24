@@ -64,7 +64,7 @@ namespace Maple.MonoGameAssistant.Core
         uint GetMonoMethodFlags(PMonoMethod pMonoMethod);
         //PMonoMethodHeader GetMonoMethodHeader(PMonoMethod pMonoMethod);
         MonoMethodPointer GetMonoMethodAddress(PMonoMethod pMonoMethod);
-        string? GetMonoMethodName(PMonoMethod pMonoMethod);
+        PMonoUtf8Char GetMonoMethodName(PMonoMethod pMonoMethod);
         MonoMethodDescInfo GetMonoMethodInfo(PMonoMethod pMonoMethod);
 
         #endregion 
@@ -87,6 +87,7 @@ namespace Maple.MonoGameAssistant.Core
         public T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField) where T_STRUCT : unmanaged;
         bool GetMonoStaticFieldValue_Buffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer);
         string? GetMonoStaticFieldValue_String(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1);
+        public nint GetMonoStaticFieldPointer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField);
         #endregion
 
         #region MonoType

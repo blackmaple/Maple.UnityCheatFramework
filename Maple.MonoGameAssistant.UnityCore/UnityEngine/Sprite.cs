@@ -1,4 +1,5 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1637,7 +1638,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
 
     }
 
-    partial class Sprite(Maple.MonoGameAssistant.Core.MonoCollectorContext collectorContext, Maple.MonoGameAssistant.MonoCollector.MonoCollectorClassInfo classInfo) : Maple.MonoGameAssistant.Core.MonoCollectorMember(collectorContext, classInfo)
+    partial class Sprite(MonoCollectorContext collectorContext, MonoCollectorClassInfo classInfo) : MonoCollectorMember(collectorContext, classInfo)
     {
 
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.Sprite.Ptr_Sprite New(bool execDefCtor)

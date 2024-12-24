@@ -1,4 +1,5 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MonoCollector;
 using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -196,7 +197,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
 
     }
 
-    partial class ImageConversion(Maple.MonoGameAssistant.Core.MonoCollectorContext collectorContext, Maple.MonoGameAssistant.MonoCollector.MonoCollectorClassInfo classInfo) : Maple.MonoGameAssistant.Core.MonoCollectorMember(collectorContext, classInfo)
+    partial class ImageConversion(MonoCollectorContext collectorContext, MonoCollectorClassInfo classInfo) : MonoCollectorMember(collectorContext, classInfo)
     {
 
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.ImageConversion.Ptr_ImageConversion New(bool execDefCtor)

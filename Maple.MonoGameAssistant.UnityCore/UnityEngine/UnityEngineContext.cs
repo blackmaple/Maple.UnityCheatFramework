@@ -23,7 +23,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
     //    [MonoCollectorType(typeof(ImageConversion))]
     //    public partial class UnityEngineContextGen { }
 
-    public partial class UnityEngineContext : Maple.MonoGameAssistant.Core.MonoCollectorContext
+    public partial class UnityEngineContext : MonoCollectorContext
     {
 
         Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_Sprite { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings

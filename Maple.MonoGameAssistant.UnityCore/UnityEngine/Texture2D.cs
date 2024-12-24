@@ -1,4 +1,5 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -2970,7 +2971,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
 
     }
 
-    partial class Texture2D(Maple.MonoGameAssistant.Core.MonoCollectorContext collectorContext, Maple.MonoGameAssistant.MonoCollector.MonoCollectorClassInfo classInfo) : Maple.MonoGameAssistant.Core.MonoCollectorMember(collectorContext, classInfo)
+    partial class Texture2D(MonoCollectorContext collectorContext, MonoCollectorClassInfo classInfo) : MonoCollectorMember(collectorContext, classInfo)
     {
 
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.Texture2D.Ptr_Texture2D New(bool execDefCtor)
