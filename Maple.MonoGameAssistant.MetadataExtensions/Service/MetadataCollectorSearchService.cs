@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions
+namespace Maple.MonoGameAssistant.MetadataExtensions.Service
 {
     public class MetadataCollectorSearchService
     {
@@ -12,43 +12,43 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
 
         public void UpdateMetadata(MonoDescriptionCollectionDTO descriptionCollectionDTO)
         {
-            this.ClearMetadata();
+            ClearMetadata();
             if (descriptionCollectionDTO.Classes is not null)
             {
-                this.DescriptionClasses.AddRange(descriptionCollectionDTO.Classes);
+                DescriptionClasses.AddRange(descriptionCollectionDTO.Classes);
             }
             if (descriptionCollectionDTO.Methods is not null)
             {
-                this.DescriptionMethods.AddRange(descriptionCollectionDTO.Methods);
+                DescriptionMethods.AddRange(descriptionCollectionDTO.Methods);
             }
             if (descriptionCollectionDTO.Fields is not null)
             {
-                this.DescriptionFields.AddRange(descriptionCollectionDTO.Fields);
+                DescriptionFields.AddRange(descriptionCollectionDTO.Fields);
             }
         }
 
         public void ClearMetadata()
         {
-            this.DescriptionClasses.Clear();
-            this.DescriptionMethods.Clear();
-            this.DescriptionFields.Clear();
+            DescriptionClasses.Clear();
+            DescriptionMethods.Clear();
+            DescriptionFields.Clear();
         }
 
         public bool TrySearchClass(ulong code, [MaybeNullWhen(false)] out MonoDescriptionClassDTO descriptionClassDTO)
         {
-            descriptionClassDTO = this.DescriptionClasses.Find(p => p.Code == code);
+            descriptionClassDTO = DescriptionClasses.Find(p => p.Code == code);
             return descriptionClassDTO is not null;
         }
 
         public bool TrySearchMethod(ulong code, [MaybeNullWhen(false)] out MonoDescriptionMethodDTO descriptionMethodDTO)
         {
-            descriptionMethodDTO = this.DescriptionMethods.Find(p => p.Code == code);
+            descriptionMethodDTO = DescriptionMethods.Find(p => p.Code == code);
             return descriptionMethodDTO is not null;
         }
 
         public bool TrySearchField(ulong code, [MaybeNullWhen(false)] out MonoDescriptionFieldDTO descriptionFieldDTO)
         {
-            descriptionFieldDTO = this.DescriptionFields.Find(p => p.Code == code);
+            descriptionFieldDTO = DescriptionFields.Find(p => p.Code == code);
             return descriptionFieldDTO is not null;
         }
 

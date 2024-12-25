@@ -7,4 +7,11 @@ namespace Maple.MonoGameAssistant.MetadataModel.MetadataAttribute
     {
         public Type ClassMetadata { get; } = classMetadata;
     }
+
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class ContextMetadataAttribute<T>(): ContextMetadataAttribute(typeof(T))
+    { 
+    
+    }
 }

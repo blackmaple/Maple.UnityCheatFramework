@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Drawing;
 
 namespace Maple.MonoGameAssistant.Core
@@ -126,9 +127,9 @@ namespace Maple.MonoGameAssistant.Core
         {
             return this.Runtime.IL2CPP_STRING_NEW.Invoke(str);
         }
-        public sealed override PMonoString GetMonoString(PMonoDomain pMonoDomain, ReadOnlySpan<char> str)
+        public sealed override PMonoString GetMonoString(PMonoDomain pMonoDomain, in ReadOnlySpan<char> str)
         {
-            return base.GetMonoString(pMonoDomain, str);
+            return this.Runtime.IL2CPP_STRING_NEW.Invoke(str);
         }
 
         public sealed override PDelegatePointer GetInternalCall(string signature)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataModel
+namespace Maple.MonoGameAssistant.MetadataModel.Model
 {
     public readonly struct MonoMethodDelegate(nint monoMethod, nint func)
     {

@@ -604,7 +604,7 @@ namespace Maple.MonoGameAssistant.Core
         {
             return this.Runtime.MONO_STRING_NEW.Invoke(pMonoDomain, str);
         }
-        public virtual PMonoString GetMonoString(PMonoDomain pMonoDomain, ReadOnlySpan<char> str)
+        public virtual PMonoString GetMonoString(PMonoDomain pMonoDomain, in ReadOnlySpan<char> str)
         {
             return this.Runtime.MONO_STRING_NEW.Invoke(pMonoDomain, str);
         }

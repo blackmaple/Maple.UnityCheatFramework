@@ -1,21 +1,23 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataModel;
+using Maple.MonoGameAssistant.MetadataExtensions.Common;
+using Maple.MonoGameAssistant.MetadataExtensions.Service;
 using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
+using Maple.MonoGameAssistant.MetadataModel.Model;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions
+namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 {
-    public abstract partial class ClassMetadataCollector(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection) : IClassMetadataCollectorCode
+    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
+        : MetadataModel.ClassMetadata.IClassMetadataCollector
     {
-        public ContextMetadataCollector MetadataCollector { get; } = metadataCollector;
-        public ILogger Logger => MetadataCollector.Logger;
-        public MetadataCollectorSearchService SearchService => MetadataCollector.SearchService;
-        public MonoRuntimeContext RuntimeContext => MetadataCollector.RuntimeContext;
-        public MonoClassMetadataCollection MetadataCollection { get; } = collection;
+        public ContextMetadataCollector ContextMetadata { get; } = contextMetadata;
+        public ILogger Logger => ContextMetadata.Logger;
+        public MetadataCollectorSearchService SearchService => ContextMetadata.SearchService;
+        public MonoRuntimeContext RuntimeContext => ContextMetadata.RuntimeContext;
+        public MonoClassMetadataCollection ClassMetadata { get; } = classMetadataCollection;
 
         public virtual bool CustomTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
@@ -25,7 +27,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         public bool DefaultTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
             Unsafe.SkipInit(out methodInfoDTO);
-            foreach (var method in this.MetadataCollection.MethodInfos)
+            foreach (var method in ClassMetadata.MethodInfos)
             {
                 if (method.EqualMethodName(descriptionMethodDTO)
                     && method.EqualMethodReturnType(descriptionMethodDTO)
@@ -40,12 +42,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public bool TryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
-            return this.CustomTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO) || this.DefaultTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO);
+            return CustomTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO) || DefaultTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO);
         }
 
         public bool DefaultTryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
         {
-            pointer = this.RuntimeContext.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
+            pointer = RuntimeContext.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
             return pointer != nint.Zero;
 
         }
@@ -56,7 +58,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public bool TryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
         {
-            return this.CustomTryGetMethodPointer(methodInfoDTO, out pointer) || this.DefaultTryGetMethodPointer(methodInfoDTO, out pointer);
+            return CustomTryGetMethodPointer(methodInfoDTO, out pointer) || DefaultTryGetMethodPointer(methodInfoDTO, out pointer);
         }
 
 
@@ -65,8 +67,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             Unsafe.SkipInit(out fieldInfoDTO);
             IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
                 descriptionFieldDTO.IsStatic
-                ? this.MetadataCollection.EnumStaticFieldInfos()
-                : this.MetadataCollection.EnumMemberFieldInfos();
+                ? ClassMetadata.EnumStaticFieldInfos()
+                : ClassMetadata.EnumMemberFieldInfos();
             foreach (var field in fieldInfoDTOs)
             {
                 if (field.EqualFieldName(descriptionFieldDTO)
@@ -86,20 +88,20 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public bool TryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
-            return this.CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || this.DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
+            return CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
         }
 
         public MonoMethodDelegate GetMethodDelegate(ulong code)
         {
-            if (false == this.SearchService.TrySearchMethod(code, out var descriptionMethodDTO))
+            if (false == SearchService.TrySearchMethod(code, out var descriptionMethodDTO))
             {
                 return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
             }
-            if (false == this.TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
+            if (false == TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
                 return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodMetadata)}:{code}");
             }
-            if (false == this.TryGetMethodPointer(methodInfoDTO, out var pointer))
+            if (false == TryGetMethodPointer(methodInfoDTO, out var pointer))
             {
                 return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodPointer)}:{code}");
             }
@@ -115,11 +117,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
 
         public MonoFieldInfoDTO GetFieldMetadata(ulong code)
         {
-            if (false == this.SearchService.TrySearchField(code, out var descriptionFieldDTO))
+            if (false == SearchService.TrySearchField(code, out var descriptionFieldDTO))
             {
                 return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
             }
-            if (false == this.TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
+            if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
                 return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(TryGetFieldMetadata)}:{code}");
             }
@@ -127,13 +129,13 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public int GetMemberFieldOffset(ulong code)
         {
-            var fieldInfoDTO = this.GetFieldMetadata(code);
+            var fieldInfoDTO = GetFieldMetadata(code);
             return fieldInfoDTO.Offset;
         }
         public nint GetStaticInstancePointer(ulong code)
         {
-            var fieldInfoDTO = this.GetFieldMetadata(code);
-            return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer);
+            var fieldInfoDTO = GetFieldMetadata(code);
+            return RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer);
         }
 
 
@@ -154,6 +156,24 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             ref var ref_Value = ref GetMemberFieldValue<T_FieldValue>(@this, fieldOffset);
             ref_Value = value;
         }
+
+
+    }
+
+    public abstract partial class ClassMetadataCollector<T_RefMetadata, T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
+        : ClassMetadataCollector<T_PtrMetadata>(metadataCollector, collection)
+        , IRefMetadataCollector<T_RefMetadata>
+        , IPtrMetadataCollector<T_PtrMetadata>
+        where T_RefMetadata : unmanaged, IRefMetadata
+        where T_PtrMetadata : unmanaged, IPtrMetadata
+    {
+    }
+
+    public abstract partial class ClassMetadataCollector<T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
+        : ClassMetadataCollector(metadataCollector, collection)
+        , IPtrMetadataCollector<T_PtrMetadata>
+        where T_PtrMetadata : unmanaged, IPtrMetadata
+    {
 
 
     }

@@ -1,4 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.Common;
+using Maple.MonoGameAssistant.MetadataExtensions.Service;
 using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
@@ -7,7 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions
+namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 {
     public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IContextMetadataCollectorBase
     {
@@ -19,7 +21,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         public bool DefaultTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
             Unsafe.SkipInit(out imageNameDTO);
-            foreach (var data in this.ImageNames)
+            foreach (var data in ImageNames)
             {
                 if (data.EqualImageName(descriptionClassDTO))
                 {
@@ -36,13 +38,13 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public bool TryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
-            return this.CustomTryGetImageMetadata(descriptionClassDTO, out imageNameDTO) || this.DefaultTryGetImageMetadata(descriptionClassDTO, out imageNameDTO);
+            return CustomTryGetImageMetadata(descriptionClassDTO, out imageNameDTO) || DefaultTryGetImageMetadata(descriptionClassDTO, out imageNameDTO);
         }
 
 
         public bool DefaultTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
-            return this.RuntimeContext.TryGetFirstClassInfo(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
+            return RuntimeContext.TryGetFirstClassInfo(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
         }
         public virtual bool CustomTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
@@ -51,21 +53,21 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
         public bool TryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
-            return this.CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection)
-              || this.DefaultTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
+            return CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection)
+              || DefaultTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
         }
 
         public MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
         {
-            if (false == this.SearchService.TrySearchClass(code, out var descriptionClassDTO))
+            if (false == SearchService.TrySearchClass(code, out var descriptionClassDTO))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
             }
-            if (false == this.TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
+            if (false == TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code}");
             }
-            if (false == this.TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
+            if (false == TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code}");
             }

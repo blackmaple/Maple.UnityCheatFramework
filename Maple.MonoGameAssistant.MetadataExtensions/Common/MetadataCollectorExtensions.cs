@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Maple.MonoGameAssistant.Core;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions
+namespace Maple.MonoGameAssistant.MetadataExtensions.Common
 {
 
 
@@ -21,16 +21,16 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         {
             var imageName = imageNameDTO.Utf8Name.AsSpan();
             var searchImageName = searchClassDTO.Utf8ImageName.AsSpan();
-            if (MemoryExtensions.SequenceEqual(imageName, searchImageName))
+            if (imageName.SequenceEqual(searchImageName))
             {
                 return true;
             }
-            return searchImageName.EndsWith(".dll"u8) && MemoryExtensions.SequenceEqual(imageName, searchImageName[..^4]);
+            return searchImageName.EndsWith(".dll"u8) && imageName.SequenceEqual(searchImageName[..^4]);
         }
 
         public static bool EqualMethodName(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
-            return MemoryExtensions.SequenceEqual(methodInfoDTO.Utf8Name, descriptionMethodDTO.Utf8Name);
+            return methodInfoDTO.Utf8Name.SequenceEqual(descriptionMethodDTO.Utf8Name);
         }
         public static bool EqualMethodReturnType(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
@@ -38,7 +38,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             {
                 return true;
             }
-            return MemoryExtensions.SequenceEqual(methodInfoDTO.ReturnType.Utf8FullName, descriptionMethodDTO.Utf8ReturnType);
+            return methodInfoDTO.ReturnType.Utf8FullName.SequenceEqual(descriptionMethodDTO.Utf8ReturnType);
 
         }
         public static bool EqualMethodParameterTypes(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
@@ -60,7 +60,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             {
                 var fullName = parameterTypes[i % rawCount].Utf8FullName;
                 var searchName = searchArray[i % rawCount];
-                if (false == MemoryExtensions.SequenceEqual(fullName, searchName))
+                if (false == fullName.SequenceEqual(searchName))
                 {
                     return false;
                 }
@@ -70,7 +70,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
 
         public static bool EqualFieldName(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
         {
-            return MemoryExtensions.SequenceEqual(fieldInfoDTO.Utf8Name, descriptionFieldDTO.Utf8Name);
+            return fieldInfoDTO.Utf8Name.SequenceEqual(descriptionFieldDTO.Utf8Name);
         }
         public static bool EqualFieldType(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
         {
@@ -78,7 +78,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             {
                 return true;
             }
-            return MemoryExtensions.SequenceEqual(fieldInfoDTO.FieldType.Utf8FullName, descriptionFieldDTO.Utf8FieldType);
+            return fieldInfoDTO.FieldType.Utf8FullName.SequenceEqual(descriptionFieldDTO.Utf8FieldType);
         }
 
         public static IEnumerable<MonoFieldInfoDTO> EnumMemberFieldInfos(this MonoClassMetadataCollection classMetadataCollection)
