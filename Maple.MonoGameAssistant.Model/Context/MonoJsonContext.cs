@@ -103,12 +103,12 @@ namespace Maple.MonoGameAssistant.Model
 
     [JsonSerializable(typeof(MonoResultDTO<byte[]>))]
 
-    [JsonSerializable(typeof(MonoDescriptionMemberDTO))]
-    [JsonSerializable(typeof(MonoDescriptionClassDTO))]
-    [JsonSerializable(typeof(MonoDescriptionMethodDTO))]
-    [JsonSerializable(typeof(MonoDescriptionFieldDTO))]
-    [JsonSerializable(typeof(MonoSearchCollectionDTO))]
-    [JsonSerializable(typeof(MonoResultDTO<MonoSearchCollectionDTO>))]
+    [JsonSerializable(typeof(MonoSearchMemberDTO))]
+    [JsonSerializable(typeof(MonoSearchClassDTO))]
+    [JsonSerializable(typeof(MonoSearchMethodDTO))]
+    [JsonSerializable(typeof(MonoSearchFieldDTO))]
+    [JsonSerializable(typeof(MonoDescriptionCollectionDTO))]
+    [JsonSerializable(typeof(MonoResultDTO<MonoDescriptionCollectionDTO>))]
 
     public partial class MonoJsonContext : JsonSerializerContext
     {

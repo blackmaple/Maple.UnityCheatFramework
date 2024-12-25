@@ -1,6 +1,6 @@
 ﻿namespace Maple.MonoGameAssistant.Model
 {
-    public class MonoSearchCollectionDTO
+    public class MonoDescriptionCollectionDTO
     {
         public MonoDescriptionClassDTO[]? Classes { get; }
         public MonoDescriptionFieldDTO[]? Fields { get; }

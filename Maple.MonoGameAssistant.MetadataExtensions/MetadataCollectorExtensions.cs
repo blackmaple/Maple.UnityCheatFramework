@@ -4,9 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Maple.MonoGameAssistant.Core;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions
 {
+
+
     public static class MetadataCollectorExtensions
     {
         public static bool IsNotNull<T_PTR>(this T_PTR @this) where T_PTR : unmanaged, IPtrMetadata
@@ -25,18 +28,26 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             return searchImageName.EndsWith(".dll"u8) && MemoryExtensions.SequenceEqual(imageName, searchImageName[..^4]);
         }
 
-        public static bool EqualMethodName(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO searchMethodDTO)
+        public static bool EqualMethodName(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
-            return MemoryExtensions.SequenceEqual(methodInfoDTO.Utf8Name, searchMethodDTO.Utf8Name);
+            return MemoryExtensions.SequenceEqual(methodInfoDTO.Utf8Name, descriptionMethodDTO.Utf8Name);
         }
-        public static bool EqualMethodReturnType(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO searchMethodDTO)
+        public static bool EqualMethodReturnType(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
-            return MemoryExtensions.SequenceEqual(methodInfoDTO.ReturnType.Utf8FullName, searchMethodDTO.Utf8ReturnType);
+            if (descriptionMethodDTO.Utf8ReturnType is null)
+            {
+                return true;
+            }
+            return MemoryExtensions.SequenceEqual(methodInfoDTO.ReturnType.Utf8FullName, descriptionMethodDTO.Utf8ReturnType);
 
         }
-        public static bool EqualMethodParameterTypes(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO searchMethodDTO)
+        public static bool EqualMethodParameterTypes(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
-            var searchArray = searchMethodDTO.Utf8Parameters.AsSpan();
+            if (descriptionMethodDTO.Utf8Parameters is null)
+            {
+                return true;
+            }
+            var searchArray = descriptionMethodDTO.Utf8Parameters.AsSpan();
             var parameterTypes = methodInfoDTO.ParameterTypes.AsSpan();
             var rawCount = parameterTypes.Length;
             if (rawCount != searchArray.Length)
@@ -57,16 +68,20 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             return true;
         }
 
-        public static bool EqualFieldName(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO searchFieldDTO)
+        public static bool EqualFieldName(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
         {
-            return MemoryExtensions.SequenceEqual(fieldInfoDTO.Utf8Name, searchFieldDTO.Utf8Name);
+            return MemoryExtensions.SequenceEqual(fieldInfoDTO.Utf8Name, descriptionFieldDTO.Utf8Name);
         }
-        public static bool EqualFieldType(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO searchFieldDTO)
+        public static bool EqualFieldType(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
         {
-            return MemoryExtensions.SequenceEqual(fieldInfoDTO.FieldType.Utf8FullName, searchFieldDTO.Utf8FieldType);
+            if (descriptionFieldDTO.Utf8FieldType is null)
+            {
+                return true;
+            }
+            return MemoryExtensions.SequenceEqual(fieldInfoDTO.FieldType.Utf8FullName, descriptionFieldDTO.Utf8FieldType);
         }
- 
-        public static IEnumerable<MonoFieldInfoDTO> EnumMemberFieldInfos(this MonoClassMetadataCollection  classMetadataCollection )
+
+        public static IEnumerable<MonoFieldInfoDTO> EnumMemberFieldInfos(this MonoClassMetadataCollection classMetadataCollection)
         {
             if (classMetadataCollection.ClassInfo.IsEnum == false)
             {
@@ -94,4 +109,5 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
 
     }
+
 }

@@ -39,17 +39,30 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
             }
-            if (false == this.TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
+            if (false == this.CustomTryGetImageMetadata(descriptionClassDTO, out var imageNameDTO)
+                || false == this.TryGetImageMetadata(descriptionClassDTO, out imageNameDTO))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code}");
             }
-            if (false == this.TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
+            if (false == this.CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection)
+                || false == this.TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code}");
             }
             return classMetadataCollection;
         }
 
+        public virtual bool CustomTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
+        {
+            Unsafe.SkipInit(out imageNameDTO);
+            return false;
+        }
+
+        public virtual bool CustomTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        {
+            Unsafe.SkipInit(out classMetadataCollection);
+            return false;
+        }
 
     }
 }

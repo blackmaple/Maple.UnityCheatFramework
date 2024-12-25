@@ -779,11 +779,11 @@ namespace Maple.MonoGameAssistant.Core
             }
         }
 
-        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO searchClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
+        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
         {
             Unsafe.SkipInit(out metadataCollection);
-            if (this.RuntiemProvider.TryGetMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8Namespace, searchClassDTO.Utf8ClassName, out var pMonoClass)
-                || this.TryGetFirstMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8Name, out pMonoClass))
+            if (this.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
+                || this.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
             {
                 metadataCollection = GetMonoMetadataCollection(pMonoClass);
                 return true;
@@ -793,9 +793,23 @@ namespace Maple.MonoGameAssistant.Core
 
         }
 
+        public bool TryGetFirstMonoClass(PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
+        {
+            Unsafe.SkipInit(out pMonoClass);
+            if (utf8Namespace.IsEmpty && utf8ClassName.IsEmpty)
+            {
+                return false;
+            }
+            return this.RuntiemProvider.TryGetMonoClass(pMonoImage, utf8Namespace, utf8ClassName, out pMonoClass);
+        }
+
         public bool TryGetFirstMonoClass(PMonoImage pMonoImage, ReadOnlySpan<byte> fullName, out PMonoClass pMonoClass)
         {
             Unsafe.SkipInit(out pMonoClass);
+            if (fullName.IsEmpty)
+            {
+                return false;
+            }
             foreach (var ptrClass in this.RuntiemProvider.EnumMonoClasses(pMonoImage))
             {
                 var monoType = this.RuntiemProvider.GetMonoClassType(ptrClass);

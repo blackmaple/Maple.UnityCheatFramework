@@ -1,8 +1,10 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataModel;
 using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions
@@ -15,7 +17,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         public MonoRuntimeContext RuntimeContext => MetadataCollector.RuntimeContext;
         public MonoClassMetadataCollection MetadataCollection { get; } = collection;
 
-        public bool TryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
+        public virtual bool CustomTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
+        {
+            Unsafe.SkipInit(out methodInfoDTO);
+            return false;
+        }
+        public bool DefaultTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
             Unsafe.SkipInit(out methodInfoDTO);
             foreach (var method in this.MetadataCollection.MethodInfos)
@@ -31,13 +38,29 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             return false;
 
         }
-        public bool TryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
+        public bool TryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
+        {
+            return this.CustomTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO) || this.DefaultTryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO);
+        }
+
+        public bool DefaultTryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
         {
             pointer = this.RuntimeContext.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
             return pointer != nint.Zero;
 
         }
-        public bool TryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
+        public virtual bool CustomTryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
+        {
+            Unsafe.SkipInit(out pointer);
+            return false;
+        }
+        public bool TryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
+        {
+            return this.CustomTryGetMethodPointer(methodInfoDTO, out pointer) || this.DefaultTryGetMethodPointer(methodInfoDTO, out pointer);
+        }
+
+
+        public bool DefaultTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
             Unsafe.SkipInit(out fieldInfoDTO);
             IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
@@ -55,29 +78,40 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             }
             return false;
         }
+        public virtual bool CustomTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
+        {
+            Unsafe.SkipInit(out fieldInfoDTO);
+            return false;
 
-        public MonoStaticMethodDelegate GetStaticMethodDelegate(long code)
+        }
+        public bool TryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
+        {
+            return this.CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || this.DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
+        }
+
+        public MonoMethodDelegate GetMethodDelegate(long code)
         {
             if (false == this.SearchService.TrySearchMethod(code, out var descriptionMethodDTO))
             {
-                return MetadataCollectorException.Throw<MonoStaticMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
             }
             if (false == this.TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoStaticMethodDelegate>($"{nameof(TryGetMethodMetadata)}:{code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodMetadata)}:{code}");
             }
             if (false == this.TryGetMethodPointer(methodInfoDTO, out var pointer))
             {
-                return MetadataCollectorException.Throw<MonoStaticMethodDelegate>($"{nameof(TryGetMethodPointer)}:{code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodPointer)}:{code}");
             }
             return new(methodInfoDTO.Pointer, pointer);
 
         }
         public nint GetMethodPointer(long code)
         {
-            MonoStaticMethodDelegate methodDelegate = GetStaticMethodDelegate(code);
-            return methodDelegate.PtrMethod;
+            MonoMethodDelegate methodDelegate = GetMethodDelegate(code);
+            return methodDelegate.MethodPointer;
         }
+
 
         public MonoFieldInfoDTO GetFieldMetadata(long code)
         {
