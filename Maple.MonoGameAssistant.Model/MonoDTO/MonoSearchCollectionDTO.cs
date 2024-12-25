@@ -2,8 +2,8 @@
 {
     public class MonoSearchCollectionDTO
     {
-        public MonoSearchClassDTO[]? Classes { get; }
-        public MonoSearchFieldDTO[]? Fields { get; }
-        public MonoSearchMethodDTO[]? Methods { get; }
+        public MonoDescriptionClassDTO[]? Classes { get; }
+        public MonoDescriptionFieldDTO[]? Fields { get; }
+        public MonoDescriptionMethodDTO[]? Methods { get; }
     }
 }

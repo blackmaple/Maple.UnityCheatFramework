@@ -1,6 +1,6 @@
 ﻿namespace Maple.MonoGameAssistant.Model
 {
-    public class MonoSearchFieldDTO : MonoSearchMemberDTO
+    public class MonoDescriptionFieldDTO : MonoDescriptionMemberDTO
     {
         public byte[]? Utf8FieldType { get; set; }
 

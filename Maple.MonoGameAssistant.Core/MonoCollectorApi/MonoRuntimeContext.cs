@@ -779,7 +779,7 @@ namespace Maple.MonoGameAssistant.Core
             }
         }
 
-        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoSearchClassDTO searchClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
+        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO searchClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
         {
             Unsafe.SkipInit(out metadataCollection);
             if (this.RuntiemProvider.TryGetMonoClass(imageNameDTO.Pointer, searchClassDTO.Utf8Namespace, searchClassDTO.Utf8ClassName, out var pMonoClass)

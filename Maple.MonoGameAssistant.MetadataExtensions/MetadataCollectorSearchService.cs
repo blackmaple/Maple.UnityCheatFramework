@@ -6,49 +6,49 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
 {
     public class MetadataCollectorSearchService
     {
-        public List<MonoSearchClassDTO> SearchClasses { get; } = new List<MonoSearchClassDTO>(256);
-        public List<MonoSearchMethodDTO> SearchMethods { get; } = new List<MonoSearchMethodDTO>(256);
-        public List<MonoSearchFieldDTO> SearchFields { get; } = new List<MonoSearchFieldDTO>(256);
+        public List<MonoDescriptionClassDTO> DescriptionClasses { get; } = new List<MonoDescriptionClassDTO>(256);
+        public List<MonoDescriptionMethodDTO> DescriptionMethods { get; } = new List<MonoDescriptionMethodDTO>(256);
+        public List<MonoDescriptionFieldDTO> DescriptionFields { get; } = new List<MonoDescriptionFieldDTO>(256);
 
         public void UpdateMetadata(MonoSearchCollectionDTO searchCollectionDTO)
         {
             this.ClearMetadata();
             if (searchCollectionDTO.Classes is not null)
             {
-                this.SearchClasses.AddRange(searchCollectionDTO.Classes);
+                this.DescriptionClasses.AddRange(searchCollectionDTO.Classes);
             }
             if (searchCollectionDTO.Methods is not null)
             {
-                this.SearchMethods.AddRange(searchCollectionDTO.Methods);
+                this.DescriptionMethods.AddRange(searchCollectionDTO.Methods);
             }
             if (searchCollectionDTO.Fields is not null)
             {
-                this.SearchFields.AddRange(searchCollectionDTO.Fields);
+                this.DescriptionFields.AddRange(searchCollectionDTO.Fields);
             }
         }
 
         public void ClearMetadata()
         {
-            this.SearchClasses.Clear();
-            this.SearchMethods.Clear();
-            this.SearchFields.Clear();
+            this.DescriptionClasses.Clear();
+            this.DescriptionMethods.Clear();
+            this.DescriptionFields.Clear();
         }
 
-        public bool TryGetClass(long code, [MaybeNullWhen(false)] out MonoSearchClassDTO searchClassDTO)
+        public bool TrySearchClass(long code, [MaybeNullWhen(false)] out MonoDescriptionClassDTO searchClassDTO)
         {
-            searchClassDTO = this.SearchClasses.Find(p => p.Code == code);
+            searchClassDTO = this.DescriptionClasses.Find(p => p.Code == code);
             return searchClassDTO is not null;
         }
 
-        public bool TryGetMethod(long code, [MaybeNullWhen(false)] out MonoSearchMethodDTO searchMethodDTO)
+        public bool TrySearchMethod(long code, [MaybeNullWhen(false)] out MonoDescriptionMethodDTO searchMethodDTO)
         {
-            searchMethodDTO = this.SearchMethods.Find(p => p.Code == code);
+            searchMethodDTO = this.DescriptionMethods.Find(p => p.Code == code);
             return searchMethodDTO is not null;
         }
 
-        public bool TryGetField(long code, [MaybeNullWhen(false)] out MonoSearchFieldDTO searchFieldDTO)
+        public bool TrySearchField(long code, [MaybeNullWhen(false)] out MonoDescriptionFieldDTO searchFieldDTO)
         {
-            searchFieldDTO = this.SearchFields.Find(p => p.Code == code);
+            searchFieldDTO = this.DescriptionFields.Find(p => p.Code == code);
             return searchFieldDTO is not null;
         }
 

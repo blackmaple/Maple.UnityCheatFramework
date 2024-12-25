@@ -2,7 +2,7 @@
 
 namespace Maple.MonoGameAssistant.Model
 {
-    public class MonoSearchClassDTO : MonoSearchMemberDTO
+    public class MonoDescriptionClassDTO : MonoDescriptionMemberDTO
     {
         public byte[]? Utf8ImageName { get; }
         public byte[]? Utf8Namespace { get; }
