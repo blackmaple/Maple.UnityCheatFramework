@@ -34,19 +34,19 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             this.DescriptionFields.Clear();
         }
 
-        public bool TrySearchClass(long code, [MaybeNullWhen(false)] out MonoDescriptionClassDTO descriptionClassDTO)
+        public bool TrySearchClass(ulong code, [MaybeNullWhen(false)] out MonoDescriptionClassDTO descriptionClassDTO)
         {
-             descriptionClassDTO = this.DescriptionClasses.Find(p => p.Code == code);
+            descriptionClassDTO = this.DescriptionClasses.Find(p => p.Code == code);
             return descriptionClassDTO is not null;
         }
 
-        public bool TrySearchMethod(long code, [MaybeNullWhen(false)] out MonoDescriptionMethodDTO descriptionMethodDTO)
+        public bool TrySearchMethod(ulong code, [MaybeNullWhen(false)] out MonoDescriptionMethodDTO descriptionMethodDTO)
         {
             descriptionMethodDTO = this.DescriptionMethods.Find(p => p.Code == code);
             return descriptionMethodDTO is not null;
         }
 
-        public bool TrySearchField(long code, [MaybeNullWhen(false)] out MonoDescriptionFieldDTO descriptionFieldDTO)
+        public bool TrySearchField(ulong code, [MaybeNullWhen(false)] out MonoDescriptionFieldDTO descriptionFieldDTO)
         {
             descriptionFieldDTO = this.DescriptionFields.Find(p => p.Code == code);
             return descriptionFieldDTO is not null;

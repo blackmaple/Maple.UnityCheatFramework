@@ -1,8 +1,8 @@
 ﻿namespace Maple.MonoGameAssistant.MetadataModel.ClassMetadata
 {
-    public interface IMetadataCollectorCollectionBase
+    public interface IContextMetadataCollectorBase
     {
-
+        object GetClassMetadataCollection(ulong code);
     }
 
 

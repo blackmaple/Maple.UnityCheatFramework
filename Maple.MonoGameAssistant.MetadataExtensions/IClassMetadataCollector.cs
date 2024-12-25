@@ -2,8 +2,8 @@
 
 namespace Maple.MonoGameAssistant.MetadataExtensions
 {
-    public interface IClassMetadataCollector: IClassMetadataCollectorCode
+    public interface IClassMetadataCollector : IClassMetadataCollectorCode
     {
-        abstract static string CODE { get; }
+        abstract static ulong CODE { get; }
     }
 }

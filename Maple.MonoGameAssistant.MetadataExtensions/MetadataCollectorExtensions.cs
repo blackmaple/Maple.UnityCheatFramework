@@ -10,7 +10,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
 {
 
 
-    public static class MetadataCollectorExtensions
+    internal static class MetadataCollectorExtensions
     {
         public static bool IsNotNull<T_PTR>(this T_PTR @this) where T_PTR : unmanaged, IPtrMetadata
             => @this.Ptr != nint.Zero;
@@ -109,5 +109,4 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
         }
 
     }
-
 }

@@ -9,14 +9,14 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions
 {
-    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
+    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IContextMetadataCollectorBase
     {
         public ILogger Logger { get; } = logger;
         public MetadataCollectorSearchService SearchService { get; } = searchService;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
         public MonoObjectNameDTO[] ImageNames { get; } = [.. runtimeContext.EnumMonoImageNames()];
 
-        public bool TryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
+        public bool DefaultTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
             Unsafe.SkipInit(out imageNameDTO);
             foreach (var data in this.ImageNames)
@@ -29,40 +29,50 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             }
             return false;
         }
-        public bool TryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        public virtual bool CustomTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
+        {
+            Unsafe.SkipInit(out imageNameDTO);
+            return false;
+        }
+        public bool TryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
+        {
+            return this.CustomTryGetImageMetadata(descriptionClassDTO, out imageNameDTO) || this.DefaultTryGetImageMetadata(descriptionClassDTO, out imageNameDTO);
+        }
+
+
+        public bool DefaultTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
             return this.RuntimeContext.TryGetFirstClassInfo(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
         }
-        public MonoClassMetadataCollection GetClassMetadataCollection(long code)
+        public virtual bool CustomTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        {
+            Unsafe.SkipInit(out classMetadataCollection);
+            return false;
+        }
+        public bool TryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        {
+            return this.CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection)
+              || this.DefaultTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
+        }
+
+        public MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
         {
             if (false == this.SearchService.TrySearchClass(code, out var descriptionClassDTO))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
             }
-            if (false == this.CustomTryGetImageMetadata(descriptionClassDTO, out var imageNameDTO)
-                || false == this.TryGetImageMetadata(descriptionClassDTO, out imageNameDTO))
+            if (false == this.TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code}");
             }
-            if (false == this.CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection)
-                || false == this.TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection))
+            if (false == this.TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
             {
                 return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code}");
             }
             return classMetadataCollection;
         }
 
-        public virtual bool CustomTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
-        {
-            Unsafe.SkipInit(out imageNameDTO);
-            return false;
-        }
-
-        public virtual bool CustomTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
-        {
-            Unsafe.SkipInit(out classMetadataCollection);
-            return false;
-        }
+        object IContextMetadataCollectorBase.GetClassMetadataCollection(ulong code) => GetClassMetadataCollection(code);
 
     }
 }

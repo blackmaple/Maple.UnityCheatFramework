@@ -89,7 +89,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             return this.CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || this.DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
         }
 
-        public MonoMethodDelegate GetMethodDelegate(long code)
+        public MonoMethodDelegate GetMethodDelegate(ulong code)
         {
             if (false == this.SearchService.TrySearchMethod(code, out var descriptionMethodDTO))
             {
@@ -106,14 +106,14 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             return new(methodInfoDTO.Pointer, pointer);
 
         }
-        public nint GetMethodPointer(long code)
+        public nint GetMethodPointer(ulong code)
         {
             MonoMethodDelegate methodDelegate = GetMethodDelegate(code);
             return methodDelegate.MethodPointer;
         }
 
 
-        public MonoFieldInfoDTO GetFieldMetadata(long code)
+        public MonoFieldInfoDTO GetFieldMetadata(ulong code)
         {
             if (false == this.SearchService.TrySearchField(code, out var descriptionFieldDTO))
             {
@@ -125,12 +125,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions
             }
             return fieldInfoDTO;
         }
-        public int GetMemberFieldOffset(long code)
+        public int GetMemberFieldOffset(ulong code)
         {
             var fieldInfoDTO = this.GetFieldMetadata(code);
             return fieldInfoDTO.Offset;
         }
-        public nint GetStaticInstancePointer(long code)
+        public nint GetStaticInstancePointer(ulong code)
         {
             var fieldInfoDTO = this.GetFieldMetadata(code);
             return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer);
