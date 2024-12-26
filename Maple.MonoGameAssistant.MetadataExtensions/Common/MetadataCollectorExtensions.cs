@@ -12,10 +12,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Common
 
     internal static class MetadataCollectorExtensions
     {
-        public static bool IsNotNull<T_PTR>(this T_PTR @this) where T_PTR : unmanaged, IPtrMetadata
-            => @this.Ptr != nint.Zero;
-        public static bool IsNull<T_PTR>(this T_PTR @this) where T_PTR : unmanaged, IPtrMetadata
-            => @this.Ptr == nint.Zero;
+
 
         public static bool EqualImageName(this MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO searchClassDTO)
         {
@@ -30,6 +27,10 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Common
 
         public static bool EqualMethodName(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
         {
+            if (descriptionMethodDTO.Utf8Name is null)
+            {
+                return true;
+            }
             return methodInfoDTO.Utf8Name.SequenceEqual(descriptionMethodDTO.Utf8Name);
         }
         public static bool EqualMethodReturnType(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
@@ -70,6 +71,10 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Common
 
         public static bool EqualFieldName(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
         {
+            if (descriptionFieldDTO.Utf8Name is null)
+            {
+                return true;
+            }
             return fieldInfoDTO.Utf8Name.SequenceEqual(descriptionFieldDTO.Utf8Name);
         }
         public static bool EqualFieldType(this MonoFieldInfoDTO fieldInfoDTO, MonoDescriptionFieldDTO descriptionFieldDTO)
@@ -81,32 +86,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Common
             return fieldInfoDTO.FieldType.Utf8FullName.SequenceEqual(descriptionFieldDTO.Utf8FieldType);
         }
 
-        public static IEnumerable<MonoFieldInfoDTO> EnumMemberFieldInfos(this MonoClassMetadataCollection classMetadataCollection)
-        {
-            if (classMetadataCollection.ClassInfo.IsEnum == false)
-            {
-                foreach (var field in classMetadataCollection.FieldInfos)
-                {
-                    if (field.IsStatic == false)
-                    {
-                        yield return field;
-                    }
-                }
-            }
-        }
-        public static IEnumerable<MonoFieldInfoDTO> EnumStaticFieldInfos(this MonoClassMetadataCollection classMetadataCollection)
-        {
-            if (classMetadataCollection.ClassInfo.IsEnum == false)
-            {
-                foreach (var field in classMetadataCollection.FieldInfos)
-                {
-                    if (field.IsStatic && field.IsConst == false)
-                    {
-                        yield return field;
-                    }
-                }
-            }
-        }
 
     }
 }

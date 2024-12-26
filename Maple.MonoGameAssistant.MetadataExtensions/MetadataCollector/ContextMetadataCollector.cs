@@ -11,12 +11,24 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 {
-    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IContextMetadataCollectorBase
+    public abstract partial class ContextMetadataCollector : IContextMetadataCollectorBase
     {
-        public ILogger Logger { get; } = logger;
-        public MetadataCollectorSearchService SearchService { get; } = searchService;
-        public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
-        public MonoObjectNameDTO[] ImageNames { get; } = [.. runtimeContext.EnumMonoImageNames()];
+        public static ContextMetadataCollector? Default { get; private set; }
+
+
+        public ILogger Logger { get; }
+        public MetadataCollectorSearchService SearchService { get; }
+        public MonoRuntimeContext RuntimeContext { get; }
+        public MonoObjectNameDTO[] ImageNames { get; }
+        protected ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
+        {
+            this.Logger = logger;
+            this.SearchService = searchService;
+            this.RuntimeContext = runtimeContext;
+            this.ImageNames = [.. runtimeContext.EnumMonoImageNames()];
+            Default = this;
+        }
+
 
         public bool DefaultTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
@@ -42,16 +54,36 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         }
 
 
-        public bool DefaultTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        public bool DefaultTryGetClassMetadata(
+            MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO,
+            [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
-            return RuntimeContext.TryGetFirstClassInfo(imageNameDTO, descriptionClassDTO, out classMetadataCollection);
+            Unsafe.SkipInit(out classMetadataCollection);
+            if (this.RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
+              || this.RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
+            {
+                var classInfoDTO = this.RuntimeContext.GetMonoClassInfoDTO(pMonoClass);
+                classMetadataCollection = new MonoClassMetadataCollection()
+                {
+                    ClassInfo = classInfoDTO,
+                    MethodInfos = [.. this.RuntimeContext.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
+                    FieldInfos = [.. this.RuntimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
+                };
+
+                return true;
+            }
+            return false;
         }
-        public virtual bool CustomTryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        public virtual bool CustomTryGetClassMetadata(
+            MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO,
+            [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
             Unsafe.SkipInit(out classMetadataCollection);
             return false;
         }
-        public bool TryGetClassMetadata(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        public bool TryGetClassMetadata(
+            MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO,
+            [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
             return CustomTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection)
               || DefaultTryGetClassMetadata(imageNameDTO, descriptionClassDTO, out classMetadataCollection);

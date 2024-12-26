@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Maple.MonoGameAssistant.MetadataExtensions\Maple.MonoGameAssistant.MetadataExtensions.csproj" />
+    <ProjectReference Include="..\Maple.MonoGameAssistant.MetadataModel\Maple.MonoGameAssistant.MetadataModel.csproj" />
+    <ProjectReference Include="..\Maple.MonoGameAssistant.MetadataSourceGenerator\Maple.MonoGameAssistant.MetadataSourceGenerator.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -7,4 +7,5 @@ namespace Maple.MonoGameAssistant.MetadataModel.ClassMetadata
         nint Ptr { get; }
     }
 
+
 }

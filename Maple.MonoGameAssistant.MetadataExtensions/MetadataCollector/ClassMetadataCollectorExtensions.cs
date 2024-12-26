@@ -1,11 +1,20 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.Common;
 using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
+using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 {
     public static class ClassMetadataCollectorExtensions
     {
+        public static bool IsNotNull<T_PtrMetadata>(this T_PtrMetadata @this) where T_PtrMetadata : unmanaged, IPtrMetadata
+            => @this.Ptr != nint.Zero;
+        public static bool IsNull<T_PtrMetadata>(this T_PtrMetadata @this) where T_PtrMetadata : unmanaged, IPtrMetadata
+            => @this.Ptr == nint.Zero;
+        public static string ToString<T_PtrMetadata>(this T_PtrMetadata @this) where T_PtrMetadata : unmanaged, IPtrMetadata
+            => @this.Ptr.ToString("X8");
+
         public static T_PtrMetadata CreateInstance<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this, bool execDefCtor)
             where T_PtrMetadata : unmanaged, IPtrMetadata
         {
@@ -15,7 +24,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         public static T_PtrMetadata New<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this)
             where T_PtrMetadata : unmanaged, IPtrMetadata
             => @this.CreateInstance(false);
-
         public static T_PtrMetadata NewPin<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this, out MonoGCHandle<T_PtrMetadata> gchandle)
             where T_PtrMetadata : unmanaged, IPtrMetadata
         {
@@ -23,7 +31,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
             gchandle = new(@this.RuntimeContext, ptr);
             return ptr;
         }
-
 
         public static T_PtrMetadata Ctor<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this)
             where T_PtrMetadata : unmanaged, IPtrMetadata
@@ -47,6 +54,31 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
             var spanArray = @this.NewArray(count, out var ptrRawArray);
             gchandle = new MonoGCHandle<PMonoArray>(@this.RuntimeContext, ptrRawArray);
             return spanArray;
+        }
+
+
+        public static bool TryConvert<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this, PMonoObject pMonoObject, out T_PtrMetadata ptrMetadata)
+            where T_PtrMetadata : unmanaged, IPtrMetadata
+        {
+
+            Unsafe.SkipInit(out ptrMetadata);
+            var pMonoClass = pMonoObject.MonoClass;
+            if (pMonoClass == @this.ClassMetadata.ClassInfo.Pointer)
+            {
+                ptrMetadata = pMonoObject.To<T_PtrMetadata>();
+                return true;
+            }
+            return false;
+        }
+        public static bool TryConvert<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this, nint ptr, out T_PtrMetadata ptrMetadata)
+            where T_PtrMetadata : unmanaged, IPtrMetadata
+        {
+            Unsafe.SkipInit(out ptrMetadata);
+            if (ptr == nint.Zero)
+            {
+                return false;
+            }
+            return @this.TryConvert(new PMonoObject(ptr), out ptrMetadata);
         }
 
     }

@@ -779,19 +779,6 @@ namespace Maple.MonoGameAssistant.Core
             }
         }
 
-        public bool TryGetFirstClassInfo(MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoClassMetadataCollection metadataCollection)
-        {
-            Unsafe.SkipInit(out metadataCollection);
-            if (this.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
-                || this.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
-            {
-                metadataCollection = GetMonoMetadataCollection(pMonoClass);
-                return true;
-            }
-
-            return false;
-
-        }
 
         public bool TryGetFirstMonoClass(PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
         {
@@ -823,19 +810,6 @@ namespace Maple.MonoGameAssistant.Core
             return false;
         }
 
-
-        public MonoClassMetadataCollection GetMonoMetadataCollection(PMonoClass pMonoClass)
-        {
-            var classInfoDTO = this.GetMonoClassInfoDTO(pMonoClass);
-
-            var metadataCollection = new MonoClassMetadataCollection()
-            {
-                ClassInfo = classInfoDTO,
-                MethodInfos = [.. this.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
-                FieldInfos = [.. this.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
-            };
-            return metadataCollection;
-        }
         #endregion
 
 

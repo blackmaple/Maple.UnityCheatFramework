@@ -10,8 +10,8 @@ namespace Maple.MonoGameAssistant.MetadataModel.MetadataAttribute
 
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ContextMetadataAttribute<T>(): ContextMetadataAttribute(typeof(T))
-    { 
-    
+    public class ContextMetadataAttribute<T>() : ContextMetadataAttribute(typeof(T))
+    {
+
     }
 }

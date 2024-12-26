@@ -6,6 +6,7 @@ using Maple.MonoGameAssistant.MetadataModel.Model;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
@@ -115,29 +116,36 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         }
 
 
-        public MonoFieldInfoDTO GetFieldMetadata(ulong code)
+        public MonoFieldSource GetFieldMetadata(ulong code)
         {
             if (false == SearchService.TrySearchField(code, out var descriptionFieldDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
+                return MetadataCollectorException.Throw<MonoFieldSource>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
             }
             if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(TryGetFieldMetadata)}:{code}");
+                return MetadataCollectorException.Throw<MonoFieldSource>($"{nameof(TryGetFieldMetadata)}:{code}");
             }
-            return fieldInfoDTO;
+            return new MonoFieldSource(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer, fieldInfoDTO.Offset);
         }
         public int GetMemberFieldOffset(ulong code)
         {
-            var fieldInfoDTO = GetFieldMetadata(code);
-            return fieldInfoDTO.Offset;
+            var fieldSource = GetFieldMetadata(code);
+            return fieldSource.FieldOffset;
         }
         public nint GetStaticInstancePointer(ulong code)
         {
-            var fieldInfoDTO = GetFieldMetadata(code);
-            return RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer);
+            var fieldSource = GetFieldMetadata(code);
+            return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.RuntimeField);
         }
-
+        public static nint GetInstance(MonoFieldSource fieldSource)
+        {
+            if (ContextMetadataCollector.Default is null)
+            {
+                return default;
+            }
+            return ContextMetadataCollector.Default.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.RuntimeField);
+        }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,4 +185,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 
 
     }
+
+
+
 }
