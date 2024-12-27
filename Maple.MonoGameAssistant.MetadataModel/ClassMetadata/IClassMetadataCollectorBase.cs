@@ -10,9 +10,13 @@ namespace Maple.MonoGameAssistant.MetadataModel.ClassMetadata
     {
         MonoMethodDelegate GetMethodDelegate(ulong code);
         nint GetMethodPointer(ulong code);
-        int GetMemberFieldOffset(ulong code);
-        nint GetStaticInstancePointer(ulong code);
 
- 
+        MonoMemberFieldSource GetMemberFieldMetadata(ulong code);
+        MonoStaticFieldSource GetStaticFieldMetadata(ulong code);
+
+        int GetMemberFieldOffset(ulong code);
+        nint GetStaticFieldValueAsPointer(ulong code);
+
+
     }
 }

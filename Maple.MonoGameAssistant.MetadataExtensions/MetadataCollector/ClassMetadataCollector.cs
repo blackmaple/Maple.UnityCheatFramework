@@ -116,36 +116,43 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         }
 
 
-        public MonoFieldSource GetFieldMetadata(ulong code)
+        public MonoFieldInfoDTO GetFieldMetadata(ulong code)
         {
             if (false == SearchService.TrySearchField(code, out var descriptionFieldDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldSource>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
             }
             if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldSource>($"{nameof(TryGetFieldMetadata)}:{code}");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(TryGetFieldMetadata)}:{code}");
             }
-            return new MonoFieldSource(fieldInfoDTO.SourceClass, fieldInfoDTO.Pointer, fieldInfoDTO.Offset);
+            return fieldInfoDTO;
         }
+
+        public MonoMemberFieldSource GetMemberFieldMetadata(ulong code)
+        {
+            var fieldInfoDTO = this.GetFieldMetadata(code);
+            return new MonoMemberFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.Offset);
+        }
+        public MonoStaticFieldSource GetStaticFieldMetadata(ulong code)
+        {
+            var fieldInfoDTO = this.GetFieldMetadata(code);
+            return new MonoStaticFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.SourceClass);
+        }
+
+
         public int GetMemberFieldOffset(ulong code)
         {
             var fieldSource = GetFieldMetadata(code);
-            return fieldSource.FieldOffset;
+            return fieldSource.Offset;
         }
-        public nint GetStaticInstancePointer(ulong code)
+
+        public nint GetStaticFieldValueAsPointer(ulong code)
         {
             var fieldSource = GetFieldMetadata(code);
-            return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.RuntimeField);
+            return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.Pointer);
         }
-        public static nint GetInstance(MonoFieldSource fieldSource)
-        {
-            if (ContextMetadataCollector.Default is null)
-            {
-                return default;
-            }
-            return ContextMetadataCollector.Default.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.RuntimeField);
-        }
+
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -157,6 +164,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
             return ref ref_Value;
 
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset, in T_FieldValue value)
             where T_FieldValue : unmanaged
@@ -166,7 +174,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         }
 
 
-    }
+    } 
 
     public abstract partial class ClassMetadataCollector<T_RefMetadata, T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
         : ClassMetadataCollector<T_PtrMetadata>(metadataCollector, collection)

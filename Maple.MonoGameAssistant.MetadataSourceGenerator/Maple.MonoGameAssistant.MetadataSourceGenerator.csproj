@@ -58,4 +58,11 @@
 
 
 
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Maple.MonoGameAssistant.MetadataModel\Maple.MonoGameAssistant.MetadataModel.csproj" />
+	</ItemGroup>
+
+
+
 </Project>
