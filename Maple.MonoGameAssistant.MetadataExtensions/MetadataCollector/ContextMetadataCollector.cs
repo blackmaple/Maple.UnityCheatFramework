@@ -1,7 +1,7 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.Common;
-using Maple.MonoGameAssistant.MetadataExtensions.Service;
-using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataService;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
@@ -9,26 +9,15 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class ContextMetadataCollector : IContextMetadataCollectorBase
+    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IContextMetadataCollectorBase
     {
-        public static ContextMetadataCollector? Default { get; private set; }
+        public ILogger Logger { get; } = logger;
+        public MetadataCollectorSearchService SearchService { get; } = searchService;
+        public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
 
-
-        public ILogger Logger { get; }
-        public MetadataCollectorSearchService SearchService { get; }
-        public MonoRuntimeContext RuntimeContext { get; }
-        public MonoObjectNameDTO[] ImageNames { get; }
-        protected ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
-        {
-            this.Logger = logger;
-            this.SearchService = searchService;
-            this.RuntimeContext = runtimeContext;
-            this.ImageNames = [.. runtimeContext.EnumMonoImageNames()];
-            Default = this;
-        }
-
+        public MonoObjectNameDTO[] ImageNames { get; } = [.. runtimeContext.EnumMonoImageNames()];
 
         public bool DefaultTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
@@ -59,15 +48,15 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
             [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
         {
             Unsafe.SkipInit(out classMetadataCollection);
-            if (this.RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
-              || this.RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
+            if (RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
+              || RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
             {
-                var classInfoDTO = this.RuntimeContext.GetMonoClassInfoDTO(pMonoClass);
+                var classInfoDTO = RuntimeContext.GetMonoClassInfoDTO(pMonoClass);
                 classMetadataCollection = new MonoClassMetadataCollection()
                 {
                     ClassInfo = classInfoDTO,
-                    MethodInfos = [.. this.RuntimeContext.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
-                    FieldInfos = [.. this.RuntimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
+                    MethodInfos = [.. RuntimeContext.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
+                    FieldInfos = [.. RuntimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
                 };
 
                 return true;

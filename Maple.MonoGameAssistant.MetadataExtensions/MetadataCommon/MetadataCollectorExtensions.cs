@@ -1,12 +1,7 @@
-﻿using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
+﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.Model;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using Maple.MonoGameAssistant.Core;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Common
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 {
 
 

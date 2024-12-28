@@ -1,24 +1,33 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.Common;
-using Maple.MonoGameAssistant.MetadataExtensions.Service;
-using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
-using Maple.MonoGameAssistant.MetadataModel.Model;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataService;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
-        : MetadataModel.ClassMetadata.IClassMetadataCollector
+    public abstract partial class ClassMetadataCollector : IClassMetadataCollector
     {
-        public ContextMetadataCollector ContextMetadata { get; } = contextMetadata;
+        public ContextMetadataCollector ContextMetadata { get; }
         public ILogger Logger => ContextMetadata.Logger;
         public MetadataCollectorSearchService SearchService => ContextMetadata.SearchService;
         public MonoRuntimeContext RuntimeContext => ContextMetadata.RuntimeContext;
-        public MonoClassMetadataCollection ClassMetadata { get; } = classMetadataCollection;
+        public MonoClassMetadataCollection ClassMetadata { get; }
+
+        public ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
+        {
+            ContextMetadata = contextMetadata;
+            ClassMetadata = classMetadataCollection;
+            this.InitClassMetadata();
+        }
+
+
+        protected virtual void InitClassMetadata() { }
+
 
         public virtual bool CustomTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
@@ -131,12 +140,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
 
         public MonoMemberFieldSource GetMemberFieldMetadata(ulong code)
         {
-            var fieldInfoDTO = this.GetFieldMetadata(code);
+            var fieldInfoDTO = GetFieldMetadata(code);
             return new MonoMemberFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.Offset);
         }
         public MonoStaticFieldSource GetStaticFieldMetadata(ulong code)
         {
-            var fieldInfoDTO = this.GetFieldMetadata(code);
+            var fieldInfoDTO = GetFieldMetadata(code);
             return new MonoStaticFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.SourceClass);
         }
 
@@ -150,10 +159,17 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         public nint GetStaticFieldValueAsPointer(ulong code)
         {
             var fieldSource = GetFieldMetadata(code);
-            return this.RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.Pointer);
+            return RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.Pointer);
         }
 
-
+        public static nint GetStaticFieldValueAsPointer(MonoStaticFieldSource staticFieldSource)
+        {
+            if (MonoRuntimeContext.GlobalInstance is null)
+            {
+                return default;
+            }
+            return MonoRuntimeContext.GlobalInstance.GetMonoStaticFieldValueAsPointer(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset) where T_FieldValue : unmanaged
@@ -174,7 +190,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
         }
 
 
-    } 
+    }
 
     public abstract partial class ClassMetadataCollector<T_RefMetadata, T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
         : ClassMetadataCollector<T_PtrMetadata>(metadataCollector, collection)

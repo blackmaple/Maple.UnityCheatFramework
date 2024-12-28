@@ -1,25 +1,20 @@
-﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.Metadata;
-using Maple.MonoGameAssistant.MetadataExtensions.Service;
-using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
-using Maple.MonoGameAssistant.MetadataModel.MetadataAttribute;
-using Maple.MonoGameAssistant.Model;
-using Microsoft.Extensions.Logging;
-using System.Numerics;
+﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using System.Runtime.InteropServices;
 
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
-    [SettingsMetadata(123, RandomSalt = true)]
-    public partial class DemoGameMetadataContext(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
-        : ContextMetadataCollector(logger, searchService, runtimeContext)
+
+    [ContextMetadataCtorAttribute(typeof(ContextMetadataCollector))]
+    [ContextMetadata<DemoGameSystem>]
+    public partial class DemoGameMetadataContext
     {
     }
 
 
-    [ClassMetadata([], [], [], [])]
     public partial class DemoGameSystem(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection) :
-        ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, collection)
+       ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, collection)
     {
         [StructLayout(LayoutKind.Sequential)]
         public readonly partial struct Ptr_DemoGameSystem(nint ptr) : IPtrMetadata /*: IPtrMetadata<Ptr_DemoGameSystem>*/
@@ -42,37 +37,29 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             }
         }
 
-        partial struct Ptr_DemoGameSystem
-        {
-            [FieldMetadata([], [])]
-            public partial Int32 Glod { set; get; }
-        }
+        //partial struct Ptr_DemoGameSystem
+        //{
+        //    [FieldMetadata([], [])]
+        //    public partial Int32 Glod { set; get; }
+        //}
 
-        partial struct Ptr_DemoGameSystem
-        {
-            [MethodMetadata([], [])]
-            public partial int GetGlod();
+        //partial struct Ptr_DemoGameSystem
+        //{
+        //    [MethodMetadata([], [])]
+        //    public partial int GetGlod();
 
-            [MethodMetadata([], [])]
-            [MethodParameterMetadata([], 0)]
-            public partial int SetGlod(int val);
+        //    [MethodMetadata([], [])]
+        //    [MethodParameterMetadata([], 0)]
+        //    public partial int SetGlod(int val);
 
 
-            [StaticFieldMetadataAttribute([], [])]
-            public static partial Ptr_DemoGameSystem T { get; }
+        //    [StaticFieldMetadataAttribute([], [])]
+        //    public static partial Ptr_DemoGameSystem T { get; }
 
-            public static partial Ptr_DemoGameSystem T => nint.Zero;
+        //    public static partial Ptr_DemoGameSystem T => nint.Zero;
 
-        }
+        //}
 
-        public class TestMetadata
-        {
-
-            public void Test()
-            {
-
-            }
-        }
 
 
     }

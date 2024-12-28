@@ -1,7 +1,7 @@
 ﻿using Maple.MonoGameAssistant.Model;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Common
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 {
     public sealed class MetadataCollectorException(string? msg) : MonoCommonException(msg)
     {

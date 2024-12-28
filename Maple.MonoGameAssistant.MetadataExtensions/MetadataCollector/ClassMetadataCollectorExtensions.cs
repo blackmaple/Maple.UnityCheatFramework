@@ -1,10 +1,9 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.Common;
-using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
     public static class ClassMetadataCollectorExtensions
     {

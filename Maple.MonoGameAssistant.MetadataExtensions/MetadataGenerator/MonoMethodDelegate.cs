@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MetadataModel.Model
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
-    public readonly struct MonoMethodDelegate(nint monoMethod, nint func)
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif 
+         readonly struct MonoMethodDelegate(nint monoMethod, nint func)
     {
         public readonly nint RuntimeMethod = monoMethod;
         public readonly nint MethodPointer = func;

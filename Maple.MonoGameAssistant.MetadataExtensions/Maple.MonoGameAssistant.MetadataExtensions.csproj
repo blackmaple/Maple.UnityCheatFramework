@@ -31,7 +31,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />
-	  <ProjectReference Include="..\Maple.MonoGameAssistant.MetadataModel\Maple.MonoGameAssistant.MetadataModel.csproj" />
 	  <ProjectReference Include="..\Maple.MonoGameAssistant.Model\Maple.MonoGameAssistant.Model.csproj" />
 	</ItemGroup>
 

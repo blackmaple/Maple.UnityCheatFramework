@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Metadata
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
     public static class ContextMetadataCollectorExtensions
     {

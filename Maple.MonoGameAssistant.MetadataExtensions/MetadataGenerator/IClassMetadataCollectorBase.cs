@@ -1,12 +1,12 @@
-﻿using Maple.MonoGameAssistant.MetadataModel.ClassMetadata;
-using Maple.MonoGameAssistant.MetadataModel.Model;
-using System.ComponentModel;
-using System.IO;
-
-namespace Maple.MonoGameAssistant.MetadataModel.ClassMetadata
+﻿namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
 
-    public interface IClassMetadataCollector
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif 
+         interface IClassMetadataCollector
     {
         MonoMethodDelegate GetMethodDelegate(ulong code);
         nint GetMethodPointer(ulong code);

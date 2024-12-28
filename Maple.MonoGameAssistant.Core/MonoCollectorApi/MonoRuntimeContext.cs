@@ -69,12 +69,14 @@ namespace Maple.MonoGameAssistant.Core
         public EnumMonoRuntimeType RuntimeType => RuntiemProvider.RuntimeType;
         public IMonoRuntiemProvider RuntiemProvider { get; }
         public PMonoDomain RootDomain { get; }
+        public static MonoRuntimeContext? GlobalInstance { get; set; }
         #endregion
 
         public MonoRuntimeContext(IMonoRuntiemProvider monoRuntiemProvider)
         {
             this.RuntiemProvider = monoRuntiemProvider;
             this.RootDomain = this.RuntiemProvider.GetMonoRootDomain();
+            MonoRuntimeContext.GlobalInstance ??= this;
         }
 
         #region IMonoRuntiemProvider->MonoDomains

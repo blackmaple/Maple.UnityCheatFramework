@@ -1,4 +1,6 @@
-﻿namespace Maple.MonoGameAssistant.Model
+﻿using Maple.MonoGameAssistant.Model;
+
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 {
     public sealed class MonoClassMetadataCollection
     {
@@ -9,9 +11,9 @@
 
         public IEnumerable<MonoFieldInfoDTO> EnumMemberFieldInfos()
         {
-            if (this.ClassInfo.IsEnum == false)
+            if (ClassInfo.IsEnum == false)
             {
-                foreach (var field in this.FieldInfos)
+                foreach (var field in FieldInfos)
                 {
                     if (field.IsStatic == false)
                     {
@@ -23,9 +25,9 @@
 
         public IEnumerable<MonoFieldInfoDTO> EnumStaticFieldInfos()
         {
-            if (this.ClassInfo.IsEnum == false)
+            if (ClassInfo.IsEnum == false)
             {
-                foreach (var field in this.FieldInfos)
+                foreach (var field in FieldInfos)
                 {
                     if (field.IsStatic && field.IsConst == false)
                     {

@@ -1,4 +1,4 @@
-﻿using Maple.MonoGameAssistant.MetadataModel.MetadataAttribute;
+﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -17,14 +17,18 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             try
             {
                 System.Diagnostics.Debugger.Launch();
-                var settingsSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(SettingsMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
-                {
-                    return ctx.TargetSymbol;
-                });
-                var classSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
-                {
-                    return ctx.TargetSymbol;
-                });
+                //var contextSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextMetadataCtorAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                //{
+                //    return (ctx.Attributes, ctx.TargetSymbol);
+                //});
+
+
+
+
+                //var classSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                //{
+                //    return (ctx.Attributes, ctx.TargetSymbol);
+                //});
             }
             catch (Exception ex)
             {
@@ -38,7 +42,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 //        isEnabledByDefault: true),
                 //    Location.None,
                 //    ex.ToString());
-              
+
                 //context.r(diagnostic);
             }
 
@@ -117,14 +121,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        public static System.Collections.Generic.IEnumerable<SettingsMetadataData> EnumSettingsMetadataData()
-        { 
-        
-        }
+        //public static System.Collections.Generic.IEnumerable<SettingsMetadataData> EnumSettingsMetadataData()
+        //{
+
+        //}
     }
 
     public class SettingsMetadataData
-    { 
+    {
         public int Code { set; get; }
 
         public ISymbol ContextSymbol { set; get; }
@@ -141,7 +145,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
     }
 
     public class MetadataSourceGeneratorException : Exception
-    { 
-    
+    {
+
     }
 }

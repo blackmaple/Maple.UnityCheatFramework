@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.MetadataExtensions.Service
+namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataService
 {
     public class MetadataCollectorSearchService
     {
