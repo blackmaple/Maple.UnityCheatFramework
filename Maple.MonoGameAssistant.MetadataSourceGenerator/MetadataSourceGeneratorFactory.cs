@@ -16,19 +16,19 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             try
             {
-                System.Diagnostics.Debugger.Launch();
-                //var contextSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextMetadataCtorAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
-                //{
-                //    return (ctx.Attributes, ctx.TargetSymbol);
-                //});
+                // System.Diagnostics.Debugger.Launch();
+                var contextSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextMetadataCtorAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                {
+                    return (ctx.Attributes, ctx.TargetSymbol);
+                });
+                var data = contextSymbols.Collect();
 
 
 
-
-                //var classSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
-                //{
-                //    return (ctx.Attributes, ctx.TargetSymbol);
-                //});
+                var classSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                {
+                    return (ctx.Attributes, ctx.TargetSymbol);
+                });
             }
             catch (Exception ex)
             {

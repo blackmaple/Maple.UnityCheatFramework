@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MetadataSourceGenerator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Maple.MonoGameAssistant.MetadataDemo\\Maple.MonoGameAssistant.MetadataDemo.csproj"
+    }
+  }
+}

@@ -6,12 +6,6 @@ using System.Runtime.InteropServices;
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
 
-    [ContextMetadataCtorAttribute(typeof(ContextMetadataCollector))]
-    [ContextMetadata<DemoGameSystem>]
-    public partial class DemoGameMetadataContext
-    {
-    }
-
 
     public partial class DemoGameSystem(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection) :
        ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, collection)
@@ -64,3 +58,4 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
     }
 }
+
