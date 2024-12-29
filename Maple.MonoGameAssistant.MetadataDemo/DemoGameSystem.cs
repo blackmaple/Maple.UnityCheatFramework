@@ -6,9 +6,10 @@ using System.Runtime.InteropServices;
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
 
-
-    public partial class DemoGameSystem(ContextMetadataCollector metadataCollector, ulong code) :
-       ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, code)
+    [ClassParentMetadata<ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>>()]
+    [ClassPropertyMetadata([], [], [], [])]
+    public partial class DemoGameSystem
+      
     {
         [StructLayout(LayoutKind.Sequential)]
         public readonly partial struct Ptr_DemoGameSystem(nint ptr) : IPtrMetadata /*: IPtrMetadata<Ptr_DemoGameSystem>*/
@@ -56,6 +57,12 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
 
 
+    }
+
+
+    public partial class ItemSystem(ContextMetadataCollector metadataCollector, ulong code)
+    { 
+    
     }
 }
 

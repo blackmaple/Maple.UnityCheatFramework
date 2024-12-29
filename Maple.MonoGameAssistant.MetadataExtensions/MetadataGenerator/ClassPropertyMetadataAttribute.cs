@@ -1,4 +1,5 @@
 ﻿using System;
+#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
@@ -8,8 +9,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif
-#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
-     class ClassMetadataAttribute(byte[] utf8ImageName, byte[]? utf8Namespace, byte[]? utf8ClassName, byte[]? utf8FullName = default) : Attribute
+     class ClassPropertyMetadataAttribute(byte[] utf8ImageName, byte[]? utf8Namespace, byte[]? utf8ClassName, byte[]? utf8FullName = default) : Attribute
     {
         public byte[] Utf8ImageName { get; } = utf8ImageName;
         public byte[]? Utf8Namespace { get; } = utf8Namespace;
@@ -17,7 +17,5 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
         public byte[]? Utf8FullName { get; } = utf8FullName;
 
     }
-#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
-
-
 }
+#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。

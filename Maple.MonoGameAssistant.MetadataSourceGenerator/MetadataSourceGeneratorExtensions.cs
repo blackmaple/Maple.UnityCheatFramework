@@ -137,12 +137,29 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
-        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextPropertyMetadataData contextProperties)
+        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextPropertyMetadataData contextProperties, ISymbol parentSymbol)
         {
-            foreach (var klass in contextProperties.ClassSymbols)
+            foreach (var symbol in contextProperties.ClassSymbols)
             {
-                // 创建属性语法树
-                var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(klass.ToDisplayString()), klass.Name)
+                if (symbol is not INamedTypeSymbol namedTypeSymbol)
+                {
+                    MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{nameof(ISymbol)}:{symbol.ToDisplayString()} is not {nameof(INamedTypeSymbol)}");
+                    yield break;
+                }
+                if (namedTypeSymbol.Constructors.Length > 1)
+                {
+                    MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{symbol.ToDisplayString()}.ctor Number:{namedTypeSymbol.Constructors.Length}");
+                    yield break;
+                }
+                foreach (var ctor in namedTypeSymbol.Constructors)
+                {
+                    if (false == ctor.Parameters.Any(p => SymbolEqualityComparer.Default.Equals(p.Type, parentSymbol)))
+                    {
+                        MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{symbol.ToDisplayString()}.ctor Parameters not found:{parentSymbol.ToDisplayString()}");
+                        yield break;
+                    }
+                }
+                var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(symbol.ToDisplayString()), symbol.Name)
                   .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
                   .WithAccessorList(
                     SyntaxFactory.AccessorList([SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))])
@@ -160,15 +177,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             {
 
                 yield return SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
-               SyntaxKind.SimpleAssignmentExpression,
-               SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(prop.Identifier)),
-               SyntaxFactory.ObjectCreationExpression(prop.Type)
-                   .WithArgumentList(SyntaxFactory.ArgumentList(
-                       SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                       [
+                   SyntaxKind.SimpleAssignmentExpression,
+                   SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(prop.Identifier)),
+                   SyntaxFactory.ObjectCreationExpression(prop.Type)
+                   .WithArgumentList(SyntaxFactory.ArgumentList([
                              SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
                              SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(112555UL)))
-                       ])))
+                       ]))
                     ));
             }
 
