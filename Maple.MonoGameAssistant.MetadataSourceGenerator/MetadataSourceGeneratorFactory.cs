@@ -1,5 +1,6 @@
 ﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,64 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             try
             {
                 // System.Diagnostics.Debugger.Launch();
-                var contextSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextMetadataCtorAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                var contextCtorSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextCtorMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
                 {
-                    return (ctx.Attributes, ctx.TargetSymbol);
+                    return new ContextCtorMetadataData()
+                    {
+                        CtorSymbol = ctx.Attributes[0].AttributeClass.TypeArguments[0],
+                        ContextSymbol = ctx.TargetSymbol
+                    };
+
                 });
-                var data = contextSymbols.Collect();
 
 
+
+                var contextClassSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextPropertyMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                {
+                    return new ContextPropertyMetadataData()
+                    {
+                        ClassSymbols = [.. ctx.Attributes.SelectMany(p => p.AttributeClass.TypeArguments)],
+                        ContextSymbol = ctx.TargetSymbol
+                    };
+
+                });
+                var combineSymbols = contextCtorSymbols.Combine(contextClassSymbols.Collect());
+
+                context.RegisterSourceOutput(combineSymbols, (context, combineData) =>
+                {
+                    var ctor = combineData.Left;
+                    var props = combineData.Right;
+
+                    foreach (var prop in props)
+                    {
+                        if (SymbolEqualityComparer.Default.Equals(prop.ContextSymbol, ctor.ContextSymbol))
+                        {
+                            //// 创建包含属性的类语法树
+                            var classDeclaration = SyntaxFactory.ClassDeclaration(prop.ContextSymbol.Name)
+                                .WithModifiers(SyntaxFactory.TokenList(
+                                    [
+                                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
+                                    ]));
+                                
+                         
+
+                            foreach (var klass in prop.ClassSymbols)
+                            {
+                                // 创建属性语法树
+                                var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(klass.ToDisplayString()), klass.Name)
+                                  .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                                  .WithAccessorList(SyntaxFactory.AccessorList([SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))]));
+
+                                classDeclaration = classDeclaration.AddMembers(propertyDeclaration);
+                            }
+
+                            var namespaceDeclaration = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(prop.ContextSymbol.ContainingNamespace.ToDisplayString()))
+                             .AddMembers(classDeclaration);
+                            context.AddSource($"{prop.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
+                        }
+                    }
+
+                });
 
                 var classSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
                 {
@@ -127,12 +179,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         //}
     }
 
-    public class SettingsMetadataData
+    public class ContextCtorMetadataData
     {
-        public int Code { set; get; }
-
+        public ISymbol CtorSymbol { set; get; }
         public ISymbol ContextSymbol { set; get; }
-
+    }
+    public class ContextPropertyMetadataData
+    {
+        public ISymbol ContextSymbol { set; get; }
         public ISymbol[] ClassSymbols { set; get; }
     }
 
