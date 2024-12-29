@@ -7,7 +7,7 @@
 #endif 
          interface IContextMetadataCollectorBase
     {
-        object GetClassMetadataCollection(ulong code);
+        //  object GetClassMetadataCollection(ulong code);
     }
 
 

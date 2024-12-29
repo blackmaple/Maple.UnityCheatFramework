@@ -3,10 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -18,18 +15,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             try
             {
                 // System.Diagnostics.Debugger.Launch();
-                var contextCtorSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextCtorMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+                var contextParentSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextParentMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
                 {
-                    return new ContextCtorMetadataData()
+                    return new ContextParentMetadataData()
                     {
-                        CtorSymbol = ctx.Attributes[0].AttributeClass.TypeArguments[0],
+                        ParentSymbol = ctx.Attributes[0].AttributeClass.TypeArguments[0],
                         ContextSymbol = ctx.TargetSymbol
                     };
 
                 });
-
-
-
                 var contextClassSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextPropertyMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
                 {
                     return new ContextPropertyMetadataData()
@@ -39,38 +33,20 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     };
 
                 });
-                var combineSymbols = contextCtorSymbols.Combine(contextClassSymbols.Collect());
-
+                var combineSymbols = contextParentSymbols.Combine(contextClassSymbols.Collect());
                 context.RegisterSourceOutput(combineSymbols, (context, combineData) =>
                 {
                     var ctor = combineData.Left;
                     var props = combineData.Right;
-
                     foreach (var prop in props)
                     {
                         if (SymbolEqualityComparer.Default.Equals(prop.ContextSymbol, ctor.ContextSymbol))
                         {
-                            //// 创建包含属性的类语法树
-                            var classDeclaration = SyntaxFactory.ClassDeclaration(prop.ContextSymbol.Name)
-                                .WithModifiers(SyntaxFactory.TokenList(
-                                    [
-                                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
-                                    ]));
-                                
-                         
-
-                            foreach (var klass in prop.ClassSymbols)
-                            {
-                                // 创建属性语法树
-                                var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(klass.ToDisplayString()), klass.Name)
-                                  .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-                                  .WithAccessorList(SyntaxFactory.AccessorList([SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))]));
-
-                                classDeclaration = classDeclaration.AddMembers(propertyDeclaration);
-                            }
-
-                            var namespaceDeclaration = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(prop.ContextSymbol.ContainingNamespace.ToDisplayString()))
-                             .AddMembers(classDeclaration);
+                            var args = ctor.ParentSymbol.BuildParameterSyntaxExpression().ToArray();
+                            var members = prop.BuildContextPropertiesExpression().ToArray();
+                            var mainCtor = prop.BuildContextMetadataCtorExpression(args, members);
+                            var classDeclaration = prop.BuildContextMetadataClassExpression(ctor.ParentSymbol, mainCtor, members);
+                            var namespaceDeclaration = prop.BuildContextMetadataNamespaceExpression(classDeclaration);
                             context.AddSource($"{prop.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
                         }
                     }
@@ -81,6 +57,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     return (ctx.Attributes, ctx.TargetSymbol);
                 });
+            }
+            catch (MetadataSourceGeneratorException ex)
+            {
+
             }
             catch (Exception ex)
             {
@@ -99,107 +79,5 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
 
         }
-    }
-
-    public static class MetadataSourceGeneratorExtensions
-    {
-        static T GetAttributeValue_NamedArgs<T>(this AttributeData attributeData, string name, T def)
-        {
-            var nVal = attributeData.NamedArguments.FirstOrDefault(p => p.Key == name).Value;
-            if (nVal.Kind == TypedConstantKind.Array)
-            {
-                if (nVal.Values is T arr)
-                {
-                    return arr;
-                }
-            }
-            else if (nVal.Kind == TypedConstantKind.Enum)
-            {
-                return (T)nVal.Value;
-            }
-            else if (nVal.Value is T val2)
-            {
-                return val2;
-            }
-            return def;
-        }
-        static bool TryGetAttributeValue_CtorArgs<T>(this AttributeData attributeData, int index, out T val)
-        {
-            Unsafe.SkipInit(out val);
-            var nVal = attributeData.ConstructorArguments.ElementAtOrDefault(index);
-            if (nVal.Kind == TypedConstantKind.Array)
-            {
-                if (nVal.Values is T arr)
-                {
-                    val = arr;
-                    return true;
-                }
-            }
-            else if (nVal.Kind == TypedConstantKind.Enum)
-            {
-                val = (T)nVal.Value;
-                return true;
-            }
-            else if (nVal.Value is T val2)
-            {
-                val = val2;
-                return true;
-            }
-
-            return false;
-        }
-
-        static IEnumerable<T> ReadImmutableArray<T>(this ImmutableArray<TypedConstant> offsetSymbols)
-            where T : struct
-        {
-            if (offsetSymbols.IsDefaultOrEmpty)
-            {
-                yield break;
-            }
-            foreach (var subMember in offsetSymbols)
-            {
-                if (subMember.Value is T val)
-                {
-                    yield return val;
-                }
-            }
-
-        }
-
-        static string ArrayDisplay<T>(this IEnumerable<T> arr)
-            where T : struct
-        {
-            return $@"[{string.Join(", ", arr)}]";
-        }
-
-
-        //public static System.Collections.Generic.IEnumerable<SettingsMetadataData> EnumSettingsMetadataData()
-        //{
-
-        //}
-    }
-
-    public class ContextCtorMetadataData
-    {
-        public ISymbol CtorSymbol { set; get; }
-        public ISymbol ContextSymbol { set; get; }
-    }
-    public class ContextPropertyMetadataData
-    {
-        public ISymbol ContextSymbol { set; get; }
-        public ISymbol[] ClassSymbols { set; get; }
-    }
-
-    public class ClassMetadataData
-    {
-        public ISymbol ClassSymbol { set; get; }
-        public ISymbol[] FieldSymbols { set; get; }
-        public ISymbol[] MethodSymbols { set; get; }
-
-    }
-
-    public class MetadataSourceGeneratorException : Exception
-    {
-
     }
 }

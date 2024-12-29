@@ -7,8 +7,8 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 {
 
 
-    public partial class DemoGameSystem(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection) :
-       ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, collection)
+    public partial class DemoGameSystem(ContextMetadataCollector metadataCollector, ulong code) :
+       ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>(metadataCollector, code)
     {
         [StructLayout(LayoutKind.Sequential)]
         public readonly partial struct Ptr_DemoGameSystem(nint ptr) : IPtrMetadata /*: IPtrMetadata<Ptr_DemoGameSystem>*/

@@ -10,23 +10,17 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class ClassMetadataCollector : IClassMetadataCollector
+    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, ulong code) : IClassMetadataCollector
     {
-        public ContextMetadataCollector ContextMetadata { get; }
+        public ContextMetadataCollector ContextMetadata { get; } = contextMetadata;
+        public MonoClassMetadataCollection ClassMetadata { get; } = contextMetadata.GetClassMetadataCollection(code);
+
         public ILogger Logger => ContextMetadata.Logger;
         public MetadataCollectorSearchService SearchService => ContextMetadata.SearchService;
         public MonoRuntimeContext RuntimeContext => ContextMetadata.RuntimeContext;
-        public MonoClassMetadataCollection ClassMetadata { get; }
-
-        public ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
-        {
-            ContextMetadata = contextMetadata;
-            ClassMetadata = classMetadataCollection;
-            this.InitClassMetadata();
-        }
 
 
-        protected virtual void InitClassMetadata() { }
+        //    protected virtual void InitClassMetadata() { }
 
 
         public virtual bool CustomTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
@@ -192,8 +186,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
     }
 
-    public abstract partial class ClassMetadataCollector<T_RefMetadata, T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
-        : ClassMetadataCollector<T_PtrMetadata>(metadataCollector, collection)
+    public abstract partial class ClassMetadataCollector<T_RefMetadata, T_PtrMetadata>(ContextMetadataCollector metadataCollector, ulong code)
+        : ClassMetadataCollector<T_PtrMetadata>(metadataCollector, code)
         , IRefMetadataCollector<T_RefMetadata>
         , IPtrMetadataCollector<T_PtrMetadata>
         where T_RefMetadata : unmanaged, IRefMetadata
@@ -201,8 +195,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
     {
     }
 
-    public abstract partial class ClassMetadataCollector<T_PtrMetadata>(ContextMetadataCollector metadataCollector, MonoClassMetadataCollection collection)
-        : ClassMetadataCollector(metadataCollector, collection)
+    public abstract partial class ClassMetadataCollector<T_PtrMetadata>(ContextMetadataCollector metadataCollector, ulong code)
+        : ClassMetadataCollector(metadataCollector, code)
         , IPtrMetadataCollector<T_PtrMetadata>
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {

@@ -95,7 +95,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return classMetadataCollection;
         }
 
-        object IContextMetadataCollectorBase.GetClassMetadataCollection(ulong code) => GetClassMetadataCollection(code);
 
     }
 }

@@ -9,7 +9,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-         class ContextCtorMetadataAttribute<T>() : Attribute
+         class ContextParentMetadataAttribute<T>() : Attribute
     {
 
     }
