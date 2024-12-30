@@ -1,36 +1,24 @@
 ﻿using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
+#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public class ClassMemberMetadataData
     {
-        public ISymbol ParentSymbol { set; get; }
-        public ISymbol MetadataSymbol { set; get; }
+        public ISymbol ParentSymbol { set; get; } = default!;
 
-        public ISymbol ContextSymbol { set; get; }
+        public byte[]? Utf8ImageName { set; get; }
+        public byte[]? Utf8Namespace { set; get; }
+        public byte[]? Utf8ClassName { set; get; }
+        public byte[]? Utf8FullName { set; get; }
 
-        public ISymbol PtrSymbol { set; get; }
+        public ISymbol ContextSymbol { set; get; } = default!;
+        public ISymbol PtrSymbol { set; get; } = default!;
 
-        public ISymbol[] FieldSymbols { set; get; }
-        public ISymbol[] MethodSymbols { set; get; }
+        public ClassPropertyMetadataData[] PropertyMetadataDatas { set; get; } = default!;
+        public ClassMethodMetadataData[] MethodMetadataDatas { set; get; } = default!;
 
-    }
-
-    public class ClassPropertyMetadataData
-    {
-        public ISymbol PropertySymbol { set; get; }
-        public byte[] PropertyName { set; get; }
-        public byte[] PropertyType { set; get; }
-    }
-
-
-    public class ClassMethodMetadataData
-    {
-        public ISymbol MethodSymbol { set; get; }
-        public byte[] MethodName { set; get; }
-        public byte[] MethodReturnType { set; get; }
-        public List<byte[]> MethodParameterTypes { set; get; }
     }
 
 }
+#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。

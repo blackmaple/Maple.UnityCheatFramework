@@ -4,9 +4,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public class ContextMemberMetadataData
     {
-        public ISymbol ParentSymbol { set; get; }
-        public ISymbol ContextSymbol { set; get; }
+        public ISymbol ParentSymbol { set; get; } = default!;
+        public ISymbol ContextSymbol { set; get; } = default!;
 
-        public ISymbol[] ClassSymbols { set; get; }
+        public ISymbol[] ClassSymbols { set; get; } = default!;
     }
 }

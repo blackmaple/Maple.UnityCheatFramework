@@ -30,32 +30,19 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
-
-                var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
-                p.AttributeClass.ContainingNamespace.ToDisplayString() == typeof(ClassParentMetadataAttribute<,>).Namespace
-                && p.AttributeClass.MetadataName == typeof(ClassParentMetadataAttribute<,>).Name
-                ).FirstOrDefault();
-                if (parentMetadata is null)
-                {
-                    return MetadataSourceGeneratorException.Throw<ClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} not found {typeof(ClassParentMetadataAttribute<,>).FullName}");
-                }
-                return new ClassMemberMetadataData()
-                {
-                    ParentSymbol = parentMetadata.AttributeClass.TypeArguments[0],
-                    PtrSymbol = parentMetadata.AttributeClass.TypeArguments[1],
-                    ContextSymbol = ctx.TargetSymbol,
-                    MetadataSymbol = ctx.Attributes[0].AttributeClass,
-                };
+                return ctx.GetClassMemberMetadataData(ctx.Attributes[0]);
             });
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
+
+                var offsetMemeber = metadata.BuildPropertyOffsetMemberExpression().ToArray();
+                var assignmentOffsetMember = metadata.BuildAssignmentOffsetMemberExpression(offsetMemeber, 123UL).ToArray();
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
-                //   var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildCtorParameterSyntaxExpression(parameterSymbols).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, 444).ToArray();
 
-                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, []);
-                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [mainCtor]);
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, [.. assignmentOffsetMember]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. offsetMemeber, mainCtor]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
@@ -68,12 +55,12 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
                 var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
-                    p.AttributeClass.ContainingNamespace.ToDisplayString() == typeof(ContextMemberMetadataAttribute<>).Namespace
+                    p.AttributeClass!.ContainingNamespace.ToDisplayString() == typeof(ContextMemberMetadataAttribute<>).Namespace
                     && p.AttributeClass.MetadataName == typeof(ContextMemberMetadataAttribute<>).Name
-                    ).SelectMany(p => p.AttributeClass.TypeArguments).ToArray();
+                    ).SelectMany(p => p.AttributeClass!.TypeArguments).ToArray();
                 return new ContextMemberMetadataData()
                 {
-                    ParentSymbol = ctx.Attributes[0].AttributeClass.TypeArguments[0],
+                    ParentSymbol = ctx.Attributes[0].AttributeClass!.TypeArguments[0],
                     ContextSymbol = ctx.TargetSymbol,
                     ClassSymbols = parentMetadata,
                 };

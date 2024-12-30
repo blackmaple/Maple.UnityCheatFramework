@@ -34,26 +34,45 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
         partial struct Ptr_DemoGameSystem
         {
-            [ClassPropertyMetadata([], [])]
-            public partial Int32 Glod { set; get; }
+            [ClassPropertyMetadata([1, 1, 1], [11, 11, 11])]
+            public partial Int32 Glod { get; }
+            //public partial Int32 Glod => 1;
+
+
+            [ClassPropertyMetadata([2, 2, 2])]
+            public static partial Int32 Config { get; }
+
+            [ClassPropertyMetadata([3, 3, 3], default)]
+            public partial Int32 Exp { get; }
+
         }
 
         //partial struct Ptr_DemoGameSystem
         //{
-        //    [MethodMetadata([], [])]
-        //    public partial int GetGlod();
-
-        //    [MethodMetadata([], [])]
-        //    [MethodParameterMetadata([], 0)]
-        //    public partial int SetGlod(int val);
-
-
-        //    [StaticFieldMetadataAttribute([], [])]
-        //    public static partial Ptr_DemoGameSystem T { get; }
-
-        //    public static partial Ptr_DemoGameSystem T => nint.Zero;
+        //    public static partial Int32 Config => 1;
 
         //}
+
+        partial struct Ptr_DemoGameSystem
+        {
+            [ClassMethodMetadata([], default)]
+            public partial int GetGlod();
+
+            [ClassMethodMetadata([1, 2, 3], [3, 2, 1])]
+            [ClassMethodParameterMetadata([0], 0)]
+            [ClassMethodParameterMetadata([1], 1)]
+            [ClassMethodParameterMetadata([3], 3)]
+            [ClassMethodParameterMetadata([2], 2)]
+            [ClassMethodParameterMetadata(default!, 4)]
+            public partial int SetGlod(int val);
+
+
+            //[StaticFieldMetadataAttribute([], [])]
+            //public static partial Ptr_DemoGameSystem T { get; }
+
+            //public static partial Ptr_DemoGameSystem T => nint.Zero;
+
+        }
 
 
 
