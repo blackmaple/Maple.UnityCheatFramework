@@ -15,9 +15,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             try
             {
 
-                InitializeClassPropertyMetadataAttribute(context);
+                InitializeClassMetadata(context);
 
-                InitializeContextPropertyMetadataAttribute(context);
+                InitializeContextMetadata(context);
 
             }
             catch
@@ -26,71 +26,71 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
-        public static void InitializeClassPropertyMetadataAttribute(IncrementalGeneratorInitializationContext context)
+        public static void InitializeClassMetadata(IncrementalGeneratorInitializationContext context)
         {
-            var classPropertyMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassPropertyMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+            var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
 
                 var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
-                p.AttributeClass.ContainingNamespace.ToDisplayString() == typeof(ClassParentMetadataAttribute<>).Namespace
-                && p.AttributeClass.MetadataName == typeof(ClassParentMetadataAttribute<>).Name
+                p.AttributeClass.ContainingNamespace.ToDisplayString() == typeof(ClassParentMetadataAttribute<,>).Namespace
+                && p.AttributeClass.MetadataName == typeof(ClassParentMetadataAttribute<,>).Name
                 ).FirstOrDefault();
                 if (parentMetadata is null)
                 {
-                    return MetadataSourceGeneratorException.Throw<ClassPropertyMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} not found {typeof(ClassParentMetadataAttribute<>).FullName}");
+                    return MetadataSourceGeneratorException.Throw<ClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} not found {typeof(ClassParentMetadataAttribute<,>).FullName}");
                 }
-                return new ClassPropertyMetadataData()
+                return new ClassMemberMetadataData()
                 {
                     ParentSymbol = parentMetadata.AttributeClass.TypeArguments[0],
-                    ClassSymbol = ctx.TargetSymbol,
+                    PtrSymbol = parentMetadata.AttributeClass.TypeArguments[1],
+                    ContextSymbol = ctx.TargetSymbol,
                     MetadataSymbol = ctx.Attributes[0].AttributeClass,
                 };
             });
 
-            context.RegisterSourceOutput(classPropertyMetadatas, (context, metdata) =>
+            context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
+                var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
+                //   var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildCtorParameterSyntaxExpression(parameterSymbols).ToArray();
+                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, 444).ToArray();
 
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, []);
+                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [mainCtor]);
+                var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
+                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
         }
 
-        public static void InitializeContextPropertyMetadataAttribute(IncrementalGeneratorInitializationContext context)
+        public static void InitializeContextMetadata(IncrementalGeneratorInitializationContext context)
         {
-            var contextParentSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextParentMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
+            var contextMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextParentMetadataAttribute<>).FullName,
+                (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
-                return new ContextParentMetadataData()
+                var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
+                    p.AttributeClass.ContainingNamespace.ToDisplayString() == typeof(ContextMemberMetadataAttribute<>).Namespace
+                    && p.AttributeClass.MetadataName == typeof(ContextMemberMetadataAttribute<>).Name
+                    ).SelectMany(p => p.AttributeClass.TypeArguments).ToArray();
+                return new ContextMemberMetadataData()
                 {
                     ParentSymbol = ctx.Attributes[0].AttributeClass.TypeArguments[0],
-                    ContextSymbol = ctx.TargetSymbol
+                    ContextSymbol = ctx.TargetSymbol,
+                    ClassSymbols = parentMetadata,
                 };
 
             });
-            var contextClassSymbols = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextPropertyMetadataAttribute<>).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
-            {
-                return new ContextPropertyMetadataData()
-                {
-                    ClassSymbols = [.. ctx.Attributes.SelectMany(p => p.AttributeClass.TypeArguments)],
-                    ContextSymbol = ctx.TargetSymbol
-                };
 
-            });
-            var combineSymbols = contextParentSymbols.Combine(contextClassSymbols.Collect());
-            context.RegisterSourceOutput(combineSymbols, (context, combineData) =>
+
+            context.RegisterSourceOutput(contextMetadatas, (context, metadata) =>
             {
-                var ctor = combineData.Left;
-                var props = combineData.Right;
-                foreach (var prop in props)
-                {
-                    if (SymbolEqualityComparer.Default.Equals(prop.ContextSymbol, ctor.ContextSymbol))
-                    {
-                        var args = ctor.ParentSymbol.BuildParameterSyntaxExpression().ToArray();
-                        var members = prop.BuildContextPropertiesExpression(ctor.ParentSymbol).ToArray();
-                        var mainCtor = prop.BuildContextMetadataCtorExpression(args, members);
-                        var classDeclaration = prop.BuildContextMetadataClassExpression(ctor.ParentSymbol, mainCtor, members);
-                        var namespaceDeclaration = prop.BuildContextMetadataNamespaceExpression(classDeclaration);
-                        context.AddSource($"{prop.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
-                    }
-                }
+
+                var args = MetadataSourceGeneratorExtensions.BuildCtorParameterSyntaxExpression(metadata.ParentSymbol).ToArray();
+                var members = metadata.BuildContextPropertiesExpression(metadata.ParentSymbol).ToArray();
+                var assignmentMemeberExpression = members.BuildAssignmentMemeberExpression().ToArray();
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, args, assignmentMemeberExpression);
+                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. members, mainCtor]);
+                var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
+                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
 
@@ -98,14 +98,4 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
     }
 
 
-    public class ClassPropertyMetadataData
-    {
-        public ISymbol ParentSymbol { set; get; }
-        public ISymbol MetadataSymbol { set; get; }
-
-        public ISymbol ClassSymbol { set; get; }
-        public ISymbol[] FieldSymbols { set; get; }
-        public ISymbol[] MethodSymbols { set; get; }
-
-    }
 }

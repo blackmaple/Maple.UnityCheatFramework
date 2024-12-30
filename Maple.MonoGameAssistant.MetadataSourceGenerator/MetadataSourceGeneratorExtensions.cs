@@ -56,7 +56,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return false;
         }
-
         static IEnumerable<T> ReadImmutableArray<T>(this ImmutableArray<TypedConstant> offsetSymbols)
             where T : struct
         {
@@ -73,7 +72,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
 
         }
-
         static string ArrayDisplay<T>(this IEnumerable<T> arr)
             where T : struct
         {
@@ -81,41 +79,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        public static NamespaceDeclarationSyntax BuildContextMetadataNamespaceExpression(this ContextPropertyMetadataData contextProperties,
-            params ClassDeclarationSyntax[] classDeclarationSyntaxes)
-        {
-            return SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(contextProperties.ContextSymbol.ContainingNamespace.ToDisplayString()))
-                .WithMembers([.. classDeclarationSyntaxes]);
-        }
+        #region Common
 
-        public static ClassDeclarationSyntax BuildContextMetadataClassExpression(
-            this ContextPropertyMetadataData contextProperties,
-            ISymbol baseSymbol,
-            ConstructorDeclarationSyntax constructorDeclarationSyntax,
-            PropertyDeclarationSyntax[] propertyDeclarationSyntaxes
-            )
-        {
-            var classDeclaration = SyntaxFactory.ClassDeclaration(contextProperties.ContextSymbol.Name)
-                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
-                .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseSymbol.ToDisplayString()))]))
-                .WithMembers([.. propertyDeclarationSyntaxes, constructorDeclarationSyntax]);
-            return classDeclaration;
-        }
-
-        public static ConstructorDeclarationSyntax BuildContextMetadataCtorExpression(this ContextPropertyMetadataData contextProperties,
-            ParameterSyntax[] parameterSyntaxes, PropertyDeclarationSyntax[] propertyDeclarations)
-        {
-
-            return SyntaxFactory.ConstructorDeclaration(SyntaxFactory.Identifier(contextProperties.ContextSymbol.Name))
-                   .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
-                   .AddParameterListParameters(parameterSyntaxes)
-                   .WithInitializer(SyntaxFactory.ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList([.. parameterSyntaxes.Select(p => SyntaxFactory.Argument(SyntaxFactory.IdentifierName(p.Identifier)))])
-                        )))
-                   .WithBody(SyntaxFactory.Block(propertyDeclarations.SetContextPropertiesValueExpression()));
-        }
-
-        public static IEnumerable<ParameterSyntax> BuildParameterSyntaxExpression(this ISymbol symbol)
+        public static IEnumerable<IParameterSymbol> GetCtorParameterSymbolExpression(ISymbol symbol)
         {
             if (symbol is not INamedTypeSymbol namedTypeSymbol)
             {
@@ -131,13 +97,88 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             {
                 foreach (var arg in ctor.Parameters)
                 {
-                    yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Name))
-                        .WithType(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()));
+                    yield return arg;
                 }
             }
         }
+        public static IEnumerable<ParameterSyntax> BuildCtorParameterSyntaxExpression(IEnumerable<IParameterSymbol> parameterSymbols)
+        {
+            foreach (var arg in parameterSymbols)
+            {
+                yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Name))
+                       .WithType(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()));
+            }
+        }
+        public static IEnumerable<ParameterSyntax> BuildCtorParameterSyntaxExpression(ISymbol symbol)
+        {
+            return BuildCtorParameterSyntaxExpression(GetCtorParameterSymbolExpression(symbol));
+        }
 
-        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextPropertyMetadataData contextProperties, ISymbol parentSymbol)
+        public static ConstructorDeclarationSyntax BuildDerivedCtorMethodExpression(ISymbol symbol,
+            ParameterSyntax[] parameterSyntaxes, IEnumerable<StatementSyntax> statementSyntaxes)
+        {
+            var args = parameterSyntaxes.Select(p => SyntaxFactory.Argument(SyntaxFactory.IdentifierName(p.Identifier))).ToArray();
+            return BuildDerivedCtorMethodExpression(symbol, parameterSyntaxes, args, statementSyntaxes);
+        }
+
+        public static ConstructorDeclarationSyntax BuildDerivedCtorMethodExpression(ISymbol symbol,
+           ParameterSyntax[] parameterSyntaxes, ArgumentSyntax[] args, IEnumerable<StatementSyntax> statementSyntaxes)
+        {
+
+            return SyntaxFactory.ConstructorDeclaration(SyntaxFactory.Identifier(symbol.Name))
+                   .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
+                   .AddParameterListParameters(parameterSyntaxes)
+                   .WithInitializer(SyntaxFactory.ConstructorInitializer(SyntaxKind.BaseConstructorInitializer,
+                       SyntaxFactory.ArgumentList([.. args])
+                   ))
+                   .WithBody(SyntaxFactory.Block(statementSyntaxes));
+        }
+
+
+        public static IEnumerable<StatementSyntax> BuildAssignmentMemeberExpression(this IEnumerable<PropertyDeclarationSyntax> propertyDeclarations)
+        {
+
+
+            foreach (var prop in propertyDeclarations)
+            {
+
+                yield return SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
+                   SyntaxKind.SimpleAssignmentExpression,
+                   SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(prop.Identifier)),
+                   SyntaxFactory.ObjectCreationExpression(prop.Type)
+                   .WithArgumentList(SyntaxFactory.ArgumentList([
+                             SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                       ]))
+                    ));
+            }
+
+        }
+
+        public static ClassDeclarationSyntax SetDerivedClassMemberExpression(
+            ISymbol symbol,
+            ISymbol baseSymbol,
+            SyntaxList<MemberDeclarationSyntax> memberDeclarations
+            )
+        {
+            var classDeclaration = SyntaxFactory.ClassDeclaration(symbol.Name)
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+                .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseSymbol.ToDisplayString()))]))
+                .WithMembers(memberDeclarations);
+            return classDeclaration;
+        }
+
+        public static NamespaceDeclarationSyntax BuildNamespaceExpression(ISymbol symbol,
+            params ClassDeclarationSyntax[] classDeclarationSyntaxes)
+        {
+            return SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(symbol.ContainingNamespace.ToDisplayString()))
+                .WithMembers([.. classDeclarationSyntaxes]);
+        }
+
+
+        #endregion
+
+        #region ContextPropertyMetadataData
+        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextMemberMetadataData contextProperties, ISymbol parentSymbol)
         {
             foreach (var symbol in contextProperties.ClassSymbols)
             {
@@ -151,14 +192,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{symbol.ToDisplayString()}.ctor Number:{namedTypeSymbol.Constructors.Length}");
                     yield break;
                 }
-                foreach (var ctor in namedTypeSymbol.Constructors)
-                {
-                    if (false == ctor.Parameters.Any(p => SymbolEqualityComparer.Default.Equals(p.Type, parentSymbol)))
-                    {
-                        MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{symbol.ToDisplayString()}.ctor Parameters not found:{parentSymbol.ToDisplayString()}");
-                        yield break;
-                    }
-                }
+                //foreach (var ctor in namedTypeSymbol.Constructors)
+                //{
+                //    if (false == ctor.Parameters.Any(p => SymbolEqualityComparer.Default.Equals(p.Type, parentSymbol)))
+                //    {
+                //        MetadataSourceGeneratorException.Throw<PropertyDeclarationSyntax>($"{symbol.ToDisplayString()}.ctor Parameters not found:{parentSymbol.ToDisplayString()}");
+                //        yield break;
+                //    }
+                //}
                 var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(symbol.ToDisplayString()), symbol.Name)
                   .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
                   .WithAccessorList(
@@ -169,24 +210,33 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
-        public static IEnumerable<StatementSyntax> SetContextPropertiesValueExpression(this IEnumerable<PropertyDeclarationSyntax> propertyDeclarations)
+
+        #endregion
+
+
+
+        #region ClassPropertyMetadataData
+
+        public static IEnumerable<ParameterSyntax> BuildClassParentCtorParameterExpression(IEnumerable<IParameterSymbol> parameterSymbols, ulong code)
         {
-
-
-            foreach (var prop in propertyDeclarations)
+            foreach (var arg in parameterSymbols)
             {
+                var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Name))
+                           .WithType(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()));
 
-                yield return SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
-                   SyntaxKind.SimpleAssignmentExpression,
-                   SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(prop.Identifier)),
-                   SyntaxFactory.ObjectCreationExpression(prop.Type)
-                   .WithArgumentList(SyntaxFactory.ArgumentList([
-                             SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
-                             SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(112555UL)))
-                       ]))
-                    ));
+                if (arg.Type.SpecialType == SpecialType.System_UInt64)
+                {
+                    parameter = parameter.WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(code))));
+                }
+                yield return parameter;
             }
-
         }
+
+        #endregion
+
+
+
+
+
     }
 }

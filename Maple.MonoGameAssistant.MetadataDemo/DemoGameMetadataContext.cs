@@ -4,10 +4,10 @@ using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     [ContextParentMetadata<ContextMetadataCollector>()]
-    [ContextPropertyMetadata<DemoGameSystem>]
-    [ContextPropertyMetadata<ItemSystem>]
+    [ContextMemberMetadata<DemoGameSystem>]
+    [ContextMemberMetadata<ItemSystem>]
 
-    
+
     public partial class DemoGameMetadataContext
     {
         //public DemoGameMetadataContext()

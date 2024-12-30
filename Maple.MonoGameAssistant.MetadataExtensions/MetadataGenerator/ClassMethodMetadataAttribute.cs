@@ -11,7 +11,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif
-         class MethodMetadataAttribute(byte[]? utf8EntryPoint, byte[]? utf8ReturnType) : Attribute
+         class ClassMethodMetadataAttribute(byte[]? utf8EntryPoint, byte[]? utf8ReturnType) : Attribute
     {
         public byte[]? Utf8EntryPoint { get; } = utf8EntryPoint;
         public byte[]? Utf8ReturnType { get; } = utf8ReturnType;

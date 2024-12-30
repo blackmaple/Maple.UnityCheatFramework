@@ -33,12 +33,12 @@
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IRefMetadata.cs" Link="Ref\IRefMetadata.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IRefMetadataCollector.cs" Link="Ref\IRefMetadataCollector.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassParentMetadataAttribute.cs" Link="Ref\ClassParentMetadataAttribute.cs" />
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassPropertyMetadataAttribute.cs" Link="Ref\ClassPropertyMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassModelMetadataAttribute.cs" Link="Ref\ClassModelMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ContextParentMetadataAttribute.cs" Link="Ref\ContextParentMetadataAttribute.cs" />
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ContextPropertyMetadataAttribute.cs" Link="Ref\ContextPropertyMetadataAttribute.cs" />
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\FieldMetadataAttribute.cs" Link="Ref\FieldMetadataAttribute.cs" />
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MethodMetadataAttribute.cs" Link="Ref\MethodMetadataAttribute.cs" />
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MethodParameterMetadataAttribute.cs" Link="Ref\MethodParameterMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ContextMemberMetadataAttribute.cs" Link="Ref\ContextMemberMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassPropertyMetadataAttribute.cs" Link="Ref\ClassPropertyMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassMethodMetadataAttribute.cs" Link="Ref\ClassMethodMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassMethodParameterMetadataAttribute.cs" Link="Ref\ClassMethodParameterMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoMemberFieldSource.cs" Link="Ref\MonoMemberFieldSource.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoMethodDelegate.cs" Link="Ref\MonoMethodDelegate.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoStaticFieldSource.cs" Link="Ref\MonoStaticFieldSource.cs" />

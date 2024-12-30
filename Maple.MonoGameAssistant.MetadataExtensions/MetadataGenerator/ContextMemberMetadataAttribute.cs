@@ -10,7 +10,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-        class ContextPropertyMetadataAttribute<T>() : Attribute()
+        class ContextMemberMetadataAttribute<T>() : Attribute()
     {
 
     }

@@ -8,7 +8,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-         class MethodParameterMetadataAttribute(byte[] utf8ParameterType, int order = 0) : Attribute
+         class ClassMethodParameterMetadataAttribute(byte[] utf8ParameterType, int order = 0) : Attribute
     {
         public byte[] Utf8ParameterType { get; } = utf8ParameterType;
         public int Order { get; } = order;

@@ -2,9 +2,11 @@
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
-    public class ContextPropertyMetadataData
+    public class ContextMemberMetadataData
     {
+        public ISymbol ParentSymbol { set; get; }
         public ISymbol ContextSymbol { set; get; }
+
         public ISymbol[] ClassSymbols { set; get; }
     }
 }
