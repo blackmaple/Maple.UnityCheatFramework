@@ -179,7 +179,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         }
 
-        public static ClassDeclarationSyntax SetDerivedClassMemberExpression(
+        public static ClassDeclarationSyntax CreateClassDeclarationSyntaxExpression(
             ISymbol symbol,
             ISymbol baseSymbol,
             SyntaxList<MemberDeclarationSyntax> memberDeclarations)
@@ -198,7 +198,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 .WithMembers([.. classDeclarationSyntaxes]);
         }
 
+        public static StructDeclarationSyntax CreateStructDeclarationSyntaxExpression(ISymbol symbol, SyntaxList<MemberDeclarationSyntax> memberDeclarations)
+        {
+            var structDeclaration = SyntaxFactory.StructDeclaration(symbol.Name)
+               .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+               .WithMembers(memberDeclarations);
+            return structDeclaration;
 
+        }
         #endregion
 
         #region ContextPropertyMetadataData
@@ -399,67 +406,250 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
 
         }
-
-
         public static void BuildMethodInCtorExpression(this ClassMemberMetadataData classMember)
         {
 
         }
 
-        public static IEnumerable<FieldDeclarationSyntax> BuildPropertyOffsetMemberExpression(this ClassMemberMetadataData classMember)
+        public static FieldDeclarationSyntax BuildOffsetMemberExpression(ClassPropertyMetadataData classProperty)
         {
-            //foreach (var prop in classMember.PropertyMetadataDatas)
-            //{
-            //    yield return SyntaxFactory.FieldDeclaration(
-            //        SyntaxFactory.VariableDeclaration(
-            //            SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-            //            [SyntaxFactory.VariableDeclarator($"OFFSET_{prop.PropertySymbol.Name}")]
-            //    )).WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
-            //}
-
-            yield return SyntaxFactory.FieldDeclaration(
+            VariableDeclarationSyntax variableDeclaration =
+                classProperty.PropertySymbol.IsStatic ?
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                    [.. classMember.PropertyMetadataDatas.Select(p => SyntaxFactory.VariableDeclarator($"OFFSET_{p.PropertySymbol.Name}"))]
-            )).WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
+                   SyntaxFactory.IdentifierName(typeof(MonoStaticFieldSource).FullName),
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())])
+                : SyntaxFactory.VariableDeclaration(
+                       SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())]);
+
+            return SyntaxFactory.FieldDeclaration(variableDeclaration).WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
 
         }
-
-        public static IEnumerable<StatementSyntax> BuildAssignmentOffsetMemberExpression(this ClassMemberMetadataData classMemberMetadataData, IEnumerable<FieldDeclarationSyntax> fieldDeclarationSyntaxes, ulong code)
+        public static ExpressionStatementSyntax AssignmentOffsetMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
         {
-            foreach (var fieldDeclaration in fieldDeclarationSyntaxes)
-            {
-                foreach (var variable in fieldDeclaration.Declaration.Variables)
-                {
-                    yield return SyntaxFactory.ExpressionStatement
+            var callMethod = classProperty.PropertySymbol.IsStatic
+                ? nameof(IClassMetadataCollector.GetStaticFieldMetadata)
+                : nameof(IClassMetadataCollector.GetMemberFieldOffset);
+            return SyntaxFactory.ExpressionStatement
+                    (
+                        SyntaxFactory.AssignmentExpression
                         (
-                            SyntaxFactory.AssignmentExpression
-                            (
-                                 SyntaxKind.SimpleAssignmentExpression,
-                                 SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(classMemberMetadataData.ContextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(variable.Identifier.Text)),
-                                 SyntaxFactory.InvocationExpression
-                                 (
-                                    SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(nameof(IClassMetadataCollector.GetMemberFieldOffset)))
+                             SyntaxKind.SimpleAssignmentExpression,
+                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())),
+                                SyntaxFactory.InvocationExpression
+                                (
+                                    SyntaxFactory.MemberAccessExpression
+                                    (
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(callMethod)
+                                    )
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
-                                    [
-                                        SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(code)))
-                                    ]
-                                    ))
+                                [
+                                    SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(classProperty.PropertyCode)))
+                                ]
+                                ))
+                        )
+                    );
+
+
+
+        }
+        public static PropertyDeclarationSyntax BuildPartialPropertyMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
+        {
+            // classProperty.PropertySymbol.DeclaredAccessibility = Accessibility.
+
+
+
+            var propType = SyntaxFactory.ParseTypeName(classProperty.PropertySymbol.Type.ToDisplayString());
+            var classfullName = SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString());
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(propType, classProperty.PropertySymbol.Name);
+
+
+
+
+            if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Public)
+            {
+                propertyDeclaration = propertyDeclaration.AddModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)]);
+            }
+            if (classProperty.PropertySymbol.IsStatic)
+            {
+                propertyDeclaration = propertyDeclaration.AddModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
+            }
+            if (classProperty.PropertySymbol.IsPartialDefinition)
+            {
+                propertyDeclaration = propertyDeclaration.AddModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)]);
+            }
+
+            List<AccessorDeclarationSyntax> listAccessorBody = new(8);
+            if (classProperty.PropertySymbol.IsStatic)
+            {
+                if (classProperty.PropertySymbol.GetMethod is not null)
+                {
+                    var getAccessorBody =
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithExpressionBody
+                        (
+                            SyntaxFactory.ArrowExpressionClause
+                            (
+                                    SyntaxFactory.InvocationExpression
+                                    (
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetStaticFieldValue)))
+                                                .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                        )
+
+                                    ).WithArgumentList(SyntaxFactory.ArgumentList([
+
+                                        SyntaxFactory.Argument
+                                        (
+                                            SyntaxFactory.MemberAccessExpression
+                                            (
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                classfullName,
+                                                SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                            )
+                                        )
+                                        ]))
                             )
-                        );
 
+                        ).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+                    listAccessorBody.Add(getAccessorBody);
+                }
+                if (classProperty.PropertySymbol.SetMethod is not null)
+                {
+                    var setAccessorBody =
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithExpressionBody
+                        (
+                            SyntaxFactory.ArrowExpressionClause
+                            (
+                                SyntaxFactory.InvocationExpression
+                                (
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        classfullName,
+                                        SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                    ),
+                                        SyntaxFactory.ArgumentList([
+                                        SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                    SyntaxFactory.Argument
+                                    (
+                                        SyntaxFactory.MemberAccessExpression
+                                        (
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                        )
+                                    ),
+                                    SyntaxFactory.Argument(SyntaxFactory.DeclarationExpression(
+                                    SyntaxFactory.IdentifierName("in"),
+                                    SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("value"))))
+                                       ])
+                                )
+                            )
+                        ).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                    listAccessorBody.Add(setAccessorBody);
 
+                }
+            }
+            else
+            {
+                if (classProperty.PropertySymbol.GetMethod is not null)
+                {
+                    var getAccessorBody =
+                         SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithExpressionBody
+                        (
+                            SyntaxFactory.ArrowExpressionClause
+                            (
+                                SyntaxFactory.InvocationExpression
+                                (
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        classfullName,
+                                        SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetMemberFieldValue)))
+                                            .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                    )
 
+                                ).WithArgumentList(SyntaxFactory.ArgumentList([
+                                        SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                    SyntaxFactory.Argument
+                                    (
+                                        SyntaxFactory.MemberAccessExpression
+                                        (
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                        )
+                                    )
+                                    ]))
+                        )
+                        ).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                    listAccessorBody.Add(getAccessorBody);
 
+                }
+                if (classProperty.PropertySymbol.SetMethod is not null)
+                {
+                    var setAccessorBody =
+                         SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithExpressionBody
+                        (
+                            SyntaxFactory.ArrowExpressionClause
+                            (
+                                    SyntaxFactory.InvocationExpression
+                                    (
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetMemberFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                        ),
+                                            SyntaxFactory.ArgumentList([
+                                            SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                        SyntaxFactory.Argument
+                                        (
+                                            SyntaxFactory.MemberAccessExpression
+                                            (
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                classfullName,
+                                                SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                            )
+                                        ),
+                                        SyntaxFactory.Argument(SyntaxFactory.DeclarationExpression(
+                                        SyntaxFactory.IdentifierName("in"),
+                                        SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("value"))))
+                                           ])
+                                    )
+                            )
+                        ).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+                    listAccessorBody.Add(setAccessorBody);
 
 
                 }
+            }
 
 
+            propertyDeclaration = propertyDeclaration.AddAccessorListAccessors(listAccessorBody.ToArray());
 
+
+            return propertyDeclaration;
+
+        }
+
+
+        public static IEnumerable<(FieldDeclarationSyntax, ExpressionStatementSyntax, StructDeclarationSyntax)> BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember)
+        {
+            foreach (var member in classMember.PropertyMetadataDatas)
+            {
+                var f = BuildOffsetMemberExpression(member);
+                var s = AssignmentOffsetMemberExpression(classMember.ContextSymbol, member);
+                var p = BuildPartialPropertyMemberExpression(classMember.ContextSymbol, member);
+                var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [p]);
+                yield return (f, s, ptr);
             }
         }
 

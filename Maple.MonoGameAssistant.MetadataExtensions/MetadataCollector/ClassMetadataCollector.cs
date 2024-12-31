@@ -142,28 +142,27 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             var fieldInfoDTO = GetFieldMetadata(code);
             return new MonoStaticFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.SourceClass);
         }
-
-
         public int GetMemberFieldOffset(ulong code)
         {
             var fieldSource = GetFieldMetadata(code);
             return fieldSource.Offset;
         }
 
-        public nint GetStaticFieldValueAsPointer(ulong code)
-        {
-            var fieldSource = GetFieldMetadata(code);
-            return RuntimeContext.GetMonoStaticFieldValueAsPointer(fieldSource.SourceClass, fieldSource.Pointer);
-        }
-
-        public static nint GetStaticFieldValueAsPointer(MonoStaticFieldSource staticFieldSource)
+        public static T_FieldValue GetStaticFieldValue<T_FieldValue>(MonoStaticFieldSource staticFieldSource)
+            where T_FieldValue : unmanaged
         {
             if (MonoRuntimeContext.GlobalInstance is null)
             {
                 return default;
             }
-            return MonoRuntimeContext.GlobalInstance.GetMonoStaticFieldValueAsPointer(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
+            return MonoRuntimeContext.GlobalInstance.GetMonoStaticFieldValueAsUnmanaged<T_FieldValue>(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
         }
+        public static void SetStaticFieldValue<T_FieldValue>(MonoStaticFieldSource staticFieldSource, in T_FieldValue value)
+            where T_FieldValue : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset) where T_FieldValue : unmanaged

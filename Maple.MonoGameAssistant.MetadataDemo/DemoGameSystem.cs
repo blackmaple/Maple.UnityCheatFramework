@@ -40,10 +40,10 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
 
             [ClassPropertyMetadata([2, 2, 2])]
-            public static partial Int32 Config { get; }
+            public static partial Int32 Config { get; set; }
 
             [ClassPropertyMetadata([3, 3, 3], default)]
-            public partial Int32 Exp { get; }
+            public partial Int32 Exp { get; set; }
 
         }
 

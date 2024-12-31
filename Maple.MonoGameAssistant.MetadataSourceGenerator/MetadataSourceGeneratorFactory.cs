@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
@@ -36,13 +37,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
 
-                var offsetMemeber = metadata.BuildPropertyOffsetMemberExpression().ToArray();
-                var assignmentOffsetMember = metadata.BuildAssignmentOffsetMemberExpression(offsetMemeber, 123UL).ToArray();
+                (FieldDeclarationSyntax f, ExpressionStatementSyntax e, StructDeclarationSyntax s)[] propertyMembers = [.. metadata.BuildClassPartialPropertyExpression()];
+
+
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, 444).ToArray();
 
-                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, [.. assignmentOffsetMember]);
-                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. offsetMemeber, mainCtor]);
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, [.. propertyMembers.Select(p => p.e)]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. propertyMembers.Select(p => p.f), .. propertyMembers.Select(p => p.s), mainCtor]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
@@ -75,7 +77,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var members = metadata.BuildContextPropertiesExpression(metadata.ParentSymbol).ToArray();
                 var assignmentMemeberExpression = members.BuildAssignmentMemeberExpression().ToArray();
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, args, assignmentMemeberExpression);
-                var classDeclaration = MetadataSourceGeneratorExtensions.SetDerivedClassMemberExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. members, mainCtor]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. members, mainCtor]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
