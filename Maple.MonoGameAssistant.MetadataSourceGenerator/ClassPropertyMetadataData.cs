@@ -9,11 +9,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public class ClassPropertyMetadataData
     {
+        public ulong Code { set; get; }
 
         public IPropertySymbol PropertySymbol { set; get; } = default!;
         public byte[]? Utf8PropertyName { set; get; }
         public byte[]? Utf8PropertyType { set; get; }
-        public ulong PropertyCode { set; get; }
         public string GetOffsetVariableName() => $"s_{nameof(FieldOffsetAttribute)}_{PropertySymbol.Name}";
     }
 

@@ -5,7 +5,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 {
     [ContextParentMetadata<ContextMetadataCollector>()]
     [ContextMemberMetadata<DemoGameSystem>]
-    [ContextMemberMetadata<ItemSystem>]
+    //[ContextMemberMetadata<ItemSystem>]
 
 
     public partial class DemoGameMetadataContext

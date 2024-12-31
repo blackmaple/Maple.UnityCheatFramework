@@ -5,6 +5,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public class ClassMemberMetadataData
     {
+        public ulong Code { set; get; }
+
         public ISymbol ParentSymbol { set; get; } = default!;
 
         public byte[]? Utf8ImageName { set; get; }

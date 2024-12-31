@@ -6,6 +6,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public class ClassMethodMetadataData
     {
+        public ulong Code { set; get; }
         public ISymbol MethodSymbol { set; get; } = default!;
         public byte[]? Utf8MethodName { set; get; }
         public byte[]? Utf8MethodReturnType { set; get; }

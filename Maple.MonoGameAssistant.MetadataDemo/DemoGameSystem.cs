@@ -40,31 +40,25 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
 
             [ClassPropertyMetadata([2, 2, 2])]
-            public static partial Int32 Config { get; set; }
+            public static partial long Config { get; set; }
 
             [ClassPropertyMetadata([3, 3, 3], default)]
-            public partial Int32 Exp { get; set; }
+            public partial Ptr_DemoGameSystem Exp { get; set; }
 
         }
 
-        //partial struct Ptr_DemoGameSystem
-        //{
-        //    public static partial Int32 Config => 1;
-
-        //}
-
         partial struct Ptr_DemoGameSystem
         {
-            [ClassMethodMetadata([], default)]
-            public partial int GetGlod();
+            //[ClassMethodMetadata([], default)]
+            //public partial int GetGlod();
 
-            [ClassMethodMetadata([1, 2, 3], [3, 2, 1])]
-            [ClassMethodParameterMetadata([0], 0)]
-            [ClassMethodParameterMetadata([1], 1)]
-            [ClassMethodParameterMetadata([3], 3)]
-            [ClassMethodParameterMetadata([2], 2)]
-            [ClassMethodParameterMetadata(default!, 4)]
-            public partial int SetGlod(int val);
+            //[ClassMethodMetadata([1, 2, 3], [3, 2, 1])]
+            //[ClassMethodParameterMetadata([0], 0)]
+            //[ClassMethodParameterMetadata([1], 1)]
+            //[ClassMethodParameterMetadata([3], 3)]
+            //[ClassMethodParameterMetadata([2], 2)]
+            //[ClassMethodParameterMetadata(default!, 4)]
+            //public partial int SetGlod(int val);
 
 
             //[StaticFieldMetadataAttribute([], [])]
@@ -79,11 +73,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     }
 
 
-    [ClassParentMetadata<ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>, DemoGameSystem.Ptr_DemoGameSystem>()]
-    [ClassModelMetadata([], [], [], [])]
-    public partial class ItemSystem
-    {
+    //[ClassParentMetadata<ClassMetadataCollector<DemoGameSystem.Ptr_DemoGameSystem>, DemoGameSystem.Ptr_DemoGameSystem>()]
+    //[ClassModelMetadata([], [], [], [])]
+    //public partial class ItemSystem
+    //{
 
-    }
+    //}
 }
 

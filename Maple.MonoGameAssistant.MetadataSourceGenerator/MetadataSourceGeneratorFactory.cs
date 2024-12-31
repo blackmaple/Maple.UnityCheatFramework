@@ -41,7 +41,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
-                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, 444).ToArray();
+                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
 
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, [.. propertyMembers.Select(p => p.e)]);
                 var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. propertyMembers.Select(p => p.f), .. propertyMembers.Select(p => p.s), mainCtor]);
