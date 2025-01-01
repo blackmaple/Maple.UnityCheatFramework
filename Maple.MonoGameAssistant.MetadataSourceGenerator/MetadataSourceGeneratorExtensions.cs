@@ -17,6 +17,22 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
     public static class MetadataSourceGeneratorExtensions
     {
 
+        static AttributeSyntax NewAttribute<T_Attribute, T_ARG>(string value) where T_Attribute : Attribute
+        {
+            return SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(T_Attribute).FullName))
+                      .WithArgumentList(SyntaxFactory.AttributeArgumentList(
+                      [
+                          SyntaxFactory.AttributeArgument(
+                                             SyntaxFactory.MemberAccessExpression(
+                                                 SyntaxKind.SimpleMemberAccessExpression,
+                                                 SyntaxFactory.ParseName(typeof(T_ARG).FullName),
+                                                 SyntaxFactory.IdentifierName(value)
+                                             )
+                                        )
+
+                      ]));
+
+        }
 
         static T? GetAttributeValue_NamedArgs<T>(this AttributeData attributeData, string name, T def)
         {
@@ -628,9 +644,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                                         SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                                     )
                                                 ),
-                                                SyntaxFactory.Argument(SyntaxFactory.DeclarationExpression(
-                                                 SyntaxFactory.IdentifierName("in"),
-                                                SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("value"))))
+
+                                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword(SyntaxFactory.Token( SyntaxKind.InKeyword))
                                             ])
                                         )
                                     )
@@ -673,7 +688,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         SyntaxFactory.SeparatedList(
                         [
                             ..EnumFunctionPointerParameterSyntax(classMethod),
-                            ..EnumFunctionPointerReturnSyntax(classMethod),
+                            GetFunctionPointerReturnSyntax(classMethod),
                         ])
                     )
                 );
@@ -694,56 +709,89 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 [
                     SyntaxFactory.AttributeList(
                     [
-                        SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(MarshalAsAttribute).FullName))
-                        .WithArgumentList(SyntaxFactory.AttributeArgumentList(
-                        [
-                            SyntaxFactory.AttributeArgument(
-                                 SyntaxFactory.MemberAccessExpression(
-                                     SyntaxKind.SimpleMemberAccessExpression,
-                                     SyntaxFactory.ParseName(typeof(UnmanagedType).FullName),
-                                     SyntaxFactory.IdentifierName(nameof(UnmanagedType.SysInt))
-                                 )
-                            )
-
-                        ]))
+                        NewAttribute<MarshalAsAttribute,UnmanagedType>(nameof(UnmanagedType.SysInt))
                     ])
                 ]);
 
-            var method = SyntaxFactory.MethodDeclaration(classMethod.GetDelegatePointerStructCaller())
+
+            
+            var methodDeclaration = SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.GetDelegatePointerStructCaller())
                 .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
                 .WithParameterList(SyntaxFactory.ParameterList(
-                           SyntaxFactory.SeparatedList(
+                            SyntaxFactory.SeparatedList(
+                            [
+                                ..EnumParameterSyntax(classMethod),
+                            ])
+                ))
+                .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.InvocationExpression(
+                          SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructMemberName())
+                            )
+                    ).WithArgumentList(SyntaxFactory.ArgumentList(
                         [
-                            ..EnumFunctionPointerParameterSyntax(classMethod),
-                            ..EnumFunctionPointerReturnSyntax(classMethod),
-                        ])
-                       ));
+                            ..EnumArgumentSyntax(classMethod)
+                        ]))
+                ))
+                .WithSemicolonToken(
+                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)
+                    .WithLeadingTrivia(SyntaxFactory.LineFeed, SyntaxFactory.LineFeed)
+                
+
+                )
+
+
+
+                .WithAttributeLists(
+                [
+                    SyntaxFactory.AttributeList(
+                    [
+                        NewAttribute<MethodImplAttribute,MethodImplOptions>(nameof(MethodImplOptions.AggressiveInlining))
+                    ])
+                ]);
+
+
+
+            var operatorDeclaration = SyntaxFactory.ConversionOperatorDeclaration(SyntaxFactory.Token(SyntaxKind.ImplicitKeyword), SyntaxFactory.ParseTypeName(classMethod.GetDelegatePointerStructName()))
+                .WithOperatorKeyword(SyntaxFactory.Token(SyntaxKind.OperatorKeyword))
+                .WithParameterList(
+                    SyntaxFactory.ParameterList([
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName()))
+                        .WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
+                    ])
+                )
+                .WithExpressionBody(
+                    SyntaxFactory.ArrowExpressionClause(
+                        SyntaxFactory.ObjectCreationExpression(
+                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructName())
+                        ).WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList(
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCtorArgName()))
+                                )
+                            )
+                         )
+                    )
+                )
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
 
             var ptrStruct = SyntaxFactory.StructDeclaration(classMethod.GetDelegatePointerStructName())
                 .WithModifiers([SyntaxFactory.Token(SyntaxKind.UnsafeKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
                 .WithAttributeLists(
                 [
                     SyntaxFactory.AttributeList(
-                    [
-                        SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(StructLayoutAttribute).FullName))
-                        .WithArgumentList(SyntaxFactory.AttributeArgumentList(
-                        [
-                            SyntaxFactory.AttributeArgument(
-                                 SyntaxFactory.MemberAccessExpression(
-                                     SyntaxKind.SimpleMemberAccessExpression,
-                                     SyntaxFactory.ParseName(typeof(LayoutKind).FullName),
-                                     SyntaxFactory.IdentifierName(nameof(LayoutKind.Sequential))
-                                 )
-                            )
-
-                        ]))
-                    ])
+                                [
+                                    NewAttribute<StructLayoutAttribute,LayoutKind>(nameof(LayoutKind.Sequential)),
+                                ])
                 ])
                 .WithParameterList(SyntaxFactory.ParameterList(
                     [
                         SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName())).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
                     ]))
-                .WithMembers([delegateField]);
+                .WithMembers([delegateField, methodDeclaration, operatorDeclaration]);
 
 
 
@@ -814,11 +862,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
-            static IEnumerable<FunctionPointerParameterSyntax> EnumFunctionPointerReturnSyntax(ClassMethodMetadataData classMethod)
+            static FunctionPointerParameterSyntax GetFunctionPointerReturnSyntax(ClassMethodMetadataData classMethod)
             {
 
-                yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString()))
-                    .WithModifiers([.. EnumReturnModifiers(classMethod.MethodSymbol)]);
+                return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString()))
+                  .WithModifiers([.. EnumReturnModifiers(classMethod.MethodSymbol)]);
 
                 static IEnumerable<SyntaxToken> EnumReturnModifiers(IMethodSymbol methodSymbol)
                 {
@@ -836,16 +884,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
             }
 
-            static IEnumerable<ParameterSyntax> EnumFunctionPointerParameterSyntax(ClassMethodMetadataData classMethod)
+            static IEnumerable<ParameterSyntax> EnumParameterSyntax(ClassMethodMetadataData classMethod)
             {
                 if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
                 {
-                    yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier("@this")).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
+                    yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier($"@{SyntaxFactory.ThisExpression().ToFullString()}")).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
                 }
 
                 foreach (var arg in classMethod.MethodSymbol.Parameters)
                 {
-                    yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()))
+                    yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Name))
+                        .WithType(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()))
                         .WithModifiers([.. EnumParameterModifiers(arg)]);
 
                 }
@@ -875,26 +924,53 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
-            static IEnumerable<ParameterSyntax> EnumFunctionPointerReturnSyntax(ClassMethodMetadataData classMethod)
+            static IEnumerable<ArgumentSyntax> EnumArgumentSyntax(ClassMethodMetadataData classMethod)
+            {
+                if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
+                {
+                    yield return SyntaxFactory.Argument(SyntaxFactory.IdentifierName($"@{SyntaxFactory.ThisExpression().ToFullString()}"));
+                }
+
+                foreach (var arg in classMethod.MethodSymbol.Parameters)
+                {
+                    yield return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(arg.Name)).WithRefKindKeyword(GetParameterModifiers(arg));
+                }
+                static SyntaxToken GetParameterModifiers(IParameterSymbol parameterSymbol)
+                {
+                    if (parameterSymbol.RefKind == RefKind.Ref)
+                    {
+                        return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.Out)
+                    {
+                        return SyntaxFactory.Token(SyntaxKind.OutKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.In || parameterSymbol.RefKind == RefKind.RefReadOnlyParameter)
+                    {
+                        return SyntaxFactory.Token(SyntaxKind.InKeyword);
+                    }
+
+                    return SyntaxFactory.Token(SyntaxKind.None);
+                }
+
+            }
+
+            static TypeSyntax GetReturnSyntax(ClassMethodMetadataData classMethod)
             {
 
-                yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString()))
-                    .WithModifiers([.. EnumReturnModifiers(classMethod.MethodSymbol)]);
-
-                static IEnumerable<SyntaxToken> EnumReturnModifiers(IMethodSymbol methodSymbol)
+                TypeSyntax typeSyntax = SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString());
+                if (classMethod.MethodSymbol.ReturnsByRef)
                 {
-                    if (methodSymbol.ReturnsByRef)
-                    {
-                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
-                    }
-                    else if (methodSymbol.ReturnsByRefReadonly)
-                    {
-                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
 
-                        yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
-                    }
+                    return SyntaxFactory.RefType(SyntaxFactory.Token(SyntaxKind.RefKeyword), typeSyntax);
 
                 }
+                else if (classMethod.MethodSymbol.ReturnsByRefReadonly)
+                {
+                    return SyntaxFactory.RefType(SyntaxFactory.Token(SyntaxKind.RefKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword), typeSyntax);
+                }
+
+                return typeSyntax;
             }
 
         }
