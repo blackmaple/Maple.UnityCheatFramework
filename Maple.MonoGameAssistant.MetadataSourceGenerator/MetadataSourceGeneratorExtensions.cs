@@ -10,6 +10,7 @@ using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -22,6 +23,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var nVal = attributeData.NamedArguments.FirstOrDefault(p => p.Key == name).Value;
             if (nVal.Kind == TypedConstantKind.Array)
             {
+                if (nVal.Values.IsDefault)
+                {
+                    return default;
+                }
                 if (nVal.Values is T arr)
                 {
                     return arr;
@@ -69,7 +74,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             return false;
         }
         static bool TryReadImmutableArray<T>(this ImmutableArray<TypedConstant> offsetSymbols, out T[]? values)
-            where T : struct
+        // where T : struct
         {
             if (offsetSymbols.IsDefault)
             {
@@ -152,12 +157,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return SyntaxFactory.ConstructorDeclaration(SyntaxFactory.Identifier(symbol.Name))
                    .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
-                   .AddParameterListParameters(parameterSyntaxes)
+                   .WithParameterList(SyntaxFactory.ParameterList([.. parameterSyntaxes]))
                    .WithInitializer(SyntaxFactory.ConstructorInitializer(SyntaxKind.BaseConstructorInitializer,
                        SyntaxFactory.ArgumentList([.. args])
                    ))
                    .WithBody(SyntaxFactory.Block(statementSyntaxes));
+
+
+
         }
+
+
 
 
         public static IEnumerable<StatementSyntax> BuildAssignmentMemeberExpression(this IEnumerable<PropertyDeclarationSyntax> propertyDeclarations)
@@ -376,9 +386,19 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         metadata.Utf8MethodReturnType = utf8Type;
                     }
+
+
+                    var callTypes = att.GetAttributeValue_NamedArgs<ImmutableArray<TypedConstant>>(nameof(ClassMethodMetadataAttribute.CallConvs), []);
+                    if (callTypes.TryReadImmutableArray<ISymbol>(out var callConvs))
+                    {
+                        metadata.CallConvs = callConvs;
+                    }
+
                     metadata.RuntimeMethod = att.GetAttributeValue_NamedArgs(nameof(ClassMethodMetadataAttribute.RuntimeMethodAsThis), false);
                     metadata.Utf8MethodParameterTypes = [.. EnumMethodParameterTypes(methodSymbol).OrderBy(p => p.order).Select(p => p.utf8Parameter)];
                     metadata.Code = MetadataSourceGeneratorCounter.Increment();
+
+                    BuildMethodMemberExpression(ptrSymbol, metadata);
                     yield return metadata;
                 }
             }
@@ -402,7 +422,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
             }
         }
-
 
         public static FieldDeclarationSyntax BuildOffsetMemberExpression(ClassPropertyMetadataData classProperty)
         {
@@ -627,21 +646,256 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
 
         }
-        public static IEnumerable<(FieldDeclarationSyntax, ExpressionStatementSyntax, StructDeclarationSyntax)> BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember)
+        public static void BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<FieldDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
         {
+            var propertyDeclarations = new List<PropertyDeclarationSyntax>();
             foreach (var member in classMember.PropertyMetadataDatas)
             {
                 var f = BuildOffsetMemberExpression(member);
+                fields.Add(f);
+
                 var s = AssignmentOffsetMemberExpression(classMember.ContextSymbol, member);
+                expressions.Add(s);
+
                 var p = BuildPartialPropertyMemberExpression(classMember.ContextSymbol, member);
-                var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [p]);
-                yield return (f, s, ptr);
+                propertyDeclarations.Add(p);
             }
+            var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. propertyDeclarations]);
+            structs.Add(ptr);
         }
 
 
-        public static void BuildMethodMemberExpression(this ClassMemberMetadataData classMember)
+        public static void BuildMethodMemberExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
         {
+            var functionPointer = SyntaxFactory.FunctionPointerType(
+                    GetFunctionPointerCallingConvention(classMethod),
+                    SyntaxFactory.FunctionPointerParameterList(
+                        SyntaxFactory.SeparatedList(
+                        [
+                            ..EnumFunctionPointerParameterSyntax(classMethod),
+                            ..EnumFunctionPointerReturnSyntax(classMethod),
+                        ])
+                    )
+                );
+
+            var delegateField = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(functionPointer)
+                .WithVariables([
+                        SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStructMemberName())
+                        .WithInitializer(SyntaxFactory.EqualsValueClause(
+                               SyntaxFactory.CastExpression(
+                                    functionPointer,
+                                    SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCtorArgName())
+                                   )
+                            ))
+                    ]))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
+                .WithAttributeLists(
+                [
+                    SyntaxFactory.AttributeList(
+                    [
+                        SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(MarshalAsAttribute).FullName))
+                        .WithArgumentList(SyntaxFactory.AttributeArgumentList(
+                        [
+                            SyntaxFactory.AttributeArgument(
+                                 SyntaxFactory.MemberAccessExpression(
+                                     SyntaxKind.SimpleMemberAccessExpression,
+                                     SyntaxFactory.ParseName(typeof(UnmanagedType).FullName),
+                                     SyntaxFactory.IdentifierName(nameof(UnmanagedType.SysInt))
+                                 )
+                            )
+
+                        ]))
+                    ])
+                ]);
+
+            var method = SyntaxFactory.MethodDeclaration(classMethod.GetDelegatePointerStructCaller())
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
+                .WithParameterList(SyntaxFactory.ParameterList(
+                           SyntaxFactory.SeparatedList(
+                        [
+                            ..EnumFunctionPointerParameterSyntax(classMethod),
+                            ..EnumFunctionPointerReturnSyntax(classMethod),
+                        ])
+                       ));
+
+            var ptrStruct = SyntaxFactory.StructDeclaration(classMethod.GetDelegatePointerStructName())
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.UnsafeKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
+                .WithAttributeLists(
+                [
+                    SyntaxFactory.AttributeList(
+                    [
+                        SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(StructLayoutAttribute).FullName))
+                        .WithArgumentList(SyntaxFactory.AttributeArgumentList(
+                        [
+                            SyntaxFactory.AttributeArgument(
+                                 SyntaxFactory.MemberAccessExpression(
+                                     SyntaxKind.SimpleMemberAccessExpression,
+                                     SyntaxFactory.ParseName(typeof(LayoutKind).FullName),
+                                     SyntaxFactory.IdentifierName(nameof(LayoutKind.Sequential))
+                                 )
+                            )
+
+                        ]))
+                    ])
+                ])
+                .WithParameterList(SyntaxFactory.ParameterList(
+                    [
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName())).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
+                    ]))
+                .WithMembers([delegateField]);
+
+
+
+            static FunctionPointerCallingConventionSyntax GetFunctionPointerCallingConvention(ClassMethodMetadataData classMethod)
+            {
+                if (classMethod.CallConvs is null)
+                {
+                    return SyntaxFactory.FunctionPointerCallingConvention(SyntaxFactory.Token(SyntaxKind.ManagedKeyword));
+                }
+                return
+                    SyntaxFactory.FunctionPointerCallingConvention(
+                          SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword),
+                          SyntaxFactory.FunctionPointerUnmanagedCallingConventionList(
+                              SyntaxFactory.SeparatedList(
+                              [
+                                  ..EnumFunctionPointerUnmanagedCallingConventionSyntax(classMethod.CallConvs)
+                              ])
+                          )
+                    );
+
+                static IEnumerable<FunctionPointerUnmanagedCallingConventionSyntax> EnumFunctionPointerUnmanagedCallingConventionSyntax(ISymbol[] callConvs)
+                {
+                    foreach (var callConv in callConvs)
+                    {
+                        yield return SyntaxFactory.FunctionPointerUnmanagedCallingConvention(SyntaxFactory.Identifier(callConv.Name.Replace("CallConv", "")));
+                    }
+
+                }
+
+
+            }
+            static IEnumerable<FunctionPointerParameterSyntax> EnumFunctionPointerParameterSyntax(ClassMethodMetadataData classMethod)
+            {
+                if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
+                {
+                    yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
+                }
+
+                foreach (var arg in classMethod.MethodSymbol.Parameters)
+                {
+                    yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()))
+                        .WithModifiers([.. EnumParameterModifiers(arg)]);
+
+                }
+
+
+
+                static IEnumerable<SyntaxToken> EnumParameterModifiers(IParameterSymbol parameterSymbol)
+                {
+                    if (parameterSymbol.RefKind == RefKind.Ref)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.Out)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.OutKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.In)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.InKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.RefReadOnlyParameter)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                        yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
+                    }
+
+                }
+
+            }
+            static IEnumerable<FunctionPointerParameterSyntax> EnumFunctionPointerReturnSyntax(ClassMethodMetadataData classMethod)
+            {
+
+                yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString()))
+                    .WithModifiers([.. EnumReturnModifiers(classMethod.MethodSymbol)]);
+
+                static IEnumerable<SyntaxToken> EnumReturnModifiers(IMethodSymbol methodSymbol)
+                {
+                    if (methodSymbol.ReturnsByRef)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                    }
+                    else if (methodSymbol.ReturnsByRefReadonly)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+
+                        yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
+                    }
+
+                }
+            }
+
+            static IEnumerable<ParameterSyntax> EnumFunctionPointerParameterSyntax(ClassMethodMetadataData classMethod)
+            {
+                if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
+                {
+                    yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier("@this")).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
+                }
+
+                foreach (var arg in classMethod.MethodSymbol.Parameters)
+                {
+                    yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()))
+                        .WithModifiers([.. EnumParameterModifiers(arg)]);
+
+                }
+
+
+
+                static IEnumerable<SyntaxToken> EnumParameterModifiers(IParameterSymbol parameterSymbol)
+                {
+                    if (parameterSymbol.RefKind == RefKind.Ref)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.Out)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.OutKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.In)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.InKeyword);
+                    }
+                    else if (parameterSymbol.RefKind == RefKind.RefReadOnlyParameter)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                        yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
+                    }
+
+                }
+
+            }
+            static IEnumerable<ParameterSyntax> EnumFunctionPointerReturnSyntax(ClassMethodMetadataData classMethod)
+            {
+
+                yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(classMethod.MethodSymbol.ReturnType.ToDisplayString()))
+                    .WithModifiers([.. EnumReturnModifiers(classMethod.MethodSymbol)]);
+
+                static IEnumerable<SyntaxToken> EnumReturnModifiers(IMethodSymbol methodSymbol)
+                {
+                    if (methodSymbol.ReturnsByRef)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+                    }
+                    else if (methodSymbol.ReturnsByRefReadonly)
+                    {
+                        yield return SyntaxFactory.Token(SyntaxKind.RefKeyword);
+
+                        yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
+                    }
+
+                }
+            }
 
         }
         public static void BuildMethodInCtorExpression(this ClassMemberMetadataData classMember)
