@@ -15,7 +15,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             try
             {
-
+                Test();
                 InitializeClassMetadata(context);
 
                 InitializeContextMetadata(context);
@@ -36,15 +36,18 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
+                List<FieldDeclarationSyntax> fields = [];
+                List<ExpressionStatementSyntax> expressions = [];
+                List<StructDeclarationSyntax> structs = [];
 
-                (FieldDeclarationSyntax f, ExpressionStatementSyntax e, StructDeclarationSyntax s)[] propertyMembers = [.. metadata.BuildClassPartialPropertyExpression()];
+                metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
 
 
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
 
-                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, [.. propertyMembers.Select(p => p.e)]);
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. propertyMembers.Select(p => p.f), .. propertyMembers.Select(p => p.s), mainCtor]);
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
@@ -82,6 +85,39 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
+
+        }
+
+
+        public static void Test()
+        {
+            // Create the function pointer type using SyntaxFactory
+            var functionPointer = SyntaxFactory.FunctionPointerType(
+                    SyntaxFactory.FunctionPointerCallingConvention(
+                        SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword),
+                        SyntaxFactory.FunctionPointerUnmanagedCallingConventionList(
+                            SyntaxFactory.SeparatedList(
+                            [
+                                SyntaxFactory.FunctionPointerUnmanagedCallingConvention(SyntaxFactory.Identifier("Cdecl")),
+                                SyntaxFactory.FunctionPointerUnmanagedCallingConvention(SyntaxFactory.Identifier("SuppressGCTransition"))
+                            ])
+                        )
+                    ),
+                    SyntaxFactory.FunctionPointerParameterList(
+                        SyntaxFactory.SeparatedList(
+                        [
+                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))),
+                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))).WithModifiers([SyntaxFactory.Token( SyntaxKind.OutKeyword)]),
+                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)))
+                        ])
+                    )
+                );
+
+            // Generate the delegate field
+            var delegateField = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(functionPointer)
+                .AddVariables(SyntaxFactory.VariableDeclarator("GetGoldPtr")))
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
 
         }
     }

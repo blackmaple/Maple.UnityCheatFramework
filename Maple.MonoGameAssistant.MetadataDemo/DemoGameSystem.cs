@@ -1,6 +1,8 @@
 ﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Maple.MonoGameAssistant.MetadataDemo
@@ -47,10 +49,32 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
         }
 
-        partial struct Ptr_DemoGameSystem
+        [StructLayout(LayoutKind.Sequential)]
+        unsafe readonly struct X(nint ptr)
         {
-            //[ClassMethodMetadata([], default)]
-            //public partial int GetGlod();
+            [MarshalAs(UnmanagedType.SysInt)]
+            readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<int, out int, int> @delegate =
+                (delegate* unmanaged[Cdecl, SuppressGCTransition]<int, out int, int>)ptr;
+        }
+
+
+        unsafe partial struct Ptr_DemoGameSystem
+        {
+
+            //readonly delegate* unmanaged[ Cdecl, SuppressGCTransition]<int, out int, int> @delegate = (delegate* unmanaged[Cdecl, SuppressGCTransition]<int, out int, int>)nint.Zero;
+            //readonly delegate* managed<int, out int, int> @delegate = (delegate*  managed <int, out int, int>)nint.Zero;
+            [ClassMethodMetadata([], default, CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
+            public partial void GetGlod(int a, ref readonly int b);
+
+            [ClassMethodMetadata([], default, CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
+            public partial int GetGlod(int a, out int b);
+
+            [ClassMethodMetadata([], default, CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
+            public partial ref int GetGlod(int a, in int b);
+
+            [ClassMethodMetadata([], default, CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
+            public partial ref int GetGlod(int a, ref int b);
+
 
             //[ClassMethodMetadata([1, 2, 3], [3, 2, 1])]
             //[ClassMethodParameterMetadata([0], 0)]
@@ -61,10 +85,6 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             //public partial int SetGlod(int val);
 
 
-            //[StaticFieldMetadataAttribute([], [])]
-            //public static partial Ptr_DemoGameSystem T { get; }
-
-            //public static partial Ptr_DemoGameSystem T => nint.Zero;
 
         }
 
