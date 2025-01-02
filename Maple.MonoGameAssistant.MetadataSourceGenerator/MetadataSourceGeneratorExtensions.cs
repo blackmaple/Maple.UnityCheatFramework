@@ -17,6 +17,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public static class MetadataSourceGeneratorExtensions
     {
+        #region Helper
 
         static AttributeSyntax NewAttribute<T_Attribute, T_ARG>(string value) where T_Attribute : Attribute
         {
@@ -34,7 +35,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                       ]));
 
         }
-
         static T? GetAttributeValue_NamedArgs<T>(this AttributeData attributeData, string name, T def)
         {
             var nVal = attributeData.NamedArguments.FirstOrDefault(p => p.Key == name).Value;
@@ -124,7 +124,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             return $@"[{string.Join(", ", arr)}]";
         }
-
+        #endregion
 
         #region Common
 
@@ -1232,6 +1232,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         }
 
+
+        public static void BuildClassMemberMetadataJson(this ClassMemberMetadataData classMember)
+        {
+            // public class t {   public t[] t {get;}= [1,1,2,3,4,];             }
+
+            SyntaxFactory.PropertyDeclaration(SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(MonoJsonClassDTO).FullName)), "123");
+        }
         #endregion
 
 

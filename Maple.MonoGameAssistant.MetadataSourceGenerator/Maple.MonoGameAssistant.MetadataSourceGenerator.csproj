@@ -40,6 +40,10 @@
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassPropertyMetadataAttribute.cs" Link="Ref\ClassPropertyMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassMethodMetadataAttribute.cs" Link="Ref\ClassMethodMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassMethodParameterMetadataAttribute.cs" Link="Ref\ClassMethodParameterMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoJsonClassDTO.cs" Link="Ref\MonoJsonClassDTO.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoJsonCollectionDTO.cs" Link="Ref\MonoJsonCollectionDTO.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoJsonFieldDTO.cs" Link="Ref\MonoJsonFieldDTO.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoJsonMethodDTO.cs" Link="Ref\MonoJsonMethodDTO.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoMemberFieldSource.cs" Link="Ref\MonoMemberFieldSource.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoMethodDelegate.cs" Link="Ref\MonoMethodDelegate.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\MonoStaticFieldSource.cs" Link="Ref\MonoStaticFieldSource.cs" />
@@ -61,7 +65,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" PrivateAssets="all" />
-		<PackageReference Include="System.Text.Json" Version="9.0.0" />
 	</ItemGroup>
 
 

@@ -1,6 +1,11 @@
-﻿namespace Maple.MonoGameAssistant.MetadataSourceGenerator
+﻿namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
-    public class MonoJsonCollectionDTO
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif 
+        class MonoJsonCollectionDTO
     {
         public MonoJsonClassDTO[]? Classes { get; set; }
         public MonoJsonFieldDTO[]? Fields { get; set; }

@@ -2,12 +2,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -54,8 +48,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
-                var jsonContent = JsonSerializer.Serialize(metadata.GetJsonClass(), new JsonSerializerOptions { WriteIndented = true });
-                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.json", SourceText.From(jsonContent, Encoding.UTF8));
             });
         }
 
