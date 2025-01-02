@@ -20,8 +20,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string GetDelegatePointerStructMemberName() => $"m_{nameof(Pointer)}";
         public string GetDelegatePointerStructCaller() => nameof(Delegate);
 
-        public string GetDelegatePointerStructName() => $"{nameof(Delegate)}_{MethodSymbol.Name}_{MethodSymbol.MetadataToken}";
-        public string GetDelegatePointerStaticFieldName() => $"s_{nameof(Delegate)}_{MethodSymbol.Name}_{MethodSymbol.MetadataToken}";
+        public string GetDelegatePointerStructName() => $"{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code}";
+        public string GetDelegatePointerStaticFieldName() => $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code}";
 
     }
 

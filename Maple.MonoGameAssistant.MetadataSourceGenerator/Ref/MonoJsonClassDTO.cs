@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.Model
+namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
-    public class MonoDescriptionClassDTO : MonoDescriptionMemberDTO
+    public class MonoJsonClassDTO : MonoJsonMemberDTO
     {
         public byte[]? Utf8ImageName { get; set; }
         public byte[]? Utf8Namespace { get; set; }

@@ -9,6 +9,7 @@
          interface IClassMetadataCollector
     {
         MonoMethodDelegate GetMethodDelegate(ulong code);
+        MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged;
         nint GetMethodPointer(ulong code);
 
         MonoMemberFieldSource GetMemberFieldMetadata(ulong code);

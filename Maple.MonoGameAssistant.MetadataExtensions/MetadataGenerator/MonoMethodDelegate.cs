@@ -8,7 +8,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-         readonly struct MonoMethodDelegate(nint monoMethod, nint func)
+    readonly struct MonoMethodDelegate(nint monoMethod, nint func)
     {
         public readonly nint RuntimeMethod = monoMethod;
         public readonly nint MethodPointer = func;
@@ -19,5 +19,21 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
             return Unsafe.As<nint, TFUNC>(ref Unsafe.AsRef(in MethodPointer));
         }
     }
+
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif 
+    readonly struct MonoMethodDelegate<TFUNC>(nint monoMethod, nint func)
+        where TFUNC : unmanaged
+    {
+        public readonly nint RuntimeMethod { get; } = monoMethod;
+        public readonly TFUNC MethodPointer { get; } = Unsafe.As<nint, TFUNC>(ref func);
+
+        public static implicit operator MonoMethodDelegate<TFUNC>(MonoMethodDelegate methodDelegate)
+            => new(methodDelegate.RuntimeMethod, methodDelegate.MethodPointer);
+    }
+
 
 }

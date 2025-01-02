@@ -2,9 +2,12 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -15,7 +18,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             try
             {
-                Test();
+
                 InitializeClassMetadata(context);
 
                 InitializeContextMetadata(context);
@@ -41,6 +44,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 List<StructDeclarationSyntax> structs = [];
 
                 metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
+                metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
 
 
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
@@ -50,7 +54,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
-
+                var jsonContent = JsonSerializer.Serialize(metadata.GetJsonClass(), new JsonSerializerOptions { WriteIndented = true });
+                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.json", SourceText.From(jsonContent, Encoding.UTF8));
             });
         }
 
@@ -89,37 +94,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        public static void Test()
-        {
-            // Create the function pointer type using SyntaxFactory
-            var functionPointer = SyntaxFactory.FunctionPointerType(
-                    SyntaxFactory.FunctionPointerCallingConvention(
-                        SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword),
-                        SyntaxFactory.FunctionPointerUnmanagedCallingConventionList(
-                            SyntaxFactory.SeparatedList(
-                            [
-                                SyntaxFactory.FunctionPointerUnmanagedCallingConvention(SyntaxFactory.Identifier("Cdecl")),
-                                SyntaxFactory.FunctionPointerUnmanagedCallingConvention(SyntaxFactory.Identifier("SuppressGCTransition"))
-                            ])
-                        )
-                    ),
-                    SyntaxFactory.FunctionPointerParameterList(
-                        SyntaxFactory.SeparatedList(
-                        [
-                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))),
-                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))).WithModifiers([SyntaxFactory.Token( SyntaxKind.OutKeyword)]),
-                            SyntaxFactory.FunctionPointerParameter(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)))
-                        ])
-                    )
-                );
 
-            // Generate the delegate field
-            var delegateField = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(functionPointer)
-                .AddVariables(SyntaxFactory.VariableDeclarator("GetGoldPtr")))
-                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
-
-        }
     }
 
 

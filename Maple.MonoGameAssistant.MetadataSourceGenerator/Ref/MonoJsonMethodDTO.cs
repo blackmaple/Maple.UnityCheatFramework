@@ -1,6 +1,6 @@
-﻿namespace Maple.MonoGameAssistant.Model
+﻿namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
-    public class MonoDescriptionMethodDTO : MonoDescriptionMemberDTO
+    public class MonoJsonMethodDTO : MonoJsonMemberDTO
     {
         public byte[]?[]? Utf8Parameters { get; set; }
         public byte[]? Utf8ReturnType { get; set; }

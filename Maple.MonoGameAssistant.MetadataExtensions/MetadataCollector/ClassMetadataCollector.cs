@@ -112,6 +112,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return new(methodInfoDTO.Pointer, pointer);
 
         }
+        public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged
+            => GetMethodDelegate(code);
+
+
+
         public nint GetMethodPointer(ulong code)
         {
             MonoMethodDelegate methodDelegate = GetMethodDelegate(code);

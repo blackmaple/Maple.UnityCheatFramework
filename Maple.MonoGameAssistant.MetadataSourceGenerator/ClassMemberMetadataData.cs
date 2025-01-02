@@ -23,6 +23,46 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
 
+        public MonoJsonClassDTO GetJsonClass()
+        {
+            return new MonoJsonClassDTO()
+            {
+                Code = this.Code,
+                Utf8ImageName = Utf8ImageName,
+                Utf8Namespace = Utf8Namespace,
+                Utf8ClassName = Utf8ClassName,
+                Utf8Name = Utf8FullName,
+            };
+        }
+
+        public IEnumerable<MonoJsonMethodDTO> EnumJsonMethod()
+        {
+            foreach (var method in this.MethodMetadataDatas)
+            {
+                yield return new MonoJsonMethodDTO()
+                {
+                    Code = method.Code,
+                    Utf8Name = method.Utf8MethodName,
+                    Utf8ReturnType = method.Utf8MethodReturnType,
+                    Utf8Parameters = method.Utf8MethodParameterTypes,
+                };
+            }
+        }
+
+        public IEnumerable<MonoJsonFieldDTO> EnumJsonField()
+        {
+            foreach (var method in this.PropertyMetadataDatas)
+            {
+                yield return new MonoJsonFieldDTO()
+                {
+                    Code = method.Code,
+                    Utf8Name = method.Utf8PropertyName,
+                    Utf8FieldType = method.Utf8PropertyName,
+                    IsStatic = method.PropertySymbol.IsStatic,
+                };
+            }
+        }
+
     }
 
 }
