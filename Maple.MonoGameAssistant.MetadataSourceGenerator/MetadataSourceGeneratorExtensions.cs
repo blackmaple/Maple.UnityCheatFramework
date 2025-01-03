@@ -12,6 +12,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -124,6 +126,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             return $@"[{string.Join(", ", arr)}]";
         }
+
         #endregion
 
         #region Common
@@ -235,8 +238,36 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
         #endregion
 
+
+        #region ContextMemberMetadataData
+        public static ContextMemberMetadataData GetContextMemberMetadataData(this GeneratorAttributeSyntaxContext ctx, AttributeData att)
+        {
+            var parentMetadata =
+                ctx.TargetSymbol.GetAttributes().Where(p =>
+                       p.AttributeClass!.ContainingNamespace.ToDisplayString() == typeof(ContextMemberMetadataAttribute<>).Namespace
+                       && p.AttributeClass.MetadataName == typeof(ContextMemberMetadataAttribute<>).Name
+                       ).SelectMany(p => p.AttributeClass!.TypeArguments).ToArray();
+
+
+            if (false == att.TryGetAttributeValue_CtorArgs<bool>(0, out var export))
+            {
+                export = false;
+            }
+
+            return new ContextMemberMetadataData()
+            {
+                ParentSymbol = att.AttributeClass!.TypeArguments[0],
+                ContextSymbol = ctx.TargetSymbol,
+                ClassSymbols = parentMetadata,
+                ExportJson = export
+            };
+        }
+
+        #endregion
+
         #region ContextPropertyMetadataData
-        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextMemberMetadataData contextProperties, ISymbol parentSymbol)
+
+        public static IEnumerable<PropertyDeclarationSyntax> BuildContextPropertiesExpression(this ContextMemberMetadataData contextProperties)
         {
             foreach (var symbol in contextProperties.ClassSymbols)
             {
@@ -268,6 +299,104 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
+
+        public static PropertyDeclarationSyntax BuildContextJsonField(this ContextMemberMetadataData contextProperties)
+        {
+            return contextProperties.BuildContextJsonCommon<MonoJsonFieldDTO>(nameof(MonoJsonFieldDTO));
+        }
+        public static PropertyDeclarationSyntax BuildContextJsonMethod(this ContextMemberMetadataData contextProperties)
+        {
+            return contextProperties.BuildContextJsonCommon<MonoJsonMethodDTO>(nameof(MonoJsonMethodDTO));
+        }
+        public static PropertyDeclarationSyntax BuildContextJsonClass(this ContextMemberMetadataData contextProperties)
+        {
+            return contextProperties.BuildContextJsonCommon<MonoJsonClassDTO>(nameof(MonoJsonClassDTO), false);
+        }
+
+        public static PropertyDeclarationSyntax BuildContextJsonCommon<T>(this ContextMemberMetadataData contextProperties, string name, bool array = true)
+        {
+
+            var baseType = SyntaxFactory.ParseTypeName(typeof(T).FullName);
+
+            var arrayType = SyntaxFactory.ArrayType(baseType)
+              .WithRankSpecifiers(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.ArrayRankSpecifier(
+                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                SyntaxFactory.OmittedArraySizeExpression()))));
+
+
+            var body = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(arrayType, name)
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithAccessorList(SyntaxFactory.AccessorList([body]))
+                .WithInitializer(
+                    SyntaxFactory.EqualsValueClause(
+                        SyntaxFactory.CollectionExpression(
+                             SyntaxFactory.SeparatedList<CollectionElementSyntax>(
+                              (contextProperties.ExportJson ? EnumMemberAccessExpressionSyntax(contextProperties.ClassSymbols, name, array) : [])
+                            )
+                        )
+                    )
+                )
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+
+            static IEnumerable<CollectionElementSyntax> EnumMemberAccessExpressionSyntax(ISymbol[] classSymbols, string name, bool array = true)
+            {
+                foreach (var symbol in classSymbols)
+                {
+                    if (array)
+                    {
+                        yield return
+                           SyntaxFactory.SpreadElement(
+                           SyntaxFactory.MemberAccessExpression(
+                               SyntaxKind.SimpleMemberAccessExpression,
+                               SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
+                               SyntaxFactory.IdentifierName(name)
+                           ));
+                    }
+                    else
+                    {
+                        yield return
+                          SyntaxFactory.ExpressionElement(
+                          SyntaxFactory.MemberAccessExpression(
+                              SyntaxKind.SimpleMemberAccessExpression,
+                              SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
+                              SyntaxFactory.IdentifierName(name)
+                          ));
+                    }
+
+                }
+            }
+        }
+
+
+        public static void BuildContextJson(this ContextMemberMetadataData contextProperties, List<MemberDeclarationSyntax> members)
+        {
+            members.AddRange([BuildContextBuildVersion(), contextProperties.BuildContextJsonClass(), contextProperties.BuildContextJsonMethod(), contextProperties.BuildContextJsonField()]);
+        }
+
+        public static PropertyDeclarationSyntax BuildContextBuildVersion()
+        {
+            var baseType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(baseType, nameof(Version))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithExpressionBody(
+                    SyntaxFactory.ArrowExpressionClause(
+                         SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(DateTime.Now.ToString("yyyyMMddHHmmss")))
+                        )
+                )
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+
+
+        }
 
         #endregion
 
@@ -412,7 +541,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     }
 
                     metadata.RuntimeMethod = att.GetAttributeValue_NamedArgs(nameof(ClassMethodMetadataAttribute.RuntimeMethodAsThis), false);
-                    metadata.Utf8MethodParameterTypes = [.. EnumMethodParameterTypes(methodSymbol).OrderBy(p => p.order).Select(p => p.utf8Parameter)];
+                    if (TryEnumMethodParameterTypes(metadata.MethodSymbol, out var parameterTypes))
+                    {
+                        metadata.Utf8MethodParameterTypes = parameterTypes;
+                    }
                     metadata.Code = MetadataSourceGeneratorCounter.Increment();
 
 
@@ -420,23 +552,33 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
             }
 
-            static IEnumerable<(byte[]? utf8Parameter, int order)> EnumMethodParameterTypes(IMethodSymbol methodSymbol)
+            static bool TryEnumMethodParameterTypes(IMethodSymbol methodSymbol, out byte[]?[]? values)
             {
                 var attributeDatas = methodSymbol.GetAttributes().Where(p => p.AttributeClass is not null && p.AttributeClass.ToDisplayString() == typeof(ClassMethodParameterMetadataAttribute).FullName).ToArray();
-
-                foreach (var att in attributeDatas)
+                if (attributeDatas.Length != 0)
                 {
-                    byte[]? utf8Parameter = default;
-                    if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrType) && arrType.TryReadImmutableArray(out utf8Parameter))
-                    {
-
-                    }
-                    if (att.TryGetAttributeValue_CtorArgs(1, out int order))
-                    {
-
-                    }
-                    yield return (utf8Parameter, order);
+                    values = [.. EnumMethodParameterTypes().OrderBy(p => p.order).Select(p => p.utf8Parameter)];
+                    return true;
                 }
+                values = null;
+                return false;
+                IEnumerable<(byte[]? utf8Parameter, int order)> EnumMethodParameterTypes()
+                {
+                    foreach (var att in attributeDatas)
+                    {
+                        byte[]? utf8Parameter = default;
+                        if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrType) && arrType.TryReadImmutableArray(out utf8Parameter))
+                        {
+
+                        }
+                        if (att.TryGetAttributeValue_CtorArgs(1, out int order))
+                        {
+
+                        }
+                        yield return (utf8Parameter, order);
+                    }
+                }
+
             }
         }
 
@@ -662,7 +804,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
 
         }
-        public static void BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<FieldDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
+        public static void BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
         {
             var propertyDeclarations = new List<PropertyDeclarationSyntax>();
             foreach (var member in classMember.PropertyMetadataDatas)
@@ -784,16 +926,26 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     return SyntaxFactory.FunctionPointerCallingConvention(SyntaxFactory.Token(SyntaxKind.ManagedKeyword));
                 }
-                return
-                    SyntaxFactory.FunctionPointerCallingConvention(
-                          SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword),
-                          SyntaxFactory.FunctionPointerUnmanagedCallingConventionList(
-                              SyntaxFactory.SeparatedList(
-                              [
-                                  ..EnumFunctionPointerUnmanagedCallingConventionSyntax(classMethod.CallConvs)
-                              ])
-                          )
-                    );
+                var callTypes = EnumFunctionPointerUnmanagedCallingConventionSyntax(classMethod.CallConvs).ToArray();
+                if (callTypes.Length == 0)
+                {
+                    return
+                       SyntaxFactory.FunctionPointerCallingConvention(SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword));
+                }
+                else
+                {
+                    return
+                        SyntaxFactory.FunctionPointerCallingConvention(
+                              SyntaxFactory.Token(SyntaxKind.UnmanagedKeyword),
+                              SyntaxFactory.FunctionPointerUnmanagedCallingConventionList(
+                                  SyntaxFactory.SeparatedList(
+                                  [
+                                      ..callTypes
+                                  ])
+                              )
+                        );
+                }
+
 
                 static IEnumerable<FunctionPointerUnmanagedCallingConventionSyntax> EnumFunctionPointerUnmanagedCallingConventionSyntax(ISymbol[] callConvs)
                 {
@@ -1209,7 +1361,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         public static void BuildClassPartialMethodExpression(this ClassMemberMetadataData classMember,
             List<StructDeclarationSyntax> structs,
-            List<FieldDeclarationSyntax> fields,
+            List<MemberDeclarationSyntax> fields,
             List<ExpressionStatementSyntax> expressions)
         {
             List<MemberDeclarationSyntax> members = [];
@@ -1233,11 +1385,249 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        public static void BuildClassMemberMetadataJson(this ClassMemberMetadataData classMember)
-        {
-            // public class t {   public t[] t {get;}= [1,1,2,3,4,];             }
+        //public static ExpressionSyntax ArrayInitializerExpression(byte[]? bytes)
+        //{
+        //    return ArrayInitializerExpression(bytes, EnumLiteralExpression);
+        //    static IEnumerable<LiteralExpressionSyntax> EnumLiteralExpression(byte[] bytes)
+        //    {
+        //        foreach (var b in bytes)
+        //        {
+        //            yield return SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(b));
+        //        }
 
-            SyntaxFactory.PropertyDeclaration(SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(MonoJsonClassDTO).FullName)), "123");
+        //    }
+        //}
+        //public static ExpressionSyntax ArrayInitializerExpression(byte[]?[]? arrayBytes)
+        //{
+        //    return ArrayInitializerExpression(arrayBytes, EnumLiteralExpression);
+        //    static IEnumerable<ExpressionSyntax> EnumLiteralExpression(byte[]?[] arrayBytes)
+        //    {
+        //        foreach (byte[]? bytes in arrayBytes)
+        //        {
+        //            yield return ArrayInitializerExpression(bytes);
+        //        }
+        //    }
+
+        //}
+
+        //public static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems, Func<T[]?[], IEnumerable<ExpressionSyntax>> func)
+        //{
+        //    var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+        //        .WithRankSpecifiers([
+        //            SyntaxFactory.ArrayRankSpecifier([
+        //                SyntaxFactory.OmittedArraySizeExpression()
+        //            ]),
+        //            SyntaxFactory.ArrayRankSpecifier([
+        //                SyntaxFactory.OmittedArraySizeExpression()
+        //            ])
+        //        ]);
+
+        //    if (arrItems is null)
+        //    {
+        //        return SyntaxFactory.DefaultExpression(arrayType);
+        //    }
+
+        //    return
+        //    SyntaxFactory.ArrayCreationExpression(arrayType)
+        //    .WithInitializer(
+        //        SyntaxFactory.InitializerExpression(
+        //           SyntaxKind.ArrayInitializerExpression,
+        //           [.. func(arrItems)]
+        //        )
+        //    );
+
+
+
+        //}
+        //public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items, Func<T[], IEnumerable<ExpressionSyntax>> func)
+        //{
+        //    var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+        //        .WithRankSpecifiers([
+        //            SyntaxFactory.ArrayRankSpecifier([
+        //                SyntaxFactory.OmittedArraySizeExpression()
+        //            ])
+        //        ]);
+
+        //    if (items is null)
+        //    {
+        //        return SyntaxFactory.DefaultExpression(arrayType);
+        //    }
+
+        //    return
+        //        SyntaxFactory.ArrayCreationExpression(arrayType)
+        //        .WithInitializer(
+        //           SyntaxFactory.InitializerExpression(
+        //                SyntaxKind.ArrayInitializerExpression,
+        //                [.. func(items)]
+        //            )
+        //        );
+        //}
+        public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
+        {
+            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+                 .WithRankSpecifiers([
+                     SyntaxFactory.ArrayRankSpecifier([
+                        SyntaxFactory.OmittedArraySizeExpression()
+                    ])
+                 ]);
+            if (items is null)
+            {
+                return SyntaxFactory.DefaultExpression(arrayType);
+            }
+
+            var txt = items.ArrayDisplay();
+            return SyntaxFactory.ParseExpression(txt);
+        }
+        public static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems) where T : struct
+        {
+            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+              .WithRankSpecifiers([
+                  SyntaxFactory.ArrayRankSpecifier([
+                                SyntaxFactory.OmittedArraySizeExpression()
+                            ]),
+                            SyntaxFactory.ArrayRankSpecifier([
+                                SyntaxFactory.OmittedArraySizeExpression()
+                            ])
+              ]);
+
+            if (arrItems is null)
+            {
+                return SyntaxFactory.DefaultExpression(arrayType);
+            }
+            var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
+            return SyntaxFactory.ParseExpression(txt);
+        }
+
+        public static PropertyDeclarationSyntax BuildClassMemberMetadataJson(ClassMemberMetadataData classMember)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonClassDTO).FullName);
+            var newData = SyntaxFactory.ObjectCreationExpression(baseType)
+                .WithArgumentList(SyntaxFactory.ArgumentList(
+                        [
+                          SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(classMember.Code))),
+                          SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8ImageName)),
+                          SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8Namespace)),
+                          SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8ClassName)),
+                          SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8FullName)),
+                        ]
+                    )
+                );
+            var body = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(baseType, nameof(MonoJsonClassDTO))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithAccessorList(SyntaxFactory.AccessorList([body]))
+                .WithInitializer(SyntaxFactory.EqualsValueClause(newData))
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+        }
+        public static PropertyDeclarationSyntax BuildClassPropertyMetadataJson(ClassMemberMetadataData classMember)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonFieldDTO).FullName);
+
+            var arrayType = SyntaxFactory.ArrayType(baseType)
+              .WithRankSpecifiers(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.ArrayRankSpecifier(
+                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                SyntaxFactory.OmittedArraySizeExpression()))));
+
+
+            var body = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(arrayType, nameof(MonoJsonFieldDTO))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithAccessorList(SyntaxFactory.AccessorList([body]))
+                .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ArrayCreationExpression(arrayType).WithInitializer
+                (
+                         SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression,
+                                SyntaxFactory.SeparatedList<ExpressionSyntax>(
+                                        EnumObjectCreationExpressionSyntax(classMember.PropertyMetadataDatas, baseType)
+                                    )
+                            )
+                    )))
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+
+            static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassPropertyMetadataData[] propertyMetadataDatas, TypeSyntax typeSyntax)
+            {
+                foreach (var p in propertyMetadataDatas)
+                {
+                    yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
+                     .WithArgumentList(SyntaxFactory.ArgumentList(
+                             [
+                                 SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(p.Code))),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyName)),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyType)),
+                                SyntaxFactory.Argument(p.PropertySymbol.IsStatic?SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression):
+                                SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression)),
+                             ]
+                         )
+                     );
+
+                }
+            }
+        }
+        public static PropertyDeclarationSyntax BuildClassMethodMetadataJson(ClassMemberMetadataData classMember)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonMethodDTO).FullName);
+
+            var arrayType = SyntaxFactory.ArrayType(baseType)
+              .WithRankSpecifiers(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.ArrayRankSpecifier(
+                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                SyntaxFactory.OmittedArraySizeExpression()))));
+
+
+            var body = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(arrayType, nameof(MonoJsonMethodDTO))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithAccessorList(SyntaxFactory.AccessorList([body]))
+                .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ArrayCreationExpression(arrayType).WithInitializer
+                (
+                         SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression,
+                                SyntaxFactory.SeparatedList<ExpressionSyntax>(
+                                        EnumObjectCreationExpressionSyntax(classMember.MethodMetadataDatas, baseType)
+                                    )
+                            )
+                    )))
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+
+            static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassMethodMetadataData[] methodMetadataDatas, TypeSyntax typeSyntax)
+            {
+                foreach (var m in methodMetadataDatas)
+                {
+                    yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
+                     .WithArgumentList(SyntaxFactory.ArgumentList(
+                             [
+                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(m.Code))),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodName)),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodParameterTypes)),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodReturnType)),
+                             ]
+                         )
+                     );
+
+                }
+            }
+
+        }
+        public static void BuildClassMetadataJson(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> members)
+        {
+            members.AddRange([
+                BuildClassMemberMetadataJson(classMember),
+                BuildClassPropertyMetadataJson(classMember),
+                BuildClassMethodMetadataJson(classMember)
+                ]);
         }
         #endregion
 

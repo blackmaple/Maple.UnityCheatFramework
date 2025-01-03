@@ -1,11 +1,13 @@
-﻿ 
+﻿
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
 #if MetadataSourceGenerator
-    internal class MonoJsonMethodDTO (ulong code, byte[]? utf8name, byte[]?[]? utf8Parameters, byte[]? utf8ReturnType)
+#pragma warning disable CS9113 // 参数未读。
+    internal class MonoJsonMethodDTO(ulong code, byte[]? utf8name, byte[]?[]? utf8Parameters, byte[]? utf8ReturnType)
+#pragma warning restore CS9113 // 参数未读。
     {
- 
+
     }
 #else
     public class MonoJsonMethodDTO : Maple.MonoGameAssistant.Model.MonoDescriptionMethodDTO

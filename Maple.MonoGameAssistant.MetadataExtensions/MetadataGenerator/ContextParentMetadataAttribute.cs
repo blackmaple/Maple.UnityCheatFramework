@@ -9,9 +9,9 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-         class ContextParentMetadataAttribute<T>() : Attribute
+         class ContextParentMetadataAttribute<T>(bool export = false) : Attribute
     {
-
+        public bool ExportJson { get; } = export;
     }
 
 }

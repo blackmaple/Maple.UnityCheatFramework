@@ -8,5 +8,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public ISymbol ContextSymbol { set; get; } = default!;
 
         public ISymbol[] ClassSymbols { set; get; } = default!;
+
+        public bool ExportJson { set; get; }
+
+
     }
 }

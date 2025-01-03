@@ -33,13 +33,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
-                List<FieldDeclarationSyntax> fields = [];
+                List<MemberDeclarationSyntax> fields = [];
                 List<ExpressionStatementSyntax> expressions = [];
                 List<StructDeclarationSyntax> structs = [];
 
+                metadata.BuildClassMetadataJson(fields);
                 metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
                 metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
-
 
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
@@ -56,28 +56,21 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var contextMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ContextParentMetadataAttribute<>).FullName,
                 (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
-                var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
-                    p.AttributeClass!.ContainingNamespace.ToDisplayString() == typeof(ContextMemberMetadataAttribute<>).Namespace
-                    && p.AttributeClass.MetadataName == typeof(ContextMemberMetadataAttribute<>).Name
-                    ).SelectMany(p => p.AttributeClass!.TypeArguments).ToArray();
-                return new ContextMemberMetadataData()
-                {
-                    ParentSymbol = ctx.Attributes[0].AttributeClass!.TypeArguments[0],
-                    ContextSymbol = ctx.TargetSymbol,
-                    ClassSymbols = parentMetadata,
-                };
-
+                return MetadataSourceGeneratorExtensions.GetContextMemberMetadataData(ctx, ctx.Attributes[0]);
             });
 
 
             context.RegisterSourceOutput(contextMetadatas, (context, metadata) =>
             {
+                List<MemberDeclarationSyntax> fields = [];
+                metadata.BuildContextJson(fields);
+
 
                 var args = MetadataSourceGeneratorExtensions.BuildCtorParameterSyntaxExpression(metadata.ParentSymbol).ToArray();
-                var members = metadata.BuildContextPropertiesExpression(metadata.ParentSymbol).ToArray();
+                var members = metadata.BuildContextPropertiesExpression().ToArray();
                 var assignmentMemeberExpression = members.BuildAssignmentMemeberExpression().ToArray();
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, args, assignmentMemeberExpression);
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. members, mainCtor]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, .. members, mainCtor]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
