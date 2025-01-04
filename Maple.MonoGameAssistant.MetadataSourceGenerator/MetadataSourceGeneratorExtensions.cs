@@ -628,7 +628,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
         public static PropertyDeclarationSyntax BuildPartialPropertyMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
         {
-            // classProperty.PropertySymbol.DeclaredAccessibility = Accessibility.
 
 
 
@@ -665,32 +664,30 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         var getAccessorBody =
                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                            .WithBody(
-                               SyntaxFactory.Block(
-                                   SyntaxFactory.ReturnStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                classfullName,
-                                                SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
-                                            )
-
-                                        )
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                            [
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        classfullName,
-                                                        SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
-                                                    )
-                                                )
-                                            ])
+                            .WithExpressionBody(
+                                SyntaxFactory.ArrowExpressionClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
                                         )
                                     )
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                        [
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    classfullName,
+                                                    SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                                )
+                                            )
+                                        ])
+                                    )
                                 )
-                            );
+                            )
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                         yield return getAccessorBody;
                     }
@@ -698,32 +695,28 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         var setAccessorBody =
                             SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                            .WithBody(
-                                SyntaxFactory.Block
-                                (
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                classfullName,
-                                                SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
-                                            ),
-                                            SyntaxFactory.ArgumentList(
-                                            [
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        classfullName,
-                                                        SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
-                                                    )),
-                                                SyntaxFactory.Argument(SyntaxFactory.DeclarationExpression(
-                                                    SyntaxFactory.IdentifierName("in"),
-                                                    SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("value"))))
-                                            ])
-                                        )
+                            .WithExpressionBody(
+                                SyntaxFactory.ArrowExpressionClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                        ),
+                                        SyntaxFactory.ArgumentList(
+                                        [
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    classfullName,
+                                                    SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                                )),
+                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword( SyntaxFactory.Token(SyntaxKind.InKeyword))
+                                        ])
                                     )
                                 )
-                            );
+                            )
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
                         yield return setAccessorBody;
 
                     }
@@ -733,31 +726,33 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     if (classProperty.PropertySymbol.GetMethod is not null)
                     {
                         var getAccessorBody =
-                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                            .WithBody(
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.ReturnStatement(
-                                        SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithExpressionBody(
+                            SyntaxFactory.ArrowExpressionClause(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        classfullName,
+                                        SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetMemberFieldValue)))
+                                            .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                    )
+                                )
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                    [
+                                        SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                        SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 classfullName,
-                                                SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetMemberFieldValue)))
-                                                    .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                                SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                             )
-                                        ).WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                            [
-                                                SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        classfullName,
-                                                        SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())))
-                                            ])
                                         )
-                                    )
+                                    ])
                                 )
-                            );
+                            )
+                        )
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                         yield return getAccessorBody;
 
@@ -765,44 +760,39 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     if (classProperty.PropertySymbol.SetMethod is not null)
                     {
                         var setAccessorBody =
-                             SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                            .WithBody(
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                classfullName,
-                                                SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetMemberFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
-                                            ),
-                                            SyntaxFactory.ArgumentList(
-                                            [
-                                                SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
-                                                SyntaxFactory.Argument
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithExpressionBody(
+                            SyntaxFactory.ArrowExpressionClause(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        classfullName,
+                                        SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetMemberFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                    ),
+                                    SyntaxFactory.ArgumentList(
+                                        [
+                                            SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                            SyntaxFactory.Argument
+                                            (
+                                                SyntaxFactory.MemberAccessExpression
                                                 (
-                                                    SyntaxFactory.MemberAccessExpression
-                                                    (
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        classfullName,
-                                                        SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
-                                                    )
-                                                ),
-
-                                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword(SyntaxFactory.Token( SyntaxKind.InKeyword))
-                                            ])
-                                        )
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    classfullName,
+                                                    SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                                )
+                                            ),
+                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.InKeyword))
+                                        ]
                                     )
                                 )
-                            );
-
-
+                            )
+                        )
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
                         yield return setAccessorBody;
 
                     }
                 }
-                //yield break;
             }
-
         }
         public static void BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
         {
