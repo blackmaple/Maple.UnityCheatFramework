@@ -129,7 +129,10 @@ public sealed class GameClassInfo
 
 
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="dest"></param>
     public void CopyTo(GameClassInfo dest)
     {
         dest.ParentClassInfos = this.ParentClassInfos;

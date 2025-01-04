@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -12,7 +14,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             try
             {
-
+                Test();
                 InitializeClassMetadata(context);
 
                 InitializeContextMetadata(context);
@@ -75,6 +77,70 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
+
+        }
+
+
+
+        public static void Test()
+        {
+
+            var typeName = SyntaxFactory.ParseTypeName("x123");
+            var name = "x";
+
+
+            var t =
+                SyntaxFactory.PropertyDeclaration(typeName, name)
+                .WithModifiers([
+                    SyntaxFactory.Token( SyntaxKind.PublicKeyword),
+                    SyntaxFactory.Token(SyntaxKind.PartialKeyword),
+                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)
+                ])
+                .WithAccessorList(
+                    SyntaxFactory.AccessorList([
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration )
+                        .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
+                        SyntaxFactory.AccessorDeclaration( SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
+                    ])
+                );
+
+            //var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.IdentifierName("int"), "xxx")
+            //    .WithLeadingTrivia(BuildSummaryComment(["123", "123", "123", default!]));
+
+
+
+            //static SyntaxTriviaList BuildSummaryComment(params string?[] summaryTexts)
+            //{
+            //    var summaryComment = SyntaxFactory.TriviaList(
+            //    SyntaxFactory.Trivia(
+            //        SyntaxFactory.DocumentationCommentTrivia(
+            //            SyntaxKind.MultiLineDocumentationCommentTrivia,
+            //            [
+            //                SyntaxFactory.XmlNewLine(""),
+            //            SyntaxFactory.XmlMultiLineElement(
+            //                SyntaxFactory.XmlName("summary"),
+            //                [
+            //                    ..EnumXmlTextSyntax(summaryTexts)
+            //                ]),
+            //            SyntaxFactory.XmlText("\r\n"),
+            //            ]
+            //    )));
+
+            //    static IEnumerable<XmlTextSyntax> EnumXmlTextSyntax(params string?[] summaryTexts)
+            //    {
+            //        foreach (var summaryText in summaryTexts)
+            //        {
+            //            yield return SyntaxFactory.XmlNewLine("\r\n");
+            //            yield return SyntaxFactory.XmlText(summaryText ?? string.Empty);
+
+            //        }
+            //        yield return SyntaxFactory.XmlNewLine("\r\n");
+            //    }
+            //    return summaryComment;
+            //}
+
+
 
         }
 

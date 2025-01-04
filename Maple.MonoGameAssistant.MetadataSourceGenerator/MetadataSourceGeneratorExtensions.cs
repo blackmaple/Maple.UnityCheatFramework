@@ -636,9 +636,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             var propertyDeclaration = SyntaxFactory.PropertyDeclaration(propType, classProperty.PropertySymbol.Name)
                 .WithModifiers([.. EnumModifiers(classProperty)])
-                .WithAccessorList(SyntaxFactory.AccessorList([.. EnumAccessorDeclarationSyntax(classfullName, propType, classProperty)]));
+                .WithAccessorList(
+                    SyntaxFactory.AccessorList([.. EnumAccessorDeclarationSyntax(classfullName, propType, classProperty)])
+                 );
+
+            //      var content = propertyDeclaration.NormalizeWhitespace().ToFullString();
 
             return propertyDeclaration;
+
+
 
             static IEnumerable<SyntaxToken> EnumModifiers(ClassPropertyMetadataData classProperty)
             {
@@ -688,7 +694,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                 )
                             )
                             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-
                         yield return getAccessorBody;
                     }
                     if (classProperty.PropertySymbol.SetMethod is not null)
@@ -752,8 +757,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                 )
                             )
                         )
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
                         yield return getAccessorBody;
 
                     }
@@ -787,7 +791,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                 )
                             )
                         )
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
                         yield return setAccessorBody;
 
                     }
