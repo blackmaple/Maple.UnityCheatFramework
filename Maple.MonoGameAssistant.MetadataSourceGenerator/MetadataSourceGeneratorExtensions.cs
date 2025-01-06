@@ -2,18 +2,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Diagnostics.SymbolStore;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Xml.Linq;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -21,7 +12,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
     {
         #region Helper
 
-        static AttributeSyntax NewAttribute<T_Attribute, T_ARG>(string value) where T_Attribute : Attribute
+        internal static AttributeSyntax NewAttribute<T_Attribute, T_ARG>(string value) where T_Attribute : Attribute
         {
             return SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(T_Attribute).FullName))
                       .WithArgumentList(SyntaxFactory.AttributeArgumentList(

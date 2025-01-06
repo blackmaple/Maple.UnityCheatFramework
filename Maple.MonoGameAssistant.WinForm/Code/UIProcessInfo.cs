@@ -1,18 +1,11 @@
-﻿using DevExpress.Utils;
-using DevExpress.XtraEditors.Controls;
-using Maple.MonoGameAssistant.Common;
-using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.WinApi;
+﻿using Maple.MonoGameAssistant.Model;
+using Maple.MonoGameAssistant.Windows.WinRT;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Maple.MonoGameAssistant.WinForm
 {

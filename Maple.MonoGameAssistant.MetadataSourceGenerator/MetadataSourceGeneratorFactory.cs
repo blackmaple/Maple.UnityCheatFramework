@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -85,25 +87,28 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public static void Test()
         {
 
-            var typeName = SyntaxFactory.ParseTypeName("x123");
-            var name = "x";
 
 
-            var t =
-                SyntaxFactory.PropertyDeclaration(typeName, name)
-                .WithModifiers([
-                    SyntaxFactory.Token( SyntaxKind.PublicKeyword),
-                    SyntaxFactory.Token(SyntaxKind.PartialKeyword),
-                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)
-                ])
-                .WithAccessorList(
-                    SyntaxFactory.AccessorList([
-                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration )
-                        .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
-                        SyntaxFactory.AccessorDeclaration( SyntaxKind.SetAccessorDeclaration)
-                        .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
-                    ])
-                );
+
+            //var typeName = SyntaxFactory.ParseTypeName("x123");
+            //var name = "x";
+
+
+            //var t =
+            //    SyntaxFactory.PropertyDeclaration(typeName, name)
+            //    .WithModifiers([
+            //        SyntaxFactory.Token( SyntaxKind.PublicKeyword),
+            //        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
+            //        SyntaxFactory.Token(SyntaxKind.StaticKeyword)
+            //    ])
+            //    .WithAccessorList(
+            //        SyntaxFactory.AccessorList([
+            //            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration )
+            //            .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
+            //            SyntaxFactory.AccessorDeclaration( SyntaxKind.SetAccessorDeclaration)
+            //            .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
+            //        ])
+            //    );
 
             //var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.IdentifierName("int"), "xxx")
             //    .WithLeadingTrivia(BuildSummaryComment(["123", "123", "123", default!]));

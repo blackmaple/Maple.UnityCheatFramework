@@ -143,9 +143,11 @@ namespace Maple.MonoGameAssistant.WinForm.UI
         }
         private async Task OpenPageCodeViewAsync(GameClassInfo gameClassInfo)
         {
-            string codeView = await gameClassInfo.ShowCodeAsync();
+
+            string codeView = await gameClassInfo.ShowCodeV2Async(this.TxtNamespace.EditValue as string ?? "Maple.Game");
+
             using var pageCodeEditor = this.UIService.GetForm<PageCodeEditor>();
-            pageCodeEditor.SetCodeView(codeView.ToString());
+            pageCodeEditor.SetCodeView(codeView);
             var args = new XtraDialogArgs
             {
                 Owner = default,
@@ -168,7 +170,7 @@ namespace Maple.MonoGameAssistant.WinForm.UI
                 btnWrite.Text = "Write";
                 btnWrite.Click += async (bs, be) =>
                 {
-                    await WriteClassFileAsync(gameClassInfo.RawClassInfo.FullName??$"{DateTime.Now:yyyyMMddHHmmssffff}", codeView);
+                    await WriteClassFileV2Async(gameClassInfo.RawClassInfo.FullName ?? $"{DateTime.Now:yyyyMMddHHmmssffff}", codeView);
                 };
 
             };
@@ -185,7 +187,7 @@ namespace Maple.MonoGameAssistant.WinForm.UI
                 return;
             }
 
-           
+
             var fullName = Path.Combine(filePath, $"{GameRemoteDataService.MakeValidFileName(fileName)}.cs");
 
             var nameSpace = this.TxtNamespace.EditValue as string;
@@ -209,6 +211,16 @@ namespace {nameSpace}
 
 }}";
             await File.WriteAllTextAsync(fullName, fullCodeView);
+        }
+        private async ValueTask WriteClassFileV2Async(string fileName, string codeView)
+        {
+            var filePath = this.BtnTxtFilePath.EditValue as string;
+            if (Directory.Exists(filePath) == false)
+            {
+                return;
+            }
+            var fullName = Path.Combine(filePath, $"{GameRemoteDataService.MakeValidFileName(fileName)}.cs");
+            await File.WriteAllTextAsync(fullName, codeView);
         }
 
 

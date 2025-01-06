@@ -1,9 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Model;
 using Maple.MonoGameAssistant.MonoCollector;
 using System.Diagnostics.CodeAnalysis;
-using System.Formats.Asn1;
-using System.Reflection;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Maple.MonoGameAssistant.UILogic;
@@ -16,6 +13,7 @@ public sealed class GameClassInfo
     public GameParentClassInfo[]? ParentClassInfos { get; set; }
     public GameInterfaceInfo[]? InterfaceInfos { get; set; }
     public GameMethodInfo[]? MethodInfos { get; set; }
+
     public GameFieldInfo[]? FieldInfos { get; set; }
 
     [JsonIgnore]
@@ -158,6 +156,24 @@ public sealed class GameClassInfo
            this.ParentClassInfos?.Select(p => p.RawClassInfo).ToArray() ?? [],
            this.InterfaceInfos?.Select(p => p.RawInterfaceInfo).ToArray() ?? []);
         return codes.ToString();
+    }
+
+    public string ShowCodeV2(string containingNamespace)
+    {
+        return
+           GameSourceGeneratorFactory.OutputCode(
+           this.RawClassInfo,
+           this.FieldInfos?.Select(p => p.RawFieldInfo).ToArray() ?? [],
+           this.MethodInfos?.Select(p => p.RawMethodInfo).ToArray() ?? [],
+           this.ParentClassInfos?.Select(p => p.RawClassInfo).ToArray() ?? [],
+           this.InterfaceInfos?.Select(p => p.RawInterfaceInfo).ToArray() ?? [],
+           containingNamespace);
+ 
+ 
+    }
+    public Task<string> ShowCodeV2Async(string containingNamespace)
+    {
+        return Task.Run(()=> this.ShowCodeV2(containingNamespace));
     }
 
     public Task<string> ShowCodeAsync()
