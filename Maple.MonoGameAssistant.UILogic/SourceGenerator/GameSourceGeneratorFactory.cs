@@ -100,7 +100,10 @@ namespace Maple.MonoGameAssistant.UILogic
 
                     yield return SyntaxFactory.FieldDeclaration(variableDeclaration)
                         .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.ConstKeyword)])
-                        .WithLeadingTrivia(GetFieldDescription(field));
+                        .WithLeadingTrivia(GetFieldDescription(field))
+                        .WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, @"
+*/")));
+
 
 
 
@@ -131,7 +134,10 @@ namespace Maple.MonoGameAssistant.UILogic
                     .WithAttributeLists([
                         NewClassPropertyMetadataAttribute(field)
                     ])
-                    .WithLeadingTrivia(GetFieldDescription(field));
+                    .WithLeadingTrivia(GetFieldDescription(field))
+                    .WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, @"
+*/")));
+
 
                 }
                 static IEnumerable<SyntaxToken> EnumModifiers(bool isStatic)
@@ -168,7 +174,12 @@ namespace Maple.MonoGameAssistant.UILogic
 
                         .WithLeadingTrivia(GetMethodDescription(method))
 
-                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+
+                       .WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, @"
+*/")));
+
+
 
             }
             static IEnumerable<SyntaxToken> EnumModifiers(MonoMethodInfoDTO methodInfoDTO)
@@ -414,7 +425,7 @@ namespace Maple.MonoGameAssistant.UILogic
         #region Helper
         static string BuildInheritViewContent(this IReadOnlyList<MonoClassInfoDTO> classInfoDTOs)
         {
-            return string.Join(":", classInfoDTOs.Select(p => $"[{p.TypeName}]"));
+            return string.Join("=>", classInfoDTOs.Select(p => $"[{p.TypeName}]"));
         }
         static string CreatePtrStructName(this MonoClassInfoDTO classInfoDTO)
         {
@@ -431,6 +442,7 @@ namespace Maple.MonoGameAssistant.UILogic
             {
                 return string.Empty;
             }
+            name = name.Replace('.', '_');
             return JsonNamingPolicy.SnakeCaseUpper.ConvertName(name);
             // return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(field);
         }
@@ -547,7 +559,9 @@ namespace Maple.MonoGameAssistant.UILogic
             return BuildSummaryComment([
                   $@"0x{fieldInfoDTO.RawOffset:X} {fieldInfoDTO.FieldType.TypeName} {fieldInfoDTO.Name}",
                   fieldInfoDTO.FieldType.GetFieldFullName(),
-                ]);
+                ],
+                default,
+               $"{fieldInfoDTO.FieldType.GetObjectTypeInfo()} {fieldInfoDTO.FieldType.TypeName}");
         }
 
         static string GetMethodFullName(this MonoMethodInfoDTO methodInfoDTO)
@@ -562,7 +576,7 @@ namespace Maple.MonoGameAssistant.UILogic
                 [
                     methodInfoDTO.GetMethodFullName()
                 ],
-                methodInfoDTO.ParameterTypes.Select(p => new KeyValuePair<string, string>(p.TypeName!, p.ParameterName!)),
+                methodInfoDTO.ParameterTypes.Select(p => new KeyValuePair<string, string>($"{p.GetObjectTypeInfo()} {p.TypeName}", p.ParameterName!)),
                 $"{methodInfoDTO.ReturnType.GetObjectTypeInfo()} {methodInfoDTO.ReturnType.TypeName}");
         }
 
@@ -656,20 +670,6 @@ namespace Maple.MonoGameAssistant.UILogic
 
         }
 
-
-        //static AttributeSyntax NewContextMemberMetadataAttribute()
-        //{
-        //    return
-        //    SyntaxFactory.Attribute(
-        //        SyntaxFactory.IdentifierName(typeof(ClassPropertyMetadataAttribute).FullName!)
-        //    )
-        //    .WithArgumentList(SyntaxFactory.AttributeArgumentList(
-        //    [
-        //        SyntaxFactory.AttributeArgument(ArrayInitializerExpression() ),
-
-        //    ]));
-        //}
-
         static AttributeListSyntax NewClassParentMetadataAttribute(MonoClassInfoDTO classInfoDTO)
         {
             var ptrType = SyntaxFactory.ParseTypeName(classInfoDTO.CreatePtrStructName());
@@ -719,32 +719,7 @@ namespace Maple.MonoGameAssistant.UILogic
 {summaryContent}
 /// </summary>
 ");
-            //var summaryComment = SyntaxFactory.TriviaList(
-            //SyntaxFactory.Trivia(
-            //    SyntaxFactory.DocumentationCommentTrivia(
-            //        SyntaxKind.MultiLineDocumentationCommentTrivia,
-            //        [
-            //            SyntaxFactory.XmlNewLine(""),
-            //            SyntaxFactory.XmlMultiLineElement(
-            //                SyntaxFactory.XmlName("summary"),
-            //                [
-            //                    ..EnumXmlTextSyntax(summaryTexts)
-            //                ]),
-            //            SyntaxFactory.XmlText("\r\n"),
-            //        ]
-            //)));
 
-            //static IEnumerable<XmlTextSyntax> EnumXmlTextSyntax(params string?[] summaryTexts)
-            //{
-            //    foreach (var summaryText in summaryTexts)
-            //    {
-            //        yield return SyntaxFactory.XmlNewLine("\r\n");
-            //        yield return SyntaxFactory.XmlText(summaryText ?? string.Empty);
-            //    }
-            //    yield return SyntaxFactory.XmlNewLine("\r\n");
-
-            //}
-            //return summaryComment;
         }
         static SyntaxTriviaList BuildSummaryComment(string?[] summaryTexts, IEnumerable<KeyValuePair<string, string>>? keyValues, string? returns = default)
         {
@@ -758,93 +733,35 @@ namespace Maple.MonoGameAssistant.UILogic
 {summaryContent}
 /// </summary>
 {returnsContent}
-");
+/*");
             }
-            var paramContent = string.Join("\r\n", keyValues.Select(p => $@"/// <param name=""{p.Key}"">{p.Value}</param>"));
+            var paramContent = string.Join("\r\n", keyValues.Select(p => $@"/// <param name=""{p.Value}"">{p.Key}</param>"));
             return SyntaxFactory.ParseLeadingTrivia(@$"
 /// <summary>
 {summaryContent}
 /// </summary>
 {paramContent}
 {returnsContent}
-");
-            //return SyntaxFactory.TriviaList();
-            //var summaryComment = SyntaxFactory.TriviaList(
-            //SyntaxFactory.Trivia(
-            //    SyntaxFactory.DocumentationCommentTrivia(
-            //        SyntaxKind.MultiLineDocumentationCommentTrivia,
-            //        [
-            //            SyntaxFactory.XmlNewLine(""),
-            //            SyntaxFactory.XmlMultiLineElement(
-            //                SyntaxFactory.XmlName("summary"),
-            //                [
-            //                   ..EnumXmlTextSyntax(summaryTexts)
-            //                ]),
-            //            SyntaxFactory.XmlText("\r\n"),
-            //            ..EnumXmlElement(keyValues,returns),
+/*");
 
-
-            //        ]
-            //)));
-
-            //return summaryComment;
-            //static IEnumerable<XmlTextSyntax> EnumXmlTextSyntax(params string?[] summaryTexts)
-            //{
-            //    foreach (var summaryText in summaryTexts)
-            //    {
-            //        yield return SyntaxFactory.XmlNewLine("\r\n");
-            //        yield return SyntaxFactory.XmlText(summaryText ?? string.Empty);
-            //    }
-            //    yield return SyntaxFactory.XmlNewLine("\r\n");
-
-            //}
-            //static IEnumerable<XmlNodeSyntax> EnumXmlElement(IEnumerable<KeyValuePair<string, string>>? keyValues, string? returns = default)
-            //{
-            //    if (keyValues is null)
-            //    {
-            //        yield break;
-            //    }
-            //    foreach (var v in keyValues)
-            //    {
-
-            //        yield return SyntaxFactory.XmlNewLine("");
-            //        var tag = SyntaxFactory.XmlName("param");
-            //        yield return SyntaxFactory.XmlElement(
-            //             SyntaxFactory.XmlElementStartTag(tag)
-            //             .WithAttributes([SyntaxFactory.XmlNameAttribute(v.Key)]),
-            //             SyntaxFactory.XmlElementEndTag(tag))
-            //             .WithContent(SyntaxFactory.SingletonList<XmlNodeSyntax>(
-            //                 SyntaxFactory.XmlText(v.Value)));
-            //        yield return SyntaxFactory.XmlText("\r\n");
-
-            //    }
-            //    if (string.IsNullOrEmpty(returns) == false)
-            //    {
-            //        yield return SyntaxFactory.XmlNewLine("");
-            //        var tag = SyntaxFactory.XmlName("returns");
-            //        yield return SyntaxFactory.XmlElement(
-            //             SyntaxFactory.XmlElementStartTag(tag),
-            //             SyntaxFactory.XmlElementEndTag(tag))
-            //             .WithContent(SyntaxFactory.SingletonList<XmlNodeSyntax>(
-            //                 SyntaxFactory.XmlText(returns!)));
-            //        yield return SyntaxFactory.XmlText("\r\n");
-            //    }
-            //}
         }
 
 
 
         static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
         {
-            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
-                 .WithRankSpecifiers([
-                     SyntaxFactory.ArrayRankSpecifier([
-                        SyntaxFactory.OmittedArraySizeExpression()
-                    ])
-                 ]);
+            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
+            //     .WithRankSpecifiers([
+            //         SyntaxFactory.ArrayRankSpecifier([
+            //            SyntaxFactory.OmittedArraySizeExpression()
+            //        ])
+            //     ]);
             if (items is null)
             {
-                return SyntaxFactory.DefaultExpression(arrayType);
+                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+        //        return SyntaxFactory.EmptyStatement 
+        //       return SyntaxFactory.DefaultConstraint(SyntaxFactory.Token(SyntaxKind.DefaultKeyword));
+        //      return SyntaxFactory.DefaultExpression(arrayType);
             }
 
             var txt = items.ArrayDisplay();
@@ -852,19 +769,21 @@ namespace Maple.MonoGameAssistant.UILogic
         }
         static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems) where T : struct
         {
-            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
-              .WithRankSpecifiers([
-                  SyntaxFactory.ArrayRankSpecifier([
-                                SyntaxFactory.OmittedArraySizeExpression()
-                            ]),
-                            SyntaxFactory.ArrayRankSpecifier([
-                                SyntaxFactory.OmittedArraySizeExpression()
-                            ])
-              ]);
+            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
+            //  .WithRankSpecifiers([
+            //      SyntaxFactory.ArrayRankSpecifier([
+            //                    SyntaxFactory.OmittedArraySizeExpression()
+            //                ]),
+            //                SyntaxFactory.ArrayRankSpecifier([
+            //                    SyntaxFactory.OmittedArraySizeExpression()
+            //                ])
+            //  ]);
 
             if (arrItems is null)
             {
-                return SyntaxFactory.DefaultExpression(arrayType);
+                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+
+           //     return SyntaxFactory.DefaultExpression(arrayType);
             }
             var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
             return SyntaxFactory.ParseExpression(txt);
@@ -875,6 +794,9 @@ namespace Maple.MonoGameAssistant.UILogic
         {
             return $@"[{string.Join(", ", arr)}]";
         }
+
+
+
 
         #endregion
 

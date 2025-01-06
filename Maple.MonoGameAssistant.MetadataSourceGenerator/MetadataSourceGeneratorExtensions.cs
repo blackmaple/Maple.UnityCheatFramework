@@ -1449,15 +1449,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         //}
         public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
         {
-            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-                 .WithRankSpecifiers([
-                     SyntaxFactory.ArrayRankSpecifier([
-                        SyntaxFactory.OmittedArraySizeExpression()
-                    ])
-                 ]);
+            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+            //     .WithRankSpecifiers([
+            //         SyntaxFactory.ArrayRankSpecifier([
+            //            SyntaxFactory.OmittedArraySizeExpression()
+            //        ])
+            //     ]);
             if (items is null)
             {
-                return SyntaxFactory.DefaultExpression(arrayType);
+                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+
+     //           return SyntaxFactory.DefaultExpression(arrayType);
             }
 
             var txt = items.ArrayDisplay();
@@ -1465,19 +1467,21 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
         public static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems) where T : struct
         {
-            var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-              .WithRankSpecifiers([
-                  SyntaxFactory.ArrayRankSpecifier([
-                                SyntaxFactory.OmittedArraySizeExpression()
-                            ]),
-                            SyntaxFactory.ArrayRankSpecifier([
-                                SyntaxFactory.OmittedArraySizeExpression()
-                            ])
-              ]);
+            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
+            //  .WithRankSpecifiers([
+            //      SyntaxFactory.ArrayRankSpecifier([
+            //                    SyntaxFactory.OmittedArraySizeExpression()
+            //                ]),
+            //                SyntaxFactory.ArrayRankSpecifier([
+            //                    SyntaxFactory.OmittedArraySizeExpression()
+            //                ])
+            //  ]);
 
             if (arrItems is null)
             {
-                return SyntaxFactory.DefaultExpression(arrayType);
+                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+
+         //       return SyntaxFactory.DefaultExpression(arrayType);
             }
             var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
             return SyntaxFactory.ParseExpression(txt);
