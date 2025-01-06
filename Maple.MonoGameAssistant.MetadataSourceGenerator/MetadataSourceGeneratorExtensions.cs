@@ -344,21 +344,23 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         yield return
                            SyntaxFactory.SpreadElement(
-                           SyntaxFactory.MemberAccessExpression(
-                               SyntaxKind.SimpleMemberAccessExpression,
-                               SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
-                               SyntaxFactory.IdentifierName(name)
-                           ));
+                               SyntaxFactory.MemberAccessExpression(
+                                   SyntaxKind.SimpleMemberAccessExpression,
+                                   SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
+                                   SyntaxFactory.IdentifierName(name)
+                               )
+                           );
                     }
                     else
                     {
                         yield return
                           SyntaxFactory.ExpressionElement(
-                          SyntaxFactory.MemberAccessExpression(
-                              SyntaxKind.SimpleMemberAccessExpression,
-                              SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
-                              SyntaxFactory.IdentifierName(name)
-                          ));
+                              SyntaxFactory.MemberAccessExpression(
+                                  SyntaxKind.SimpleMemberAccessExpression,
+                                  SyntaxFactory.IdentifierName(symbol.ToDisplayString()),
+                                  SyntaxFactory.IdentifierName(name)
+                              )
+                          );
                     }
 
                 }
