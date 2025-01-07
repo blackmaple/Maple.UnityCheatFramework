@@ -6,9 +6,13 @@ using Maple.MonoGameAssistant.MonoCollectorDataV2;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace Maple.MonoGameAssistant.UILogic
 {
@@ -30,8 +34,11 @@ namespace Maple.MonoGameAssistant.UILogic
             string containingNamespace)
         {
 
-
-
+            foreach (var p in parentClasses)
+            {
+                Debug.WriteLine(p.Pointer.ToString("X8"));
+            }
+            Debug.WriteLine("#####################");
             if (classInfoDTO.IsEnum)
             {
                 var enumMember = CreateEnumDeclarationSyntax(classInfoDTO, fieldInfoDTOs);
@@ -48,10 +55,22 @@ namespace Maple.MonoGameAssistant.UILogic
                     members.Add(refMember);
                 }
 
-                var propMember = EnumPropertyDeclarationSyntax(classInfoDTO, fieldInfoDTOs);
-                var methodMember = EnumMethodDeclarationSyntax(classInfoDTO, methodInfoDTOs);
-                var ptrMember = CreatePtrStructDeclarationSyntax(classInfoDTO, [.. propMember, .. methodMember]);
+                var ptrMember = CreatePtrStructDeclarationSyntax(classInfoDTO);
                 members.Add(ptrMember);
+
+                var propMember = EnumPropertyDeclarationSyntax(classInfoDTO, fieldInfoDTOs);
+                var ptrFieldMember = NextPtrStructDeclarationSyntax(classInfoDTO, [.. propMember]);
+                members.Add(ptrFieldMember);
+
+                foreach (var methods in methodInfoDTOs.GroupBy(p => p.SourceClass))
+                {
+                    var sourceClass = parentClasses.Where(p => p.Pointer == methods.Key).FirstOrDefault();
+                    var methodMembers = EnumMethodDeclarationSyntax(classInfoDTO, [.. methods]);
+                    var ptrMethodMember = NextPtrStructDeclarationSyntax(classInfoDTO, [.. methodMembers], sourceClass);
+                    members.Add(ptrMethodMember);
+                }
+
+
                 var classMember = CreateClassDeclarationSyntax(classInfoDTO, parentClasses, interfaceInfoDTOs, [.. members]);
                 return BuildNamespaceExpression(containingNamespace, classMember).NormalizeWhitespace().ToFullString();
 
@@ -262,9 +281,9 @@ namespace Maple.MonoGameAssistant.UILogic
             }
         }
 
-        public static StructDeclarationSyntax CreatePtrStructDeclarationSyntax(MonoClassInfoDTO monoClassInfoDTO, MemberDeclarationSyntax[] members)
+        public static StructDeclarationSyntax CreatePtrStructDeclarationSyntax(MonoClassInfoDTO monoClassInfoDTO)
         {
-            var ptrStructName = monoClassInfoDTO.CreatePtrStructName();// $"Ptr_{monoClassInfoDTO.GetFixedClassName()}";
+            var ptrStructName = monoClassInfoDTO.CreatePtrStructName();
             var baseType = SyntaxFactory.ParseTypeName(typeof(nint).FullName!);
             var ctorArg = "ptr";
             var fieldName = $"m_{nameof(Pointer)}";
@@ -378,13 +397,24 @@ namespace Maple.MonoGameAssistant.UILogic
                     ])
                 )
                 .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(typeof(IPtrMetadata).FullName!))]))
-                .WithMembers([fieldDeclaration, ptrProp, nint2Ptr, ptr2nint, notisnull, .. members]);
+                .WithMembers([fieldDeclaration, ptrProp, nint2Ptr, ptr2nint, notisnull]);
 
 
             return ptrStruct;
 
 
 
+        }
+        public static StructDeclarationSyntax NextPtrStructDeclarationSyntax(MonoClassInfoDTO monoClassInfoDTO, MemberDeclarationSyntax[] members, MonoClassInfoDTO? classInfoDTO = default)
+        {
+            var ptrStructName = monoClassInfoDTO.CreatePtrStructName();
+            var ptrStruct = SyntaxFactory.StructDeclaration(ptrStructName)
+            .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.UnsafeKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+            .WithMembers([.. members])
+            .WithLeadingTrivia((classInfoDTO ?? monoClassInfoDTO).GetClassDescription(default, default));
+
+
+            return ptrStruct;
         }
 
         public static MemberDeclarationSyntax CreateEnumDeclarationSyntax(MonoClassInfoDTO monoClassInfoDTO, MonoFieldInfoDTO[] fieldInfoDTOs)
@@ -541,14 +571,27 @@ namespace Maple.MonoGameAssistant.UILogic
         static string GetClassFullName(this MonoClassInfoDTO classInfoDTO)
             => @$"[""{classInfoDTO.ImageName}"".""{classInfoDTO.Namespace}"".""{classInfoDTO.Name}""]";
         static SyntaxTriviaList GetClassDescription(this MonoClassInfoDTO classInfoDTO,
-            MonoClassInfoDTO[] parentClasses,
-            MonoInterfaceInfoDTO[] interfaceInfoDTOs)
+            MonoClassInfoDTO[]? parentClasses,
+            MonoInterfaceInfoDTO[]? interfaceInfoDTOs)
         {
             return BuildSummaryComment([
-                 $"{classInfoDTO.GetObjectTypeInfo()} {classInfoDTO.GetClassFullName()}",
-                 parentClasses.BuildInheritViewContent(),
-                 interfaceInfoDTOs.BuildInheritViewContent(),
+                ..EnumSummaryComment(classInfoDTO,parentClasses,interfaceInfoDTOs)
             ]);
+
+            static IEnumerable<string> EnumSummaryComment(MonoClassInfoDTO classInfoDTO,
+            MonoClassInfoDTO[]? parentClasses,
+            MonoInterfaceInfoDTO[]? interfaceInfoDTOs)
+            {
+                yield return $"{classInfoDTO.GetObjectTypeInfo()} {classInfoDTO.GetClassFullName()}";
+                if (parentClasses is not null)
+                {
+                    yield return parentClasses.BuildInheritViewContent();
+                }
+                if (interfaceInfoDTOs is not null)
+                {
+                    yield return interfaceInfoDTOs.BuildInheritViewContent();
+                }
+            }
         }
 
 
@@ -614,6 +657,7 @@ namespace Maple.MonoGameAssistant.UILogic
                 ]);
         }
 
+
         static AttributeListSyntax NewClassPropertyMetadataAttribute(MonoFieldInfoDTO fieldInfoDTO)
         {
             return
@@ -633,6 +677,20 @@ namespace Maple.MonoGameAssistant.UILogic
         }
         static AttributeListSyntax NewClassMethodMetadataAttribute(MonoMethodInfoDTO methodInfoDTO)
         {
+
+
+            var attributeArgument = SyntaxFactory.AttributeArgument(
+                    SyntaxFactory.NameEquals(nameof(ClassMethodMetadataAttribute.CallConvs)),
+                    default,
+                    SyntaxFactory.CollectionExpression(
+                        SyntaxFactory.SeparatedList<CollectionElementSyntax>([
+                            ..EnumCallConvs(methodInfoDTO)
+                        ])
+                    )
+
+            );
+
+
             return
                 SyntaxFactory.AttributeList([
                     SyntaxFactory.Attribute(SyntaxFactory.ParseName(typeof(ClassMethodMetadataAttribute).FullName!))
@@ -643,10 +701,21 @@ namespace Maple.MonoGameAssistant.UILogic
                             ),
                             SyntaxFactory.AttributeArgument(
                                 ArrayInitializerExpression(methodInfoDTO.ReturnType.Utf8TypeName)
-                            )
+                            ),
+                           attributeArgument
                         ])
                     )
                 ]);
+
+
+            static IEnumerable<CollectionElementSyntax> EnumCallConvs(MonoMethodInfoDTO methodInfoDTO)
+            {
+                yield return SyntaxFactory.ExpressionElement(SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(typeof(CallConvSuppressGCTransition).FullName!)));
+                if (methodInfoDTO.Pointer.ToInt64() <= uint.MaxValue)
+                {
+                    yield return SyntaxFactory.ExpressionElement(SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(typeof(CallConvCdecl).FullName!)));
+                }
+            }
         }
         static IEnumerable<AttributeListSyntax> NewClassMethodParameterMetadataAttribute(MonoMethodInfoDTO methodInfoDTO)
         {
@@ -759,9 +828,9 @@ namespace Maple.MonoGameAssistant.UILogic
             if (items is null)
             {
                 return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
-        //        return SyntaxFactory.EmptyStatement 
-        //       return SyntaxFactory.DefaultConstraint(SyntaxFactory.Token(SyntaxKind.DefaultKeyword));
-        //      return SyntaxFactory.DefaultExpression(arrayType);
+                //        return SyntaxFactory.EmptyStatement 
+                //       return SyntaxFactory.DefaultConstraint(SyntaxFactory.Token(SyntaxKind.DefaultKeyword));
+                //      return SyntaxFactory.DefaultExpression(arrayType);
             }
 
             var txt = items.ArrayDisplay();
@@ -783,7 +852,7 @@ namespace Maple.MonoGameAssistant.UILogic
             {
                 return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
 
-           //     return SyntaxFactory.DefaultExpression(arrayType);
+                //     return SyntaxFactory.DefaultExpression(arrayType);
             }
             var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
             return SyntaxFactory.ParseExpression(txt);
