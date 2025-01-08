@@ -14,6 +14,8 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         //{
         //    //this.DemoGameSystem = new DemoGameSystem();
         //}
+
+        //    public sealed override string ApiVersion => throw new NotImplementedException();
     }
 }
 

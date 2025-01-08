@@ -23,7 +23,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.0.90-rc</Version>
+		<Version>1.1.0-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -81,13 +81,6 @@
 	<ItemGroup>
 		<!-- Package the generator in the analyzer directory of the nuget package -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-	</ItemGroup>
-
-
-
-
-	<ItemGroup>
-		<Folder Include="Properties\" />
 	</ItemGroup>
 
 

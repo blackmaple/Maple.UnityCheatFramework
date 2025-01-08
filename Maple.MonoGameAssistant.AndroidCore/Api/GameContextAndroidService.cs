@@ -11,7 +11,7 @@ namespace Maple.MonoGameAssistant.AndroidCore
     : IGameContextService,
     IGameWebApiControllers,
     IMonoTaskScheduler<T_CONTEXT>
-    where T_CONTEXT : MonoCollectorContext
+    where T_CONTEXT : class, IMonoMetadataCollector
     {
         public ILogger Logger { get; } = logger;
 

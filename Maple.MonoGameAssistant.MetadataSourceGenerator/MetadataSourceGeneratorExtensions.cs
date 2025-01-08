@@ -407,8 +407,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             var baseType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
 
-            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(baseType, nameof(Version))
-                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(baseType, "ApiVersion")
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.OverrideKeyword)])
                 .WithExpressionBody(
                     SyntaxFactory.ArrowExpressionClause(
                          SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(DateTime.Now.ToString("yyyyMMddHHmmss")))

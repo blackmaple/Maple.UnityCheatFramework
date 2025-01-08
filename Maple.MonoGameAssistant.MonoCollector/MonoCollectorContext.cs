@@ -11,11 +11,13 @@ namespace Maple.MonoGameAssistant.MonoCollector
 {
 
     [method: MonoCollectorFlag(EnumMonoCollectorFlag.ContextCtor)]
-    public abstract class MonoCollectorContext(MonoRuntimeContext runtimeContext, EnumMonoCollectorTypeVersion typeVersion, ILogger logger, string apiVer = "202407222030")
+#pragma warning disable CS9113 // 参数未读。
+    public abstract class MonoCollectorContext(MonoRuntimeContext runtimeContext, EnumMonoCollectorTypeVersion typeVersion, ILogger logger, string apiVer = "202407222030") : IMonoMetadataCollector
+#pragma warning restore CS9113 // 参数未读。
     {
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
-        public EnumMonoCollectorTypeVersion TypeVersion { get; } = typeVersion;
-
+        //   public EnumMonoCollectorTypeVersion TypeVersion { get; } = typeVersion;
+        public EnumMonoRuntimeType TypeVersion => RuntimeContext.RuntimeType;
         public ILogger Logger { get; } = logger;
         public string ApiVersion { get; } = apiVer;
 

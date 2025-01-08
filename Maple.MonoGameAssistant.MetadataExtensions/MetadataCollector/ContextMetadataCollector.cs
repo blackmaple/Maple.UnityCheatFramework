@@ -11,12 +11,13 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IContextMetadataCollectorBase
+    public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IMonoMetadataCollector
     {
         public ILogger Logger { get; } = logger;
         public MetadataCollectorSearchService SearchService { get; } = searchService;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
-
+        public EnumMonoRuntimeType TypeVersion => RuntimeContext.RuntimeType;
+        public abstract string ApiVersion { get; }
         public MonoObjectNameDTO[] ImageNames { get; } = [.. runtimeContext.EnumMonoImageNames()];
 
         public bool DefaultTryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)

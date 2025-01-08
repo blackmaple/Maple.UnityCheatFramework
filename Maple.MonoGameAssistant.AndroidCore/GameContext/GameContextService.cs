@@ -1,10 +1,7 @@
-﻿using Maple.MonoGameAssistant.AndroidCore.AndroidTask;
-using Maple.MonoGameAssistant.Common;
+﻿using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Maple.MonoGameAssistant.AndroidCore.GameContext
@@ -16,7 +13,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.GameContext
            MonoTaskScheduler monoTaskScheduler)
         : IGameContextService,
         IMonoTaskScheduler<T_CONTEXT>
-        where T_CONTEXT : MonoCollectorContext
+        where T_CONTEXT : class, IMonoMetadataCollector
     {
 
         #region props
@@ -206,8 +203,15 @@ namespace Maple.MonoGameAssistant.AndroidCore.GameContext
         }
     }
 
-    public class DefGameCollectorContext(MonoRuntimeContext runtimeContext, ILogger logger) : MonoCollectorContext(runtimeContext, EnumMonoCollectorTypeVersion.APP, logger, "202407222030")
+#pragma warning disable CS9113 // 参数未读。
+    public class DefGameCollectorContext(MonoRuntimeContext runtimeContext, ILogger logger) : IMonoMetadataCollector
+#pragma warning restore CS9113 // 参数未读。
     {
+        public MonoRuntimeContext RuntimeContext => throw new NotImplementedException();
+
+        public EnumMonoRuntimeType TypeVersion => throw new NotImplementedException();
+
+        public string ApiVersion => throw new NotImplementedException();
     }
 
 }

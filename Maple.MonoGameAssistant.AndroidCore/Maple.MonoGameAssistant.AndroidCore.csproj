@@ -41,7 +41,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.0.921-rc</Version>
+		<Version>1.1.0-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -68,6 +68,10 @@
 		<ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Logger\Maple.MonoGameAssistant.Logger.csproj" />
 
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 
 
