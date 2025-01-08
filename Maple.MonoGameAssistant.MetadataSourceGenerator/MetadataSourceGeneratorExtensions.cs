@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -112,12 +113,41 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
 
         }
+        static byte[]? GetUtf8Bytes(this string? txt)
+        {
+            if (txt is null)
+            {
+                return default;
+            }
+            else if (txt.Length == 0)
+            {
+                return [];
+            }
+            else
+            {
+                return Encoding.UTF8.GetBytes(txt);
+            }
+        }
         static string ArrayDisplay<T>(this IEnumerable<T> arr)
             where T : struct
         {
             return $@"[{string.Join(", ", arr)}]";
         }
 
+        static bool TryGetAttributeBytes_CtorArgs(this AttributeData attributeData, int index, out byte[]? bytes)
+        {
+            Unsafe.SkipInit(out bytes);
+            if (attributeData.TryGetAttributeValue_CtorArgs(index, out ImmutableArray<TypedConstant> arrVal) && arrVal.TryReadImmutableArray(out bytes))
+            {
+                return true;
+            }
+            else if (attributeData.TryGetAttributeValue_CtorArgs(index, out string? txt))
+            {
+                bytes = GetUtf8Bytes(txt);
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Common
@@ -437,22 +467,23 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 MethodMetadataDatas = [.. ptrSymbol.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
             };
 
-            if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrName) && arrName.TryReadImmutableArray(out byte[]? utf8ImageName))
+            if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8ImageName))
             {
                 metadata.Utf8ImageName = utf8ImageName;
             }
-            if (att.TryGetAttributeValue_CtorArgs(1, out arrName) && arrName.TryReadImmutableArray(out byte[]? utf8Namespace))
+            if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Namespace))
             {
                 metadata.Utf8Namespace = utf8Namespace;
             }
-            if (att.TryGetAttributeValue_CtorArgs(2, out arrName) && arrName.TryReadImmutableArray(out byte[]? utf8ClassName))
+            if (att.TryGetAttributeBytes_CtorArgs(2, out byte[]? utf8ClassName))
             {
                 metadata.Utf8ClassName = utf8ClassName;
             }
-            if (att.TryGetAttributeValue_CtorArgs(3, out arrName) && arrName.TryReadImmutableArray(out byte[]? utf8FullName))
+            if (att.TryGetAttributeBytes_CtorArgs(3, out byte[]? utf8FullName))
             {
                 metadata.Utf8FullName = utf8FullName;
             }
+            //  if(ctx.)
             return metadata;
 
         }
@@ -480,11 +511,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         PropertySymbol = propertySymbol,
                     };
-                    if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrName) && arrName.TryReadImmutableArray(out byte[]? utf8Name))
+                    if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8Name))
                     {
                         metadata.Utf8PropertyName = utf8Name;
                     }
-                    if (att.TryGetAttributeValue_CtorArgs(1, out ImmutableArray<TypedConstant> arrType) && arrType.TryReadImmutableArray(out byte[]? utf8Type))
+                    if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Type))
                     {
                         metadata.Utf8PropertyType = utf8Type;
                     }
@@ -517,15 +548,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         MethodSymbol = methodSymbol,
                     };
-                    if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrName) && arrName.TryReadImmutableArray(out byte[]? utf8Name))
+                    if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8Name))
                     {
                         metadata.Utf8MethodName = utf8Name;
                     }
-                    if (att.TryGetAttributeValue_CtorArgs(1, out ImmutableArray<TypedConstant> arrType) && arrType.TryReadImmutableArray(out byte[]? utf8Type))
+
+                    if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Type))
                     {
                         metadata.Utf8MethodReturnType = utf8Type;
                     }
 
+                    metadata.RuntimeMethod = att.GetAttributeValue_NamedArgs(nameof(ClassMethodMetadataAttribute.RuntimeMethodAsThis), false);
 
                     var callTypes = att.GetAttributeValue_NamedArgs<ImmutableArray<TypedConstant>>(nameof(ClassMethodMetadataAttribute.CallConvs), []);
                     if (callTypes.TryReadImmutableArray<ISymbol>(out var callConvs))
@@ -533,7 +566,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         metadata.CallConvs = callConvs;
                     }
 
-                    metadata.RuntimeMethod = att.GetAttributeValue_NamedArgs(nameof(ClassMethodMetadataAttribute.RuntimeMethodAsThis), false);
                     if (TryEnumMethodParameterTypes(metadata.MethodSymbol, out var parameterTypes))
                     {
                         metadata.Utf8MethodParameterTypes = parameterTypes;
@@ -559,8 +591,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     foreach (var att in attributeDatas)
                     {
-                        byte[]? utf8Parameter = default;
-                        if (att.TryGetAttributeValue_CtorArgs(0, out ImmutableArray<TypedConstant> arrType) && arrType.TryReadImmutableArray(out utf8Parameter))
+                        if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8Parameter))
                         {
 
                         }
@@ -1372,96 +1403,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        //public static ExpressionSyntax ArrayInitializerExpression(byte[]? bytes)
-        //{
-        //    return ArrayInitializerExpression(bytes, EnumLiteralExpression);
-        //    static IEnumerable<LiteralExpressionSyntax> EnumLiteralExpression(byte[] bytes)
-        //    {
-        //        foreach (var b in bytes)
-        //        {
-        //            yield return SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(b));
-        //        }
 
-        //    }
-        //}
-        //public static ExpressionSyntax ArrayInitializerExpression(byte[]?[]? arrayBytes)
-        //{
-        //    return ArrayInitializerExpression(arrayBytes, EnumLiteralExpression);
-        //    static IEnumerable<ExpressionSyntax> EnumLiteralExpression(byte[]?[] arrayBytes)
-        //    {
-        //        foreach (byte[]? bytes in arrayBytes)
-        //        {
-        //            yield return ArrayInitializerExpression(bytes);
-        //        }
-        //    }
-
-        //}
-
-        //public static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems, Func<T[]?[], IEnumerable<ExpressionSyntax>> func)
-        //{
-        //    var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-        //        .WithRankSpecifiers([
-        //            SyntaxFactory.ArrayRankSpecifier([
-        //                SyntaxFactory.OmittedArraySizeExpression()
-        //            ]),
-        //            SyntaxFactory.ArrayRankSpecifier([
-        //                SyntaxFactory.OmittedArraySizeExpression()
-        //            ])
-        //        ]);
-
-        //    if (arrItems is null)
-        //    {
-        //        return SyntaxFactory.DefaultExpression(arrayType);
-        //    }
-
-        //    return
-        //    SyntaxFactory.ArrayCreationExpression(arrayType)
-        //    .WithInitializer(
-        //        SyntaxFactory.InitializerExpression(
-        //           SyntaxKind.ArrayInitializerExpression,
-        //           [.. func(arrItems)]
-        //        )
-        //    );
-
-
-
-        //}
-        //public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items, Func<T[], IEnumerable<ExpressionSyntax>> func)
-        //{
-        //    var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-        //        .WithRankSpecifiers([
-        //            SyntaxFactory.ArrayRankSpecifier([
-        //                SyntaxFactory.OmittedArraySizeExpression()
-        //            ])
-        //        ]);
-
-        //    if (items is null)
-        //    {
-        //        return SyntaxFactory.DefaultExpression(arrayType);
-        //    }
-
-        //    return
-        //        SyntaxFactory.ArrayCreationExpression(arrayType)
-        //        .WithInitializer(
-        //           SyntaxFactory.InitializerExpression(
-        //                SyntaxKind.ArrayInitializerExpression,
-        //                [.. func(items)]
-        //            )
-        //        );
-        //}
         public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
         {
-            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-            //     .WithRankSpecifiers([
-            //         SyntaxFactory.ArrayRankSpecifier([
-            //            SyntaxFactory.OmittedArraySizeExpression()
-            //        ])
-            //     ]);
+
             if (items is null)
             {
                 return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
 
-     //           return SyntaxFactory.DefaultExpression(arrayType);
+                //           return SyntaxFactory.DefaultExpression(arrayType);
             }
 
             var txt = items.ArrayDisplay();
@@ -1469,21 +1419,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
         public static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems) where T : struct
         {
-            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName))
-            //  .WithRankSpecifiers([
-            //      SyntaxFactory.ArrayRankSpecifier([
-            //                    SyntaxFactory.OmittedArraySizeExpression()
-            //                ]),
-            //                SyntaxFactory.ArrayRankSpecifier([
-            //                    SyntaxFactory.OmittedArraySizeExpression()
-            //                ])
-            //  ]);
+
 
             if (arrItems is null)
             {
                 return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
 
-         //       return SyntaxFactory.DefaultExpression(arrayType);
+                //       return SyntaxFactory.DefaultExpression(arrayType);
             }
             var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
             return SyntaxFactory.ParseExpression(txt);

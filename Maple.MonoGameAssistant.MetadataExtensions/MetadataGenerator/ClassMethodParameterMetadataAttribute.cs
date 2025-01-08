@@ -1,5 +1,6 @@
 ﻿using System;
 
+#pragma warning disable IDE0060 // 删除未使用的参数
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
@@ -8,11 +9,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif 
-         class ClassMethodParameterMetadataAttribute(byte[] utf8ParameterType, int order = 0) : Attribute
+         class ClassMethodParameterMetadataAttribute : Attribute
     {
-        public byte[] Utf8ParameterType { get; } = utf8ParameterType;
-        public int Order { get; } = order;
+        public ClassMethodParameterMetadataAttribute(byte[] utf8ParameterType, int order = 0) { }
+
+        public ClassMethodParameterMetadataAttribute(string parameterType, int order = 0) { }
+
     }
-
-
 }
+#pragma warning restore IDE0060 // 删除未使用的参数

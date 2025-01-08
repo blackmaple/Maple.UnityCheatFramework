@@ -4,7 +4,7 @@ using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     [ContextParentMetadata<ContextMetadataCollector>(true)]
-    [ContextMemberMetadata<DemoGameSystem>]
+    [ContextMemberMetadata<GameManager>]
     //[ContextMemberMetadata<ItemSystem>]
 
 

@@ -75,7 +75,7 @@ namespace Maple.MonoGameAssistant.Core
         //PMonoField GetMonoFieldParent(PMonoField pMonoField);
         int GetMonoFieldOffset(PMonoField pMonoField);
         uint GetMonoFieldFlags(PMonoField pMonoField);
-        string? GetMonoFieldName(PMonoField pMonoField);
+        PMonoUtf8Char GetMonoFieldName(PMonoField pMonoField);
 
         #endregion 
 
@@ -101,7 +101,7 @@ namespace Maple.MonoGameAssistant.Core
         T_Struct CreateMonoClass<T_Struct>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, bool execDefCtor) where T_Struct : unmanaged;
 
         PMonoString GetMonoString(PMonoDomain pMonoDomain, string str);
-        PMonoString GetMonoString(PMonoDomain pMonoDomain,in ReadOnlySpan<char> str);
+        PMonoString GetMonoString(PMonoDomain pMonoDomain, in ReadOnlySpan<char> str);
         PMonoArray CreateMonoArray(PMonoDomain pMonoDomain, PMonoClass pMonoClass, int count);
 
 

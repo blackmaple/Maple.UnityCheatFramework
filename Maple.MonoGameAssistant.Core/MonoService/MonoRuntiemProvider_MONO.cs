@@ -437,10 +437,9 @@ namespace Maple.MonoGameAssistant.Core
         {
             return this.Runtime.MONO_FIELD_GET_FLAGS.Invoke(pMonoField);
         }
-        public string? GetMonoFieldName(PMonoField pMonoField)
+        public PMonoUtf8Char GetMonoFieldName(PMonoField pMonoField)
         {
-            var pFieldName = this.Runtime.MONO_FIELD_GET_NAME.Invoke(pMonoField);
-            return pFieldName.ToString();
+            return this.Runtime.MONO_FIELD_GET_NAME.Invoke(pMonoField);
         }
         #endregion
 

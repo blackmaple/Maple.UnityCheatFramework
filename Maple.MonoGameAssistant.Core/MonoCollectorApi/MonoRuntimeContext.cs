@@ -291,8 +291,9 @@ namespace Maple.MonoGameAssistant.Core
 
             var isConst = IsConstField(fieldFlags);
 
-            var fieldName = this.RuntiemProvider.GetMonoFieldName(pMonoField);
-
+            var pUtf8FieldName = this.RuntiemProvider.GetMonoFieldName(pMonoField);
+            var fieldName = pUtf8FieldName.GetRawString();
+            var utf8FieldName = pUtf8FieldName.ToArray();
 
             var fieldType = this.RuntiemProvider.GetMonoFieldType(pMonoField);
 
@@ -322,6 +323,7 @@ namespace Maple.MonoGameAssistant.Core
                 Name = fieldName,
                 FieldType = fieldTypeClass,
                 Flags = fieldFlags,
+                Utf8Name = utf8FieldName,
 
                 Offset = fieldOffset,
                 RawOffset = rawOffset,

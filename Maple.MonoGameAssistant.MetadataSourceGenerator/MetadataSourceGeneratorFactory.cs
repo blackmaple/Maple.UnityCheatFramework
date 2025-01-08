@@ -2,10 +2,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Xml;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
@@ -30,9 +26,25 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         public static void InitializeClassMetadata(IncrementalGeneratorInitializationContext context)
         {
+            var path = context.AnalyzerConfigOptionsProvider.Select((p, _) =>
+            {
+                if (p.GlobalOptions.TryGetValue("build_property.projectdir", out var path))
+                {
+                    return path;
+                }
+                return default;
+            });
+
             var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
                 return ctx.GetClassMemberMetadataData(ctx.Attributes[0]);
+
+            });
+
+            classMetadatas = classMetadatas.Combine(path).Select((data, _) =>
+            {
+                data.Left.ProjectPath = data.Right;
+                return data.Left;
             });
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
@@ -52,6 +64,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
+
+
+                MetadataSourceGeneratorJson.WriteJson2File(metadata);
             });
         }
 
@@ -88,62 +103,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
 
 
-
-
-            //var typeName = SyntaxFactory.ParseTypeName("x123");
-            //var name = "x";
-
-
-            //var t =
-            //    SyntaxFactory.PropertyDeclaration(typeName, name)
-            //    .WithModifiers([
-            //        SyntaxFactory.Token( SyntaxKind.PublicKeyword),
-            //        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
-            //        SyntaxFactory.Token(SyntaxKind.StaticKeyword)
-            //    ])
-            //    .WithAccessorList(
-            //        SyntaxFactory.AccessorList([
-            //            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration )
-            //            .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
-            //            SyntaxFactory.AccessorDeclaration( SyntaxKind.SetAccessorDeclaration)
-            //            .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
-            //        ])
-            //    );
-
-            //var propertyDeclaration = SyntaxFactory.PropertyDeclaration(SyntaxFactory.IdentifierName("int"), "xxx")
-            //    .WithLeadingTrivia(BuildSummaryComment(["123", "123", "123", default!]));
-
-
-
-            //static SyntaxTriviaList BuildSummaryComment(params string?[] summaryTexts)
+            //context.RegisterPostInitializationOutput(ctx =>
             //{
-            //    var summaryComment = SyntaxFactory.TriviaList(
-            //    SyntaxFactory.Trivia(
-            //        SyntaxFactory.DocumentationCommentTrivia(
-            //            SyntaxKind.MultiLineDocumentationCommentTrivia,
-            //            [
-            //                SyntaxFactory.XmlNewLine(""),
-            //            SyntaxFactory.XmlMultiLineElement(
-            //                SyntaxFactory.XmlName("summary"),
-            //                [
-            //                    ..EnumXmlTextSyntax(summaryTexts)
-            //                ]),
-            //            SyntaxFactory.XmlText("\r\n"),
-            //            ]
-            //    )));
+            //    // 写入到文件
+            //    var projectDirectory = ctx.AnalyzerConfigOptions.GlobalOptions["build_property.MSBuildProjectDirectory"];
+            //    var filePath = Path.Combine(projectDirectory, "GeneratedData.json");
+            //    File.WriteAllText(filePath, jsonString);
 
-            //    static IEnumerable<XmlTextSyntax> EnumXmlTextSyntax(params string?[] summaryTexts)
-            //    {
-            //        foreach (var summaryText in summaryTexts)
-            //        {
-            //            yield return SyntaxFactory.XmlNewLine("\r\n");
-            //            yield return SyntaxFactory.XmlText(summaryText ?? string.Empty);
+            //});
 
-            //        }
-            //        yield return SyntaxFactory.XmlNewLine("\r\n");
-            //    }
-            //    return summaryComment;
-            //}
 
 
 

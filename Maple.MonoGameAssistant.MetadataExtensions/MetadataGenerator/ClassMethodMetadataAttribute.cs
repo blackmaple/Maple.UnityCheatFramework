@@ -1,10 +1,7 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
+﻿#pragma warning disable IDE0060 // 删除未使用的参数
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
-
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 #if MetadataSourceGenerator
@@ -12,21 +9,19 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif
-        class ClassMethodMetadataAttribute(byte[]? utf8EntryPoint, byte[]? utf8ReturnType) : Attribute
+    class ClassMethodMetadataAttribute : Attribute
     {
-        public byte[]? Utf8EntryPoint { get; } = utf8EntryPoint;
-        public byte[]? Utf8ReturnType { get; } = utf8ReturnType;
+        public ClassMethodMetadataAttribute(byte[]? utf8EntryPoint, byte[]? utf8ReturnType = default)
+        {
 
-        public bool RuntimeMethodAsThis { set; get; } = false;
+        }
 
-        public Type[]? CallConvs { get; set; }
-#if !MetadataSourceGenerator
-    = [typeof(CallConvSuppressGCTransition)];
-#endif
+        public ClassMethodMetadataAttribute(string? entryPoint, string? returnType = default)
+        {
 
-
+        }
+        public bool RuntimeMethodAsThis { set; get; }
+        public Type[]? CallConvs { set; get; }
     }
-
-
 }
-#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
+#pragma warning restore IDE0060 // 删除未使用的参数

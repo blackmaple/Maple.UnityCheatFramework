@@ -1,5 +1,5 @@
 ﻿using System;
-#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
+#pragma warning disable IDE0060 // 删除未使用的参数
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
@@ -10,24 +10,17 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #else
     public
 #endif
-         class ClassPropertyMetadataAttribute(byte[]? utf8FiledName, byte[]? utf8FileType = default) : Attribute
+         class ClassPropertyMetadataAttribute : Attribute
     {
-        public byte[]? Utf8FiledName { get; } = utf8FiledName;
-        public byte[]? Utf8FieldType { get; set; } = utf8FileType;
-    }
+        public ClassPropertyMetadataAttribute(byte[]? utf8FieldName, byte[]? utf8FieldType = default)
+        {
 
+        }
+        public ClassPropertyMetadataAttribute(string? fieldName, string? fieldType = default)
+        {
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-#if MetadataSourceGenerator
-    internal
-#else
-    public
-#endif 
-         class StaticFieldMetadataAttribute(byte[]? utf8FiledName, byte[]? utf8FileType = default)
-        : ClassPropertyMetadataAttribute(utf8FiledName, utf8FileType)
-    {
+        }
 
     }
-
 }
-#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
+#pragma warning restore IDE0060 // 删除未使用的参数

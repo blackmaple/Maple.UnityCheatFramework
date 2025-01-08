@@ -1,4 +1,5 @@
 ﻿using System;
+#pragma warning disable CS9113 // 参数未读。
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
@@ -8,10 +9,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
     internal
 #else
     public
-#endif 
-         class ContextParentMetadataAttribute<T>(bool export = false) : Attribute
+#endif
+         class ContextParentMetadataAttribute<T>(bool build = false) : Attribute
     {
-        public bool ExportJson { get; } = export;
+
     }
 
 }
+#pragma warning restore CS9113 // 参数未读。

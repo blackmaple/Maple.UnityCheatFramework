@@ -34,16 +34,10 @@ namespace Maple.MonoGameAssistant.UILogic
             string containingNamespace)
         {
 
-            foreach (var p in parentClasses)
-            {
-                Debug.WriteLine(p.Pointer.ToString("X8"));
-            }
-            Debug.WriteLine("#####################");
             if (classInfoDTO.IsEnum)
             {
                 var enumMember = CreateEnumDeclarationSyntax(classInfoDTO, fieldInfoDTOs);
                 return BuildNamespaceExpression(containingNamespace, enumMember).NormalizeWhitespace().ToFullString();
-
             }
             else
             {
@@ -65,7 +59,7 @@ namespace Maple.MonoGameAssistant.UILogic
                 foreach (var methods in methodInfoDTOs.GroupBy(p => p.SourceClass))
                 {
                     var sourceClass = parentClasses.Where(p => p.Pointer == methods.Key).FirstOrDefault();
-                    var methodMembers = EnumMethodDeclarationSyntax(classInfoDTO, [.. methods]);
+                    var methodMembers = EnumMethodDeclarationSyntax(classInfoDTO, [.. methods.OrderBy(p => p.IsStatic ? 0 : 1).ThenBy(p => p.Name)]);
                     var ptrMethodMember = NextPtrStructDeclarationSyntax(classInfoDTO, [.. methodMembers], sourceClass);
                     members.Add(ptrMethodMember);
                 }
@@ -134,7 +128,7 @@ namespace Maple.MonoGameAssistant.UILogic
                 foreach (var field in fieldInfoDTOs)
                 {
                     var typeName = SyntaxFactory.ParseTypeName(field.GetFieldTypeDisplayName()!);
-                    var name = field.GetFixedFieldName()!;
+                    var name = field.GetFixedFieldName(true)!;
 
 
                     yield return
@@ -162,11 +156,12 @@ namespace Maple.MonoGameAssistant.UILogic
                 static IEnumerable<SyntaxToken> EnumModifiers(bool isStatic)
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.PublicKeyword);
-                    yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
                     if (isStatic)
                     {
                         yield return SyntaxFactory.Token(SyntaxKind.StaticKeyword);
                     }
+                    yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
+
                 }
             }
 
@@ -177,7 +172,7 @@ namespace Maple.MonoGameAssistant.UILogic
             foreach (var method in methodInfoDTOs)
             {
                 var displayRetTypeName = SyntaxFactory.ParseTypeName(method.ReturnType.GetTypeDisplayName()!);
-                var displayMethodName = method.Name.ToTitle();
+                var displayMethodName = method.GetFixedMethodName(true)!;
 
                 yield return SyntaxFactory.MethodDeclaration(displayRetTypeName, displayMethodName)
                         .WithModifiers([.. EnumModifiers(method)])
@@ -204,7 +199,6 @@ namespace Maple.MonoGameAssistant.UILogic
             static IEnumerable<SyntaxToken> EnumModifiers(MonoMethodInfoDTO methodInfoDTO)
             {
                 yield return SyntaxFactory.Token(SyntaxKind.PublicKeyword);
-                yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
                 if (methodInfoDTO.IsStatic)
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.StaticKeyword);
@@ -213,6 +207,8 @@ namespace Maple.MonoGameAssistant.UILogic
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.AbstractKeyword);
                 }
+                yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
+
             }
 
             static IEnumerable<ParameterSyntax> EnumParameterListSyntax(MonoMethodInfoDTO methodInfoDTO)
@@ -466,13 +462,24 @@ namespace Maple.MonoGameAssistant.UILogic
             return $"Ref_{classInfoDTO.GetFixedClassName()}";
         }
 
+        static string? GetFixedMethodName(this MonoMethodInfoDTO methodInfoDTO, bool title = false)
+        {
+            var name = methodInfoDTO.Name;
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+            name = name.Replace("<", "").Replace(">", "");
+            return title ? name.ToTitle() : name;
+        }
+
         static string ToTitle(this string? name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return string.Empty;
             }
-            name = name.Replace('.', '_');
+            name = name.Replace(".", string.Empty);
             return JsonNamingPolicy.SnakeCaseUpper.ConvertName(name);
             // return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(field);
         }
@@ -583,11 +590,11 @@ namespace Maple.MonoGameAssistant.UILogic
             MonoInterfaceInfoDTO[]? interfaceInfoDTOs)
             {
                 yield return $"{classInfoDTO.GetObjectTypeInfo()} {classInfoDTO.GetClassFullName()}";
-                if (parentClasses is not null)
+                if (parentClasses is not null && parentClasses.Length != 0)
                 {
                     yield return parentClasses.BuildInheritViewContent();
                 }
-                if (interfaceInfoDTOs is not null)
+                if (interfaceInfoDTOs is not null && interfaceInfoDTOs.Length != 0)
                 {
                     yield return interfaceInfoDTOs.BuildInheritViewContent();
                 }
@@ -666,10 +673,12 @@ namespace Maple.MonoGameAssistant.UILogic
                 .WithArgumentList(
                     SyntaxFactory.AttributeArgumentList([
                         SyntaxFactory.AttributeArgument(
-                            ArrayInitializerExpression(fieldInfoDTO.Utf8Name)
+                           // ArrayInitializerExpression(fieldInfoDTO.Utf8Name)
+                           ConstStringExpressionSyntax(fieldInfoDTO.Name)
                         ),
                         SyntaxFactory.AttributeArgument(
-                            ArrayInitializerExpression(fieldInfoDTO.FieldType.Utf8TypeName)
+                         //   ArrayInitializerExpression(fieldInfoDTO.FieldType.Utf8TypeName)
+                            ConstStringExpressionSyntax(fieldInfoDTO.FieldType.TypeName)
                         )
                     ])
                 )
@@ -697,10 +706,12 @@ namespace Maple.MonoGameAssistant.UILogic
                     .WithArgumentList(
                         SyntaxFactory.AttributeArgumentList([
                             SyntaxFactory.AttributeArgument(
-                                ArrayInitializerExpression(methodInfoDTO.Utf8Name)
+                                //ArrayInitializerExpression(methodInfoDTO.Utf8Name)
+                                ConstStringExpressionSyntax(methodInfoDTO.Name)
                             ),
                             SyntaxFactory.AttributeArgument(
-                                ArrayInitializerExpression(methodInfoDTO.ReturnType.Utf8TypeName)
+                                //ArrayInitializerExpression(methodInfoDTO.ReturnType.Utf8TypeName)
+                                ConstStringExpressionSyntax(methodInfoDTO.ReturnType.TypeName)
                             ),
                            attributeArgument
                         ])
@@ -727,10 +738,11 @@ namespace Maple.MonoGameAssistant.UILogic
                     .WithArgumentList(
                         SyntaxFactory.AttributeArgumentList([
                             SyntaxFactory.AttributeArgument(
-                                ArrayInitializerExpression(data.Item.Utf8TypeName)
+                                //ArrayInitializerExpression(data.Item.Utf8TypeName)
+                                ConstStringExpressionSyntax(data.Item.TypeName)
                             ),
                             SyntaxFactory.AttributeArgument(
-                               SyntaxFactory.LiteralExpression( SyntaxKind.NumericLiteralExpression,SyntaxFactory.Literal(data.Index))
+                               SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,SyntaxFactory.Literal(data.Index))
                             )
                         ])
                     )
@@ -753,11 +765,11 @@ namespace Maple.MonoGameAssistant.UILogic
                         ])
                     )
                 )
-                .WithArgumentList(
-                    SyntaxFactory.AttributeArgumentList([
-                        SyntaxFactory.AttributeArgument(SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression, SyntaxFactory.Token( SyntaxKind.TrueKeyword))),
-                    ])
-                )
+                //.WithArgumentList(
+                //    SyntaxFactory.AttributeArgumentList([
+                //        SyntaxFactory.AttributeArgument(SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression, SyntaxFactory.Token( SyntaxKind.TrueKeyword))),
+                //    ])
+                //)
             ]);
         }
         static AttributeListSyntax NewClassModelMetadataAttribute(MonoClassInfoDTO classInfoDTO)
@@ -769,10 +781,10 @@ namespace Maple.MonoGameAssistant.UILogic
                     )
                     .WithArgumentList(
                         SyntaxFactory.AttributeArgumentList([
-                            SyntaxFactory.AttributeArgument(ArrayInitializerExpression(classInfoDTO.Utf8ImageName)),
-                            SyntaxFactory.AttributeArgument(ArrayInitializerExpression(classInfoDTO.Utf8Namespace)),
-                            SyntaxFactory.AttributeArgument(ArrayInitializerExpression(classInfoDTO.Utf8Name)),
-                            SyntaxFactory.AttributeArgument(ArrayInitializerExpression(classInfoDTO.Utf8FullName)),
+                            SyntaxFactory.AttributeArgument(ConstStringExpressionSyntax(classInfoDTO.ImageName)),
+                            SyntaxFactory.AttributeArgument(ConstStringExpressionSyntax(classInfoDTO.Namespace)),
+                            SyntaxFactory.AttributeArgument(ConstStringExpressionSyntax(classInfoDTO.Name)),
+                            SyntaxFactory.AttributeArgument(ConstStringExpressionSyntax(classInfoDTO.TypeName)),
                         ])
                     )
                 ]);
@@ -817,46 +829,25 @@ namespace Maple.MonoGameAssistant.UILogic
 
 
 
-        static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
-        {
-            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
-            //     .WithRankSpecifiers([
-            //         SyntaxFactory.ArrayRankSpecifier([
-            //            SyntaxFactory.OmittedArraySizeExpression()
-            //        ])
-            //     ]);
-            if (items is null)
-            {
-                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
-                //        return SyntaxFactory.EmptyStatement 
-                //       return SyntaxFactory.DefaultConstraint(SyntaxFactory.Token(SyntaxKind.DefaultKeyword));
-                //      return SyntaxFactory.DefaultExpression(arrayType);
-            }
+        //static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
+        //{
+        //    //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
+        //    //     .WithRankSpecifiers([
+        //    //         SyntaxFactory.ArrayRankSpecifier([
+        //    //            SyntaxFactory.OmittedArraySizeExpression()
+        //    //        ])
+        //    //     ]);
+        //    if (items is null)
+        //    {
+        //        return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+        //        //        return SyntaxFactory.EmptyStatement 
+        //        //       return SyntaxFactory.DefaultConstraint(SyntaxFactory.Token(SyntaxKind.DefaultKeyword));
+        //        //      return SyntaxFactory.DefaultExpression(arrayType);
+        //    }
 
-            var txt = items.ArrayDisplay();
-            return SyntaxFactory.ParseExpression(txt);
-        }
-        static ExpressionSyntax ArrayInitializerExpression<T>(T[]?[]? arrItems) where T : struct
-        {
-            //var arrayType = SyntaxFactory.ArrayType(SyntaxFactory.ParseTypeName(typeof(T).FullName!))
-            //  .WithRankSpecifiers([
-            //      SyntaxFactory.ArrayRankSpecifier([
-            //                    SyntaxFactory.OmittedArraySizeExpression()
-            //                ]),
-            //                SyntaxFactory.ArrayRankSpecifier([
-            //                    SyntaxFactory.OmittedArraySizeExpression()
-            //                ])
-            //  ]);
-
-            if (arrItems is null)
-            {
-                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
-
-                //     return SyntaxFactory.DefaultExpression(arrayType);
-            }
-            var txt = $"[{string.Join(", ", arrItems.Select(p => ArrayInitializerExpression(p).NormalizeWhitespace().ToFullString()))}]";
-            return SyntaxFactory.ParseExpression(txt);
-        }
+        //    var txt = items.ArrayDisplay();
+        //    return SyntaxFactory.ParseExpression(txt);
+        //}
 
         static string ArrayDisplay<T>(this IEnumerable<T> arr)
             where T : struct
@@ -864,7 +855,24 @@ namespace Maple.MonoGameAssistant.UILogic
             return $@"[{string.Join(", ", arr)}]";
         }
 
+        static LiteralExpressionSyntax ConstStringExpressionSyntax(string? txt)
+        {
+            if (txt is null)
+            {
+                return SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression);
+            }
+            if (txt.Length == 0)
+            {
 
+                //return SyntaxFactory.MemberAccessExpression(
+                //    SyntaxKind.SimpleMemberAccessExpression,
+                //    SyntaxFactory.IdentifierName(typeof(string).FullName!),
+                //    SyntaxFactory.IdentifierName(nameof(string.Empty))
+                //);
+            }
+            return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(txt));
+
+        }
 
 
         #endregion

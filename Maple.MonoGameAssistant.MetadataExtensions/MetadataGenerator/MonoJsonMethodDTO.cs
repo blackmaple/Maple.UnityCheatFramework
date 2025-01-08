@@ -3,10 +3,12 @@
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
 #if MetadataSourceGenerator
-#pragma warning disable CS9113 // 参数未读。
     internal class MonoJsonMethodDTO(ulong code, byte[]? utf8name, byte[]?[]? utf8Parameters, byte[]? utf8ReturnType)
-#pragma warning restore CS9113 // 参数未读。
     {
+        public ulong Code { get; } = code;
+        public byte[]? Utf8Name { get; } = utf8name;
+        public byte[]?[]? Utf8Parameters { get; } = utf8Parameters;
+        public byte[]? Utf8ReturnType { get; } = utf8ReturnType;
 
     }
 #else
