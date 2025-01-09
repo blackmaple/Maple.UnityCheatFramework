@@ -25,7 +25,7 @@ namespace Maple.MonoGameAssistant.Windows.Service
         IHookTaskScheduler<T_CONTEXT>,
         IMonoTaskScheduler<T_CONTEXT>,
         IUITaskScheduler<T_CONTEXT>
-        where T_CONTEXT : MonoCollectorContext
+        where T_CONTEXT : class, IMonoMetadataCollector
     {
 
         #region props
