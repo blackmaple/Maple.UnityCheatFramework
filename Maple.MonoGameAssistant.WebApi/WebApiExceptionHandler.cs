@@ -1,0 +1,72 @@
+﻿using Maple.MonoGameAssistant.Model;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace Maple.MonoGameAssistant.WebApi
+{
+    public class WebApiExceptionHandler(ILogger<WebApiExceptionHandler> logger) : IExceptionHandler
+    {
+        ILogger Logger { get; } = logger;
+
+        public virtual async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+        {
+            this.Logger.LogError("{ex}", exception);
+            if (exception is MonoCommonException ex)
+            {
+                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetBizError(ex), cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"SystemUnknowError‌:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), cancellationToken).ConfigureAwait(false);
+            }
+            return true;
+        }
+
+        public virtual async ValueTask TryStatusCodeAsync(HttpContext httpContext)
+        {
+            var statusCode = httpContext.Response.StatusCode;
+            if (statusCode >= StatusCodes.Status200OK && statusCode < StatusCodes.Status300MultipleChoices)
+            {
+                return;
+            }
+            this.Logger.LogError("{url}:{code}", httpContext.Request.Path.Value, statusCode);
+
+            httpContext.Response.StatusCode = StatusCodes.Status200OK;
+            switch (statusCode)
+            {
+
+                case StatusCodes.Status401Unauthorized:
+                case StatusCodes.Status403Forbidden:
+                    {
+                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemUnauthorized($"SystemUnauthorized:{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                        break;
+                    }
+                case StatusCodes.Status404NotFound:
+                    {
+                        var settings = httpContext.RequestServices.GetService<IOptions<WebApiPathSettings>>()?.Value;
+                        if (settings is not null && false == settings.ExistsWebApiPath(httpContext.Request.Path))
+                        {
+                            httpContext.Response.Redirect(settings.ErrorPage);
+                        }
+                        else
+                        {
+                            await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes.Status404NotFound)}:{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                        }
+
+                        break;
+                    }
+                case StatusCodes.Status400BadRequest:
+                default:
+                    {
+                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes)}Error({statusCode}):{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                        break;
+                    }
+            }
+        }
+
+    }
+
+}

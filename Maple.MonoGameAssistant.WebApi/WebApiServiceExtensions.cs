@@ -1,9 +1,14 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.IO.Compression;
 
@@ -79,7 +84,7 @@ namespace Maple.MonoGameAssistant.WebApi
             });
             serviceDescriptors.AddCors();
 
-            serviceDescriptors.AddTryCatchService(settings.IndexPage ?? "/index.html", ["/mono", "/game"]);
+            serviceDescriptors.AddDefaultExceptionHandler<WebApiExceptionHandler>(settings.IndexPage ?? "/index.html", ["/mono", "/game"]);
         }
 
 
@@ -88,7 +93,7 @@ namespace Maple.MonoGameAssistant.WebApi
         {
             var app = slimBuilder.Build();
             app.UseResponseCompression();
-            app.UseTryCatchService();
+            app.UseDefaultExceptionHandler<WebApiExceptionHandler>();
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
@@ -293,5 +298,46 @@ namespace Maple.MonoGameAssistant.WebApi
 
         }
 
+        private static IServiceCollection AddDefaultExceptionHandler<T>(this IServiceCollection services, string errorPage, string[] webApiPaths)
+            where T : WebApiExceptionHandler
+        {
+            services.Configure<WebApiPathSettings>(p =>
+            {
+                p.ErrorPage = errorPage;
+                p.ApiPaths = webApiPaths;
+            });
+            services.AddExceptionHandler<T>();
+            return services;
+        }
+        private static void UseDefaultExceptionHandler<T>(this IApplicationBuilder app)
+            where T : WebApiExceptionHandler
+        {
+            app.UseExceptionHandler(p => { });
+            app.UseStatusCodePages(TryStatusCodePages);
+
+            static void TryStatusCodePages(IApplicationBuilder app)
+            {
+                app.Run(async context =>
+                {
+                    var handler = context.RequestServices.GetService<IExceptionHandler>();
+                    if (handler is T exceptionHandler)
+                    {
+                        await exceptionHandler.TryStatusCodeAsync(context).ConfigureAwait(false);
+                    }
+                });
+
+            }
+        }
+        private static MonoResultDTO<T_DTO> GetOk<T_DTO>(this T_DTO dto)
+            where T_DTO : notnull
+        {
+            return new MonoResultDTO<T_DTO>()
+            {
+                CODE = (int)EnumMonoCommonCode.OK,
+                DATA = dto
+            };
+        }
+
     }
+
 }
