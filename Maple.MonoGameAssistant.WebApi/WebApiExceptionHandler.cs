@@ -16,11 +16,11 @@ namespace Maple.MonoGameAssistant.WebApi
             this.Logger.LogError("{ex}", exception);
             if (exception is MonoCommonException ex)
             {
-                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetBizError(ex), cancellationToken).ConfigureAwait(false);
+                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetBizError(ex), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"SystemUnknowError‌:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), cancellationToken).ConfigureAwait(false);
+                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"SystemUnknowError‌:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
             return true;
         }
@@ -41,7 +41,7 @@ namespace Maple.MonoGameAssistant.WebApi
                 case StatusCodes.Status401Unauthorized:
                 case StatusCodes.Status403Forbidden:
                     {
-                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemUnauthorized($"SystemUnauthorized:{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemUnauthorized($"SystemUnauthorized:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO).ConfigureAwait(false);
                         break;
                     }
                 case StatusCodes.Status404NotFound:
@@ -53,7 +53,7 @@ namespace Maple.MonoGameAssistant.WebApi
                         }
                         else
                         {
-                            await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes.Status404NotFound)}:{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                            await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes.Status404NotFound)}:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO).ConfigureAwait(false);
                         }
 
                         break;
@@ -61,7 +61,7 @@ namespace Maple.MonoGameAssistant.WebApi
                 case StatusCodes.Status400BadRequest:
                 default:
                     {
-                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes)}Error({statusCode}):{DateTime.Now:yyyy-MM-dd HH:mm:ss}")).ConfigureAwait(false);
+                        await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes)}Error({statusCode}):{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO).ConfigureAwait(false);
                         break;
                     }
             }

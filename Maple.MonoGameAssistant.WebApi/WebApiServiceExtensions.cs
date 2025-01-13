@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 
 namespace Maple.MonoGameAssistant.WebApi
@@ -298,7 +299,7 @@ namespace Maple.MonoGameAssistant.WebApi
 
         }
 
-        private static IServiceCollection AddDefaultExceptionHandler<T>(this IServiceCollection services, string errorPage, string[] webApiPaths)
+        private static IServiceCollection AddDefaultExceptionHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IServiceCollection services, string errorPage, string[] webApiPaths)
             where T : WebApiExceptionHandler
         {
             services.Configure<WebApiPathSettings>(p =>
@@ -309,7 +310,7 @@ namespace Maple.MonoGameAssistant.WebApi
             services.AddExceptionHandler<T>();
             return services;
         }
-        private static void UseDefaultExceptionHandler<T>(this IApplicationBuilder app)
+        private static void UseDefaultExceptionHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IApplicationBuilder app)
             where T : WebApiExceptionHandler
         {
             app.UseExceptionHandler(p => { });
