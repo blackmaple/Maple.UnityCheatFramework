@@ -1,4 +1,6 @@
-﻿namespace Maple.MonoGameAssistant.WebApi
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Maple.MonoGameAssistant.WebApi
 {
     internal class WebApiPathSettings
     {
