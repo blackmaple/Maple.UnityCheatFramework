@@ -42,7 +42,7 @@
 
             @{
                 var skillInfos = CharacterSkill.SkillInfos;
-                if (skillInfos?.Any() == true)
+                if (skillInfos?.Length > 0)
                 {
                     <MList Dense ThreeLine>
                         @foreach (var item in skillInfos)
