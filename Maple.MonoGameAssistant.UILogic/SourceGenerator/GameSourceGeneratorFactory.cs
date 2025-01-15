@@ -421,7 +421,7 @@ namespace Maple.MonoGameAssistant.UILogic
 
             return SyntaxFactory.EnumDeclaration(SyntaxFactory.Identifier(monoClassInfoDTO.Name!))
                   .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(baseType)]))
-                  .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+                  .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
                   .WithMembers([.. member])
                   .WithLeadingTrivia(BuildSummaryComment(monoClassInfoDTO.GetClassFullName()));
             static IEnumerable<EnumMemberDeclarationSyntax> EnumMember(IOrderedEnumerable<MonoFieldInfoDTO> fieldInfoDTOs)

@@ -4,11 +4,11 @@ using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     [ContextParentMetadata<ContextMetadataCollector>(true)]
-    [ContextMemberMetadata<GameManager>]
+    [ContextMemberMetadata<MetadataModel.Game>]
     //[ContextMemberMetadata<ItemSystem>]
 
 
-    public partial class DemoGameMetadataContext
+    public partial class EsportsMetadataContext
     {
         //public DemoGameMetadataContext()
         //{
@@ -16,6 +16,8 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         //}
 
         //    public sealed override string ApiVersion => throw new NotImplementedException();
+
     }
+
 }
 

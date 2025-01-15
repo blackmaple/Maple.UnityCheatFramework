@@ -26,14 +26,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         public static void InitializeClassMetadata(IncrementalGeneratorInitializationContext context)
         {
-            var path = context.AnalyzerConfigOptionsProvider.Select((p, _) =>
-            {
-                if (p.GlobalOptions.TryGetValue("build_property.projectdir", out var path))
-                {
-                    return path;
-                }
-                return default;
-            });
+            //var path = context.AnalyzerConfigOptionsProvider.Select((p, _) =>
+            //{
+            //    if (p.GlobalOptions.TryGetValue("build_property.projectdir", out var path))
+            //    {
+            //        return path;
+            //    }
+            //    return default;
+            //});
 
             var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
@@ -41,11 +41,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             });
 
-            classMetadatas = classMetadatas.Combine(path).Select((data, _) =>
-            {
-                data.Left.ProjectPath = data.Right;
-                return data.Left;
-            });
+            //classMetadatas = classMetadatas.Combine(path).Select((data, _) =>
+            //{
+            //    data.Left.ProjectPath = data.Right;
+            //    return data.Left;
+            //});
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
@@ -66,7 +66,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.g.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
 
-                MetadataSourceGeneratorJson.WriteJson2File(metadata);
+               // MetadataSourceGeneratorJson.WriteJson2File(metadata);
             });
         }
 
