@@ -83,7 +83,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <returns>class GameMain.ClubSystem.ClubAthleteData</returns>
 
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("athleteData", "GameMain.ClubSystem.ClubAthleteData")]
-            public partial ClubAthleteData.Ptr_ClubAthleteData ATHLETE_DATA { get; }
+            public partial ClubAthleteData.Ptr_ClubAthleteData C_ATHLETE_DATA { get; }
 
 
             /// <summary>

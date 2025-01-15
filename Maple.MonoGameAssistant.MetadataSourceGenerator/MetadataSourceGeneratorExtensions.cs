@@ -678,6 +678,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
         }
+
         public static PropertyDeclarationSyntax BuildPartialPropertyMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
         {
 
@@ -704,9 +705,23 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.PublicKeyword);
                 }
+                else if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Internal)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.InternalKeyword);
+                }
+                else if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Private)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.PrivateKeyword);
+                }
+
+
                 if (classProperty.PropertySymbol.IsStatic)
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.StaticKeyword);
+                }
+                if (classProperty.PropertySymbol.IsReadOnly)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
                 }
                 if (classProperty.PropertySymbol.IsPartialDefinition)
                 {
@@ -843,7 +858,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                 )
                             )
                         );
-                         
+
                         yield return setAccessorBody;
 
                     }

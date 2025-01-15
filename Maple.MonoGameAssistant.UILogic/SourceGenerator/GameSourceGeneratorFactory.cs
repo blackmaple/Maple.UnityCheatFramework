@@ -405,7 +405,7 @@ namespace Maple.MonoGameAssistant.UILogic
         {
             var ptrStructName = monoClassInfoDTO.CreatePtrStructName();
             var ptrStruct = SyntaxFactory.StructDeclaration(ptrStructName)
-            .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.UnsafeKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+            .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
             .WithMembers([.. members])
             .WithLeadingTrivia((classInfoDTO ?? monoClassInfoDTO).GetClassDescription(default, default));
 

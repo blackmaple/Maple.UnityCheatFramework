@@ -322,7 +322,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <returns>class GameMain.ClubSystem.Club</returns>
 
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("<ClubPlayer>k__BackingField", "GameMain.ClubSystem.Club")]
-            public partial Maple.MonoGameAssistant.MetadataDemo.MetadataModel.Club.Ptr_Club CLUB_PLAYER { get; }
+            public partial Maple.MonoGameAssistant.MetadataDemo.MetadataModel.Club.Ptr_Club C_CLUB_PLAYER { get; }
 
 
             /// <summary>
