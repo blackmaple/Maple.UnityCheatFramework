@@ -32,7 +32,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <returns>class GameMain.Main</returns>
 
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("inst", "GameMain.Main")]
-            public static partial nint C_INST { get; }
+            public static partial Main.Ptr_Main C_INST { get; }
 
 
             /// <summary>
