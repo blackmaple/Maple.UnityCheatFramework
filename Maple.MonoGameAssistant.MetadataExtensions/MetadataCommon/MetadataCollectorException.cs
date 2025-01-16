@@ -1,4 +1,6 @@
-﻿using Maple.MonoGameAssistant.Model;
+﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
+using Maple.MonoGameAssistant.Model;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
