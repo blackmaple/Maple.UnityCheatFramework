@@ -29,7 +29,14 @@ namespace Maple.MonoGameAssistant.Windows.HotKey.ThreadMessage
                     {
                         return;
                     }
-                    await MsgNotifyService.NotifyAsync(dto).ConfigureAwait(false);
+                    try
+                    {
+                        await MsgNotifyService.NotifyAsync(dto).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Logger.Error(ex);
+                    }
                 }
             }
         }
