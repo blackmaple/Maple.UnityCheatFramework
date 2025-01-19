@@ -70,8 +70,12 @@ namespace Maple.MonoGameAssistant.Logger
             return time;
         }
 
-        internal static string GetLogFileFullName(string filePath, string category, in DateTime time)
+        internal static string GetLogFileFullName(string filePath, string category, in DateTime time, bool err = false)
         {
+            if (err)
+            {
+                return Path.Combine(filePath, $"{time:yyyyMMdd_HH}_{category}_{Environment.ProcessId:X4}.err");
+            }
             return Path.Combine(filePath, $"{time:yyyyMMdd_HH}_{category}_{Environment.ProcessId:X4}.log");
         }
 
