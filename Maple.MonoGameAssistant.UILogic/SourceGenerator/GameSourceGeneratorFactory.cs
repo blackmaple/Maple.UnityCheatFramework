@@ -264,12 +264,13 @@ namespace Maple.MonoGameAssistant.UILogic
                     var baseType = SyntaxFactory.ParseTypeName(field.GetFieldTypeDisplayName()!);
                     var name = field.GetFixedFieldName()!;
                     var variableDeclaration = SyntaxFactory.VariableDeclaration(baseType, [SyntaxFactory.VariableDeclarator(name)]);
+                     
 
                     yield return SyntaxFactory.FieldDeclaration(variableDeclaration)
                         .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
                         .WithAttributeLists([
                             NewAttribute<FieldOffsetAttribute>($"0x{field.Offset:X}")
-                        ]);
+                        ]).WithLeadingTrivia(field.GetStructFieldDescription());
 
 
                 }
@@ -613,7 +614,13 @@ namespace Maple.MonoGameAssistant.UILogic
                 default,
                $"{fieldInfoDTO.FieldType.GetObjectTypeInfo()} {fieldInfoDTO.FieldType.TypeName}");
         }
-
+        static SyntaxTriviaList GetStructFieldDescription(this MonoFieldInfoDTO fieldInfoDTO)
+        {
+            return BuildSummaryComment([
+                  $@"0x{fieldInfoDTO.Offset:X} {fieldInfoDTO.FieldType.TypeName} {fieldInfoDTO.Name}",
+                  fieldInfoDTO.FieldType.GetFieldFullName(),
+                ]);
+        }
         static string GetMethodFullName(this MonoMethodInfoDTO methodInfoDTO)
         {
             var staticName = methodInfoDTO.IsStatic ? "static" : string.Empty;
