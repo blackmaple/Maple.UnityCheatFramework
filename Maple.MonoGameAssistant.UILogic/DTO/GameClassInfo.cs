@@ -146,7 +146,7 @@ public sealed class GameClassInfo
     }
 
 
-    public string ShowCode()
+    public string ShowCode(string containingNamespace)
     {
         var codes =
            MonoCollectorGeneratorV0.OutputStringBuilder(
@@ -155,7 +155,23 @@ public sealed class GameClassInfo
            this.MethodInfos?.Select(p => p.RawMethodInfo).ToArray() ?? [],
            this.ParentClassInfos?.Select(p => p.RawClassInfo).ToArray() ?? [],
            this.InterfaceInfos?.Select(p => p.RawInterfaceInfo).ToArray() ?? []);
-        return codes.ToString();
+
+
+        return @$"
+using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace {containingNamespace}
+{{
+    
+    {codes}
+
+}}";
     }
 
     public string ShowCodeV2(string containingNamespace)
@@ -168,17 +184,17 @@ public sealed class GameClassInfo
            this.ParentClassInfos?.Select(p => p.RawClassInfo).ToArray() ?? [],
            this.InterfaceInfos?.Select(p => p.RawInterfaceInfo).ToArray() ?? [],
            containingNamespace);
- 
- 
+
+
     }
     public Task<string> ShowCodeV2Async(string containingNamespace)
     {
-        return Task.Run(()=> this.ShowCodeV2(containingNamespace));
+        return Task.Run(() => this.ShowCodeV2(containingNamespace));
     }
 
-    public Task<string> ShowCodeAsync()
+    public Task<string> ShowCodeAsync(string containingNamespace)
     {
-        return Task.Run(this.ShowCode);
+        return Task.Run(() => this.ShowCode(containingNamespace));
     }
 
 }

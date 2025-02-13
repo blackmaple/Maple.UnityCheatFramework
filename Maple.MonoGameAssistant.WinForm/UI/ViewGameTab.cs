@@ -143,8 +143,21 @@ namespace Maple.MonoGameAssistant.WinForm.UI
         }
         private async Task OpenPageCodeViewAsync(GameClassInfo gameClassInfo)
         {
+            string codeView;
 
-            string codeView = await gameClassInfo.ShowCodeV2Async(this.TxtNamespace.EditValue as string ?? "Maple.Game");
+            var dialogResult = XtraMessageBox.Show(this, "Selected V2", "Selected V2?", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                codeView = await gameClassInfo.ShowCodeV2Async(this.TxtNamespace.EditValue as string ?? "Maple.Game");
+            }
+            else
+            {
+                codeView = await gameClassInfo.ShowCodeAsync(this.TxtNamespace.EditValue as string ?? "Maple.Game");
+
+            }
+
+
 
             using var pageCodeEditor = this.UIService.GetForm<PageCodeEditor>();
             pageCodeEditor.SetCodeView(codeView);
