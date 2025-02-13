@@ -1,4 +1,5 @@
 ﻿using Maple.MonoGameAssistant.Model;
+using System.Text.Json.Serialization;
 
 namespace Maple.MonoGameAssistant.GameDTO
 {
@@ -20,5 +21,7 @@ namespace Maple.MonoGameAssistant.GameDTO
 
         public bool CanWrite { set; get; }
 
+        [JsonIgnore]
+        public bool Loading { set; get; }
     }
 }
