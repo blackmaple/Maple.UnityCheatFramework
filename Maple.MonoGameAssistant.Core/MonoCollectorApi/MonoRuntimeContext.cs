@@ -603,7 +603,7 @@ namespace Maple.MonoGameAssistant.Core
         {
             return this.GetMonoClassInfoDTO(pMonoType, new MonoReturnTypeDTO());
         }
-        private MonoMethodInfoDTO GetMonoMethodInfoDTO(PMonoClass pMonoClass, PMonoMethod pMonoMethod, bool fromParent)
+        public MonoMethodInfoDTO GetMonoMethodInfoDTO(PMonoClass pMonoClass, PMonoMethod pMonoMethod, bool fromParent)
         {
             var methodName = this.RuntiemProvider.GetMonoMethodName(pMonoMethod);
 
@@ -709,6 +709,38 @@ namespace Maple.MonoGameAssistant.Core
 
 
         }
+
+
+        public IEnumerable<MonoMethodInfoDTO> EnumMonoMethods(PMonoClass pMonoClass, bool valueType, bool skipSysObject)
+        {
+            //my self
+            var listMethod = this.RuntiemProvider.EnumMonoMethods(pMonoClass);
+            foreach (var pMonoMethod in listMethod)
+            {
+                yield return GetMonoMethodInfoDTO(pMonoClass, pMonoMethod, false);
+            }
+
+            //parent 跳过系统默认基类
+            //class : System.Object
+            //struct : System.ValueType : System.Object
+            //struct 不枚举
+            if (false == valueType)
+            {
+                var parentClasses = this.RuntiemProvider.EnumMonoParentClasses(pMonoClass).SkipLast(skipSysObject ? 1 : 0);
+                foreach (var parentClass in parentClasses)
+                {
+                    var parentListMethod = this.RuntiemProvider.EnumMonoMethods(parentClass);
+                    foreach (var pMonoMethod in parentListMethod)
+                    {
+                        yield return GetMonoMethodInfoDTO(parentClass, pMonoMethod, true);
+                    }
+                }
+            }
+
+
+
+        }
+
 
         public IEnumerable<MonoFieldInfoDTO> EnumMonoFields(PMonoClass pMonoClass, EnumMonoFieldOptions fieldOptions = EnumMonoFieldOptions.EnumAndConstAndStatic)
         {
