@@ -15,7 +15,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.1.0-rc</Version>
+		<Version>1.2.0-rc</Version>
 
 	</PropertyGroup>
 
@@ -30,8 +30,8 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.2" />
 	</ItemGroup>
 </Project>
