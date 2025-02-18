@@ -10,7 +10,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Opaque
         [MarshalAs(UnmanagedType.SysInt)]
         readonly nint _ptr = ptr;
 
-        public nint Ptr => throw new NotImplementedException();
+        public nint Ptr => _ptr;
 
         public static implicit operator JFIELDID(nint val) => new(val);
         public static implicit operator nint(JFIELDID val) => val._ptr;

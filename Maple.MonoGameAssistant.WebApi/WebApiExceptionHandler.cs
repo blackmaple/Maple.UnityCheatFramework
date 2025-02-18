@@ -13,15 +13,17 @@ namespace Maple.MonoGameAssistant.WebApi
 
         public virtual async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            this.Logger.LogError("{ex}", exception);
+            Logger.LogError("{ex}", exception);
+            httpContext.Response.StatusCode = StatusCodes.Status200OK;
             if (exception is MonoCommonException ex)
             {
-                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetBizError(ex), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
+                  await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetBizError(ex), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"SystemUnknowError‌:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
+                  await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{exception.GetType().Name}‌:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
+
             return true;
         }
 
