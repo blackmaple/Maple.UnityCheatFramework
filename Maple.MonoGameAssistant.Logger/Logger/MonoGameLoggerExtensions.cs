@@ -74,7 +74,7 @@ namespace Maple.MonoGameAssistant.Logger
         {
             if (err)
             {
-                return Path.Combine(filePath, $"{time:yyyyMMdd_HH}_{category}_{Environment.ProcessId:X4}.err");
+                return Path.Combine(filePath, $"{time:yyyyMMdd_HH}_{category}_{Environment.ProcessId:X4}.err.log");
             }
             return Path.Combine(filePath, $"{time:yyyyMMdd_HH}_{category}_{Environment.ProcessId:X4}.log");
         }

@@ -43,7 +43,7 @@
 		<ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Logger\Maple.MonoGameAssistant.Logger.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.UnityCore\Maple.MonoGameAssistant.UnityCore.csproj" />
-		<ProjectReference Include="..\Maple.MonoGameAssistant.WebApi\Maple.MonoGameAssistant.WebApi.csproj" />
+		<ProjectReference Include="..\Maple.MonoGameAssistant.WebApiLauncher\Maple.MonoGameAssistant.WebApiLauncher.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

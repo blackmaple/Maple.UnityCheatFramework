@@ -1,4 +1,4 @@
-﻿using Maple.MonoGameAssistant.WebApi;
+﻿using Maple.MonoGameAssistant.WebApiLauncher;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Maple.MonoGameAssistant.Windows.Service;
@@ -8,7 +8,7 @@ namespace Maple.MonoGameAssistant.MonoDataCollector
     {
         internal static async Task RunWebApiServiceAsync(int millisecondsDelay = 8000)
         {
-            var webapp = WebApiServiceExtensions.AsRunWebApiService(p =>
+            var webapp = LauncherServiceExtensions.AsRunWebApiService(p =>
               {
                   p.GameName = "MonoDataCollector";
                   p.QQ = "0";
