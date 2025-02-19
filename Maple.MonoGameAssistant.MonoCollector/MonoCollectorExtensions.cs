@@ -327,7 +327,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
         {
             Unsafe.SkipInit(out collectorClassInfo);
             if (@this.RuntiemProvider.TryGetMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out var pMonoClass)
-                || @this.TryGetFirstMonoClass(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out pMonoClass))
+                || @this.TryGetFirstMonoClass_CE(imageInfoDTO.Pointer, classSettings.Utf8Namespace, classSettings.Utf8ClassName, out pMonoClass))
             {
                 collectorClassInfo = @this.GetMonoCollectorClassInfo(pMonoClass);
                 return true;
@@ -339,7 +339,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
         }
 
         //参考CE直接遍历
-        static bool TryGetFirstMonoClass(this MonoRuntimeContext @this, PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
+        static bool TryGetFirstMonoClass_CE(this MonoRuntimeContext @this, PMonoImage pMonoImage, ReadOnlySpan<byte> utf8Namespace, ReadOnlySpan<byte> utf8ClassName, out PMonoClass pMonoClass)
         {
             Unsafe.SkipInit(out pMonoClass);
             foreach (var ptrClass in @this.RuntiemProvider.EnumMonoClasses(pMonoImage))
