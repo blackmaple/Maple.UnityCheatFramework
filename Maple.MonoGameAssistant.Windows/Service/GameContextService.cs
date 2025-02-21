@@ -59,7 +59,7 @@ namespace Maple.MonoGameAssistant.Windows.Service
                 {
                     await LoadGameServiceAsync().ConfigureAwait(false);
 
-                    HookWindowMessage();
+           //         HookWindowMessage();
 
                     await LoadGameDataAsync().ConfigureAwait(false);
 
