@@ -1,5 +1,6 @@
 ﻿using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
 namespace Maple.MonoGameAssistant.GameCore
@@ -30,7 +31,7 @@ namespace Maple.MonoGameAssistant.GameCore
             using var httpMsg = await this.Client.SendAsync(reqMsg).ConfigureAwait(false);
             if (false == httpMsg.IsSuccessStatusCode)
             {
-                GameException.Throw($"Http StatusCode Error:{httpMsg.StatusCode}");
+                return GameException.Throw<MonoResultDTO<T_RESPONSE>>($"Http StatusCode Error:{httpMsg.StatusCode}");
             }
 
 
@@ -327,5 +328,16 @@ namespace Maple.MonoGameAssistant.GameCore
         }
         #endregion
 
+    }
+
+
+    public static class GameHttpClientExtensions
+    {
+        public static IServiceCollection AddNamedPipeHttpClientService(this IServiceCollection services, string name)
+        {
+            services.AddSingleton<NamedPipeHttpClientFactory, NamedPipeHttpClientFactory>();
+            services.AddScoped(p => new GameHttpClientService(p.GetRequiredService<NamedPipeHttpClientFactory>().CreateClient(name)));
+            return services;
+        }
     }
 }

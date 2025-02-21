@@ -27,6 +27,9 @@ namespace Maple.MonoGameAssistant.WebApiLauncher
                 MonoDataCollector = true,
                 NamedPipe = true,
                 Http = false,
+                GamePath = slimBuilder.Environment.ContentRootPath,
+                WebRootPath = slimBuilder.Environment.WebRootPath
+
             };
             actionGameSettings(settings);
             slimBuilder.Services.AddSingleton(settings);
@@ -48,6 +51,7 @@ namespace Maple.MonoGameAssistant.WebApiLauncher
         {
             if (settings.Http && settings.TryGetRandomPort(out var port))
             {
+                //settings.Port = port;
                 slimBuilder.WebHost.UseKestrel(p => p.ListenAnyIP(port));
             }
         }
@@ -274,7 +278,7 @@ namespace Maple.MonoGameAssistant.WebApiLauncher
         private static IServiceCollection AddDefaultExceptionHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IServiceCollection services)
             where T : LauncherExceptionHandler
         {
-          
+
             services.AddExceptionHandler<T>();
             return services;
         }
