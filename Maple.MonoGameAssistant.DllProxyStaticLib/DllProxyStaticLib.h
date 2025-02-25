@@ -790,7 +790,14 @@ wchar_t FullPath[512] = { 0 };
 HMODULE WINAPI LoadOriginalModule(HINSTANCE hInstance);
 void WINAPI LoadFunctions(HMODULE hOriginal);
 void WINAPI LoadProxy(HINSTANCE hInstance);
-extern "C" BOOL WINAPI InitDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
+BOOL WINAPI InitDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
+int WINAPI  LoadPlugin();
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
+BOOL WINAPI CheckMainWindow(int count = 15);
+void WINAPI InitializePlugin();
+DWORD WINAPI ThreadProc(LPVOID lpParam);
+BOOL WINAPI DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved);
+
 #pragma endregion
 
 #pragma region Exports

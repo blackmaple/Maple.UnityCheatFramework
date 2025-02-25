@@ -331,13 +331,4 @@ namespace Maple.MonoGameAssistant.GameCore
     }
 
 
-    public static class GameHttpClientExtensions
-    {
-        public static IServiceCollection AddNamedPipeHttpClientService(this IServiceCollection services, string name)
-        {
-            services.AddSingleton<NamedPipeHttpClientFactory, NamedPipeHttpClientFactory>();
-            services.AddScoped(p => new GameHttpClientService(p.GetRequiredService<NamedPipeHttpClientFactory>().CreateClient(name)));
-            return services;
-        }
-    }
 }

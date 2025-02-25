@@ -11,7 +11,7 @@
 		<IsAotCompatible>true</IsAotCompatible>
 
 		<OutputType>Library</OutputType>
-		<AssemblyName>winhttp</AssemblyName>
+		<AssemblyName>maple</AssemblyName>
 
 
 		<DebuggerSupport>false</DebuggerSupport>
@@ -31,19 +31,19 @@
 
 	</PropertyGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<NativeLibrary Include="..\x64\Release\Maple.MonoGameAssistant.DllProxyStaticLib.lib" />
 		<LinkerArg Include="/LTCG" />
 		<LinkerArg Include="/MAP" />
 
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<ItemGroup>
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Logger\Maple.MonoGameAssistant.Logger.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.UnityCore\Maple.MonoGameAssistant.UnityCore.csproj" />
-		<ProjectReference Include="..\Maple.MonoGameAssistant.WebApiLauncher\Maple.MonoGameAssistant.WebApiLauncher.csproj" />
+		<ProjectReference Include="..\Maple.MonoGameAssistant.WebApi\Maple.MonoGameAssistant.WebApi.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

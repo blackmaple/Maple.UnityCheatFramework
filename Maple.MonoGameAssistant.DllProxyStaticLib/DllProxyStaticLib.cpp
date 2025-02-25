@@ -21,14 +21,81 @@ void WINAPI LoadProxy(HINSTANCE hInstance)
 {
 	LoadFunctions(LoadOriginalModule(hInstance));
 }
+
 BOOL WINAPI InitDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
 		LoadProxy(hModule);
+		InitializePlugin();
 	}
 	return TRUE;
 }
+int WINAPI LoadPlugin()
+{
+	HMODULE hModule = LoadLibrary(L"Maple.dll");
+	if (hModule == NULL)
+	{
+		return -1;
+	}
+	typedef int (*MapleAPI)();
+	MapleAPI func = (MapleAPI)GetProcAddress(hModule, "Maple");
+	if (func == nullptr)
+	{
+		return -2;
+	}
+	return func();
+}
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+	DWORD processId;
+	GetWindowThreadProcessId(hwnd, &processId);
+	if (processId == GetCurrentProcessId()) {
+		if (GetWindow(hwnd, GW_OWNER) == NULL && IsWindowVisible(hwnd)) {
+			HWND* mainWindowHandle = reinterpret_cast<HWND*>(lParam);
+			*mainWindowHandle = hwnd;
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+BOOL WINAPI CheckMainWindow(int count)
+{
+	HWND mainWindowHandle = NULL;
+	while (count--)
+	{
+		Sleep(1000);
+		EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&mainWindowHandle));
+		if (mainWindowHandle != NULL)
+		{
+			return TRUE;
+		}
+
+	}
+	return FALSE;
+}
+void WINAPI InitializePlugin()
+{
+	HANDLE hThread = CreateThread(NULL, 0, ThreadProc, NULL, 0, NULL);
+	if (hThread) {
+		CloseHandle(hThread);
+	}
+
+}
+DWORD WINAPI ThreadProc(LPVOID lpParam)
+{
+	if (CheckMainWindow())
+	{
+		LoadPlugin();
+	}
+
+	return 0;
+}
+
+BOOL WINAPI DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+{
+	return InitDllMain(hModule, ul_reason_for_call, lpReserved);
+}
+
 
 void WINAPI Export_CloseDriver() { ApiAddresses[Index_CloseDriver](); }
 void WINAPI Export_DefDriverProc() { ApiAddresses[Index_DefDriverProc](); }

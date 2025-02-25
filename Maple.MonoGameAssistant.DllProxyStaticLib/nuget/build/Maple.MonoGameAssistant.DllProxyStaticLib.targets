@@ -1,7 +1,0 @@
-<Project>
-	<ItemGroup>
-		<NativeLibrary Include="$(MSBuildThisFileDirectory)\$(PlatformTarget)\Maple.MonoGameAssistant.DllProxyStaticLib.lib" />
-		<LinkerArg Include="/LTCG" />
-		<LinkerArg Include="/MAP" />
-	</ItemGroup>
-</Project>

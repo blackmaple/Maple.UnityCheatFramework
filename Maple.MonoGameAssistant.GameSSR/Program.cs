@@ -27,12 +27,12 @@ builder.Services.AddMasaBlazor(p =>
     });
 });
 
-//builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://localhost:18197/"))
-//    .ConfigurePrimaryHttpMessageHandler(p => new HttpClientHandler() { AutomaticDecompression = System.Net.DecompressionMethods.Brotli });
+builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://localhost:18197/"))
+    .ConfigurePrimaryHttpMessageHandler(p => new HttpClientHandler() { AutomaticDecompression = System.Net.DecompressionMethods.Brotli });
 
 
 
-builder.Services.AddNamedPipeHttpClientService(MonoJsonExtensions.GetPipeName(System.Diagnostics.Process.GetProcessesByName("Yaoling")[0]));
+//builder.Services.AddNamedPipeHttpClientService(MonoJsonExtensions.GetPipeName(System.Diagnostics.Process.GetProcessesByName("Yaoling")[0]));
 builder.Services.AddScoped<GameCoreService>();
 
 var app = builder.Build();
