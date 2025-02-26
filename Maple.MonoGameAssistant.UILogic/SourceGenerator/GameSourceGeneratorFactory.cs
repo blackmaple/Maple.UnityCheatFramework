@@ -264,7 +264,7 @@ namespace Maple.MonoGameAssistant.UILogic
                     var baseType = SyntaxFactory.ParseTypeName(field.GetFieldTypeDisplayName()!);
                     var name = field.GetFixedFieldName()!;
                     var variableDeclaration = SyntaxFactory.VariableDeclaration(baseType, [SyntaxFactory.VariableDeclarator(name)]);
-                     
+
 
                     yield return SyntaxFactory.FieldDeclaration(variableDeclaration)
                         .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
@@ -507,22 +507,35 @@ namespace Maple.MonoGameAssistant.UILogic
             return title ? field.ToTitle() : field;
             static string? GetFixedFieldNameImp(MonoFieldInfoDTO fieldInfoDTO)
             {
-                var fieldName = fieldInfoDTO.Name;
-                if (string.IsNullOrEmpty(fieldName))
+                var backingFieldName = fieldInfoDTO.Name;
+                if (string.IsNullOrEmpty(backingFieldName))
                 {
-                    return fieldName;
+                    return backingFieldName;
                 }
-                var index0 = fieldName.IndexOf('<');
-                if (index0 == -1)
+                // Find the indexes of the special characters
+                int middleIndex = backingFieldName.IndexOf('<');
+                int endIndex = backingFieldName.IndexOf(">k__BackingField", StringComparison.OrdinalIgnoreCase);
+
+                // Check if the string contains the specific pattern
+                if (middleIndex != -1 && endIndex != -1)
                 {
-                    return fieldName;
+                    // Extract parts based on the indexes
+                    string firstPart = backingFieldName[..middleIndex];
+                    string secondPart = backingFieldName.Substring(middleIndex + 1, endIndex - middleIndex - 1);
+
+                    // If the first part is empty, return only the second part
+                    if (string.IsNullOrEmpty(firstPart) || firstPart == "_")
+                    {
+                        return secondPart;
+                    }
+
+                    // Otherwise, return the combined property name
+                    return $"{secondPart}_{firstPart}";
                 }
-                var index1 = fieldName.IndexOf(">k__BackingField");
-                if (index1 == -1)
-                {
-                    return fieldName;
-                }
-                return fieldName.Substring(index0 + 1, index1 - 1);
+
+                // If no match, return the original string or handle accordingly
+                return backingFieldName;
+
             }
         }
         static string GetObjectTypeInfo(this MonoClassInfoDTO classInfoDTO)
