@@ -15,8 +15,8 @@
     <files>
 		<file src="LICENSE" target="LICENSE" />
 		<file src="README.md" target="README.md" />
-		<file src=".\x64\**" target="build\x64\" />
-		<file src=".\x86\**" target="build\x86\" />
+		<file src=".\win-x64\**" target="build\x64\" />
+		<file src=".\win-x86\**" target="build\x86\" />
 		<file src=".\ref\**" target="build\" />
 		<file src=".\build\Maple.MonoGameAssistant.DllProxy.targets" target="build\Maple.MonoGameAssistant.DllProxy.targets" />
     </files>
