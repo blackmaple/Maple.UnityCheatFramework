@@ -20,11 +20,13 @@ namespace Maple.MonoGameAssistant.Core
 
         //public T_REF AsRef<T_REF>() where T_REF : unmanaged
         //    => _ptr.AsRefStruct<T_REF>();
+        [Obsolete("Mono Only,IL2CPP:GetMonoClass")]
         public ref REF_MONO_VT AsRef()
             => ref _ptr.AsRefStruct<REF_MONO_VT>();
 
     }
 
+    [Obsolete("Mono Only,IL2CPP:GetMonoClass")]
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct REF_MONO_VT
     {

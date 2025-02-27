@@ -43,6 +43,8 @@ namespace Maple.MonoGameAssistant.Core
             return Unsafe.As<T_STRUCT, PMonoObject>(ref data);
         }
 
+
+        [Obsolete("Mono Only,IL2CPP:GetMonoClass")]
         public PMonoClass MonoClass => _ptr.AsRefStruct<REF_MONO_OBJECT>().MonoClass;
 
 

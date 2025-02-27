@@ -104,7 +104,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
         public T_MonoObject IsFrom<T_MonoObject>(PMonoObject pMonoObject)
         where T_MonoObject : unmanaged
         {
-            var pMonoClass = pMonoObject.MonoClass;
+            var pMonoClass = this.RuntimeContext.RuntiemProvider.GetMonoClass(pMonoObject);// pMonoObject.MonoClass;
             if (pMonoClass == ClassInfo.ClassInfoDTO.Pointer)
             {
                 return pMonoObject.To<T_MonoObject>();

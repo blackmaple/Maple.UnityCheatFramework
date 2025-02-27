@@ -4,6 +4,7 @@ using System;
 using System.Buffers;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -258,6 +259,12 @@ namespace Maple.MonoGameAssistant.Core
         public PMonoType GetMonoClassType(PMonoClass pMonoClass)
         {
             return this.Runtime.MONO_CLASS_GET_TYPE.Invoke(pMonoClass);
+        }
+
+        public PMonoClass GetMonoClass(PMonoObject pMonoObject)
+        {
+            return this.Runtime.MONO_OBJECT_GET_CLASS.Invoke(pMonoObject);
+
         }
         #endregion
 
@@ -627,6 +634,9 @@ namespace Maple.MonoGameAssistant.Core
         {
             this.Runtime.MONO_GCHANDLE_FREE.Invoke(gchandle);
         }
+
+
+
         #endregion
 
 

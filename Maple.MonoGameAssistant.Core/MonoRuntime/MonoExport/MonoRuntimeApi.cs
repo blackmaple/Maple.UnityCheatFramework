@@ -156,6 +156,8 @@ namespace Maple.MonoGameAssistant.Core
         internal PIL2CPP_OBJECT_NEW IL2CPP_OBJECT_NEW;
 
         internal PIL2CPP_RESOLVE_ICALL IL2CPP_RESOLVE_ICALL;
+
+        internal PMONO_OBJECT_GET_CLASS MONO_OBJECT_GET_CLASS;
         #endregion
 
         private partial bool LoadMonoRuntime_MONO_Imp(nint hModule)
@@ -281,6 +283,8 @@ namespace Maple.MonoGameAssistant.Core
 
             init &= TryCreate(hModule, PMONO_GCHANDLE_FREE.mono, out MONO_GCHANDLE_FREE);
 
+
+            init &= TryCreate(hModule, PMONO_OBJECT_GET_CLASS.mono, out MONO_OBJECT_GET_CLASS);
             return init;
         }
 
@@ -388,6 +392,8 @@ namespace Maple.MonoGameAssistant.Core
             init &= TryCreate(hModule, PMONO_GCHANDLE_GET_TARGET.il2cpp, out MONO_GCHANDLE_GET_TARGET);
 
             init &= TryCreate(hModule, PMONO_GCHANDLE_FREE.il2cpp, out MONO_GCHANDLE_FREE);
+
+            init &= TryCreate(hModule, PMONO_OBJECT_GET_CLASS.il2cpp, out MONO_OBJECT_GET_CLASS);
 
             return init;
         }

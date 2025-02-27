@@ -524,7 +524,7 @@ namespace Maple.MonoGameAssistant.UILogic
                     string secondPart = backingFieldName.Substring(middleIndex + 1, endIndex - middleIndex - 1);
 
                     // If the first part is empty, return only the second part
-                    if (string.IsNullOrEmpty(firstPart) || firstPart == "_")
+                    if (string.IsNullOrEmpty(firstPart))
                     {
                         return secondPart;
                     }

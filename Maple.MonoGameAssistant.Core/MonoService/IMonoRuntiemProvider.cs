@@ -54,7 +54,7 @@ namespace Maple.MonoGameAssistant.Core
         PMonoUtf8Char GetMonoClassName(PMonoClass pMonoClass);
         PMonoUtf8Char GetMonoClassNamespace(PMonoClass pMonoClass);
         PMonoType GetMonoClassType(PMonoClass pMonoClass);
-
+        PMonoClass GetMonoClass(PMonoObject pMonoObject);
         #endregion
 
         #region MonoMethods
