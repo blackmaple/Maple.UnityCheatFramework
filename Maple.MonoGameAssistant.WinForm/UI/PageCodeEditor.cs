@@ -26,7 +26,7 @@ namespace Maple.MonoGameAssistant.WinForm
         public void SetCodeView(string code)
         {
             this.CodeEditor.Text= code;
-            this.CodeEditor.UpdateTextHighlight();
+   //         this.CodeEditor.UpdateTextHighlight();
         }
 
 
