@@ -41,6 +41,7 @@
             BarMgr = new DevExpress.XtraBars.BarManager(components);
             BarTop = new DevExpress.XtraBars.Bar();
             BtnLoadProcess = new DevExpress.XtraBars.BarButtonItem();
+            BtnShowJsonCode = new DevExpress.XtraBars.BarButtonItem();
             barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
@@ -59,30 +60,31 @@
             // 
             layoutControl1.Controls.Add(gcProcess);
             layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            layoutControl1.Location = new System.Drawing.Point(0, 24);
+            layoutControl1.Location = new System.Drawing.Point(0, 30);
+            layoutControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             layoutControl1.Name = "layoutControl1";
             layoutControl1.Root = Root;
-            layoutControl1.Size = new System.Drawing.Size(708, 359);
+            layoutControl1.Size = new System.Drawing.Size(809, 462);
             layoutControl1.TabIndex = 0;
             layoutControl1.Text = "layoutControl1";
             // 
             // gcProcess
             // 
-            gcProcess.Location = new System.Drawing.Point(11, 10);
+            gcProcess.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            gcProcess.Location = new System.Drawing.Point(12, 12);
             gcProcess.MainView = gvProcess;
+            gcProcess.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             gcProcess.Name = "gcProcess";
             gcProcess.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] { RepItemProcessIcon });
-            gcProcess.Size = new System.Drawing.Size(686, 339);
+            gcProcess.Size = new System.Drawing.Size(785, 438);
             gcProcess.TabIndex = 4;
             gcProcess.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { gvProcess });
             // 
             // gvProcess
             // 
             gvProcess.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colProcessIcon, colProcessId, colProcessName });
-            gvProcess.DetailHeight = 272;
             gvProcess.GridControl = gcProcess;
             gvProcess.Name = "gvProcess";
-            gvProcess.OptionsEditForm.PopupEditFormWidth = 700;
             gvProcess.OptionsFind.AlwaysVisible = true;
             gvProcess.OptionsView.EnableAppearanceEvenRow = true;
             gvProcess.OptionsView.ShowColumnHeaders = false;
@@ -98,11 +100,13 @@
             colProcessIcon.Caption = "ProcessIcon";
             colProcessIcon.ColumnEdit = RepItemProcessIcon;
             colProcessIcon.FieldName = "ProcessIcon";
+            colProcessIcon.MinWidth = 23;
             colProcessIcon.Name = "colProcessIcon";
             colProcessIcon.OptionsColumn.AllowEdit = false;
             colProcessIcon.OptionsColumn.ReadOnly = true;
             colProcessIcon.Visible = true;
             colProcessIcon.VisibleIndex = 0;
+            colProcessIcon.Width = 86;
             // 
             // RepItemProcessIcon
             // 
@@ -119,11 +123,13 @@
             colProcessId.DisplayFormat.FormatString = "0x{0:X8}";
             colProcessId.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
             colProcessId.FieldName = "ProcessId";
+            colProcessId.MinWidth = 23;
             colProcessId.Name = "colProcessId";
             colProcessId.OptionsColumn.AllowEdit = false;
             colProcessId.OptionsColumn.ReadOnly = true;
             colProcessId.Visible = true;
             colProcessId.VisibleIndex = 1;
+            colProcessId.Width = 86;
             // 
             // colProcessName
             // 
@@ -132,11 +138,13 @@
             colProcessName.AppearanceHeader.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
             colProcessName.Caption = "ProcessName";
             colProcessName.FieldName = "ProcessName";
+            colProcessName.MinWidth = 23;
             colProcessName.Name = "colProcessName";
             colProcessName.OptionsColumn.AllowEdit = false;
             colProcessName.OptionsColumn.ReadOnly = true;
             colProcessName.Visible = true;
             colProcessName.VisibleIndex = 2;
+            colProcessName.Width = 86;
             // 
             // Root
             // 
@@ -144,7 +152,7 @@
             Root.GroupBordersVisible = false;
             Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { layoutControlItem1 });
             Root.Name = "Root";
-            Root.Size = new System.Drawing.Size(708, 359);
+            Root.Size = new System.Drawing.Size(809, 462);
             Root.TextVisible = false;
             // 
             // layoutControlItem1
@@ -152,7 +160,7 @@
             layoutControlItem1.Control = gcProcess;
             layoutControlItem1.Location = new System.Drawing.Point(0, 0);
             layoutControlItem1.Name = "layoutControlItem1";
-            layoutControlItem1.Size = new System.Drawing.Size(690, 343);
+            layoutControlItem1.Size = new System.Drawing.Size(789, 442);
             layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
             layoutControlItem1.TextVisible = false;
             // 
@@ -164,15 +172,16 @@
             BarMgr.DockControls.Add(barDockControlLeft);
             BarMgr.DockControls.Add(barDockControlRight);
             BarMgr.Form = this;
-            BarMgr.Items.AddRange(new DevExpress.XtraBars.BarItem[] { BtnLoadProcess });
-            BarMgr.MaxItemId = 3;
+            BarMgr.Items.AddRange(new DevExpress.XtraBars.BarItem[] { BtnLoadProcess, BtnShowJsonCode });
+            BarMgr.MaxItemId = 4;
             // 
             // BarTop
             // 
+            BarTop.BarName = "Custom 2";
             BarTop.DockCol = 0;
             BarTop.DockRow = 0;
             BarTop.DockStyle = DevExpress.XtraBars.BarDockStyle.Top;
-            BarTop.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] { new DevExpress.XtraBars.LinkPersistInfo(BtnLoadProcess) });
+            BarTop.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] { new DevExpress.XtraBars.LinkPersistInfo(BtnLoadProcess), new DevExpress.XtraBars.LinkPersistInfo(DevExpress.XtraBars.BarLinkUserDefines.PaintStyle, BtnShowJsonCode, "", true, true, true, 0, null, DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph) });
             BarTop.OptionsBar.AllowQuickCustomization = false;
             BarTop.OptionsBar.DisableClose = true;
             BarTop.OptionsBar.DisableCustomization = true;
@@ -188,52 +197,56 @@
             BtnLoadProcess.Name = "BtnLoadProcess";
             BtnLoadProcess.ItemClick += BtnLoadProcess_ItemClick;
             // 
+            // BtnShowJsonCode
+            // 
+            BtnShowJsonCode.Caption = "Json2C#";
+            BtnShowJsonCode.Id = 3;
+            BtnShowJsonCode.Name = "BtnShowJsonCode";
+            BtnShowJsonCode.ItemClick += BtnShowJsonCode_ItemClick;
+            // 
             // barDockControlTop
             // 
             barDockControlTop.CausesValidation = false;
             barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
             barDockControlTop.Location = new System.Drawing.Point(0, 0);
             barDockControlTop.Manager = BarMgr;
-            barDockControlTop.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            barDockControlTop.Size = new System.Drawing.Size(708, 24);
+            barDockControlTop.Size = new System.Drawing.Size(809, 30);
             // 
             // barDockControlBottom
             // 
             barDockControlBottom.CausesValidation = false;
             barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            barDockControlBottom.Location = new System.Drawing.Point(0, 383);
+            barDockControlBottom.Location = new System.Drawing.Point(0, 492);
             barDockControlBottom.Manager = BarMgr;
-            barDockControlBottom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            barDockControlBottom.Size = new System.Drawing.Size(708, 0);
+            barDockControlBottom.Size = new System.Drawing.Size(809, 0);
             // 
             // barDockControlLeft
             // 
             barDockControlLeft.CausesValidation = false;
             barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
-            barDockControlLeft.Location = new System.Drawing.Point(0, 24);
+            barDockControlLeft.Location = new System.Drawing.Point(0, 30);
             barDockControlLeft.Manager = BarMgr;
-            barDockControlLeft.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            barDockControlLeft.Size = new System.Drawing.Size(0, 359);
+            barDockControlLeft.Size = new System.Drawing.Size(0, 462);
             // 
             // barDockControlRight
             // 
             barDockControlRight.CausesValidation = false;
             barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            barDockControlRight.Location = new System.Drawing.Point(708, 24);
+            barDockControlRight.Location = new System.Drawing.Point(809, 30);
             barDockControlRight.Manager = BarMgr;
-            barDockControlRight.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            barDockControlRight.Size = new System.Drawing.Size(0, 359);
+            barDockControlRight.Size = new System.Drawing.Size(0, 462);
             // 
             // ViewHomeTab
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(708, 383);
+            ClientSize = new System.Drawing.Size(809, 492);
             Controls.Add(layoutControl1);
             Controls.Add(barDockControlLeft);
             Controls.Add(barDockControlRight);
             Controls.Add(barDockControlBottom);
             Controls.Add(barDockControlTop);
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             Name = "ViewHomeTab";
             Text = "Process";
             Load += ViewHomeTab_Load;
@@ -267,5 +280,6 @@
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
         private DevExpress.XtraBars.BarButtonItem BtnLoadProcess;
+        private DevExpress.XtraBars.BarButtonItem BtnShowJsonCode;
     }
 }

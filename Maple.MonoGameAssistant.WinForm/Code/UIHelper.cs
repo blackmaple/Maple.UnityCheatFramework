@@ -158,6 +158,19 @@ namespace Maple.MonoGameAssistant.WinForm
             selectedPath = dialog.SelectedPath;
             return dialogResult == DialogResult.OK;
         }
+
+        public static bool TrySaveFileDialog(this Form frm, out string selectedFile)
+        {
+            XtraSaveFileDialog dialog = new()
+            {
+                StartPosition = FormStartPosition.CenterParent,
+                UseParentFormIcon = false,
+                
+            };
+            var dialogResult = dialog.ShowDialog(frm);
+            selectedFile = dialog.FileName;
+            return dialogResult == DialogResult.OK;
+        }
     }
 
 }
