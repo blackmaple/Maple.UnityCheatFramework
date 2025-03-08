@@ -161,11 +161,12 @@ namespace Maple.MonoGameAssistant.WinForm
 
         public static bool TrySaveFileDialog(this Form frm, out string selectedFile)
         {
-            XtraSaveFileDialog dialog = new()
+            XtraOpenFileDialog dialog = new()
             {
                 StartPosition = FormStartPosition.CenterParent,
                 UseParentFormIcon = false,
-                
+
+
             };
             var dialogResult = dialog.ShowDialog(frm);
             selectedFile = dialog.FileName;

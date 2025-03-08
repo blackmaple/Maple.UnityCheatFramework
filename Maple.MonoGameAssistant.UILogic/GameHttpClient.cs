@@ -113,10 +113,32 @@ public class GameHttpClient
         }
 
     }
+    private static async ValueTask<MonoResultDTO<T_DTO>> TrySendAsync<T_DTO, T_POST>(HttpClient http, string url, T_POST? post)
+    {
+        try
+        {
+            var dto = await SendAsync<T_DTO, T_POST>(http, url, post).ConfigureAwait(false);
+            return dto;
+        }
+        catch (GameContextException ex)
+        {
+
+            return MonoResultDTO.GetBizError<T_DTO>(ex);
+        }
+        catch (Exception ex) when (ex.InnerException is TimeoutException)
+        {
+            return MonoResultDTO.GetBizError<T_DTO>(0, "Timeout:The service is not ready");
+        }
+        catch (Exception ex)
+        {
+            return MonoResultDTO.GetSystemError<T_DTO>(ex.Message);
+        }
+
+    }
 
     public static async Task<MonoResultDTO<T_DTO>> TryGetGameInfoAsync<T_DTO>(HttpClient http)
     {
-        return await SendAsync<T_DTO, MonoRequestDTO>(http, "/game/info", default).ConfigureAwait(false);
+        return await TrySendAsync<T_DTO, MonoRequestDTO>(http, "/game/info", default).ConfigureAwait(false);
 
     }
 
