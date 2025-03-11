@@ -153,6 +153,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         #region Common
 
+        static SyntaxToken ConvertToHexLiteral(ulong value)
+        {
+            string hexString = $"0x{value:X}UL";
+            return SyntaxFactory.Literal(hexString, value);
+        }
         public static IEnumerable<IParameterSymbol> GetCtorParameterSymbolExpression(ISymbol symbol)
         {
             if (symbol is not INamedTypeSymbol namedTypeSymbol)
@@ -461,7 +466,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
                 if (arg.Type.SpecialType == SpecialType.System_UInt64)
                 {
-                    parameter = parameter.WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(code))));
+                    parameter = parameter.WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(code))));
                 }
                 yield return parameter;
             }
@@ -472,6 +477,14 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         #endregion
 
         #region ClassMemberMetadataData
+        private static ulong GetClassCode(string classDisplayString)
+        {
+            if (false == MetadataSourceGeneratorCounter.TryGetClassHash(classDisplayString, out var classHash, out var oldclassDisplayName))
+            {
+                return MetadataSourceGeneratorException.Throw<ulong>($"{classDisplayString} hash already exists:{oldclassDisplayName}");
+            }
+            return classHash;
+        }
         public static ClassMemberMetadataData GetClassMemberMetadataData(this GeneratorAttributeSyntaxContext ctx, AttributeData att)
         {
             var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
@@ -484,9 +497,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
             var ptrSymbol = parentMetadata.AttributeClass!.TypeArguments[1];
 
+            var classDisplayString = ctx.TargetSymbol.ToDisplayString();
             var metadata = new ClassMemberMetadataData()
             {
-                Code = MetadataSourceGeneratorCounter.IncrementClass(ctx.TargetSymbol.ToDisplayString()),
+                Code = GetClassCode(classDisplayString),
                 ParentSymbol = parentMetadata.AttributeClass.TypeArguments[0],
                 PtrSymbol = ptrSymbol,
 
@@ -516,6 +530,16 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             return metadata;
 
         }
+
+        private static ulong GetPropertyCode(string fieldDisplayString)
+        {
+
+            if (false == MetadataSourceGeneratorCounter.TryGetFieldHash(fieldDisplayString, out var fieldHash, out var oldFieldDisplayName))
+            {
+                return MetadataSourceGeneratorException.Throw<ulong>($"{fieldDisplayString} hash already exists:{oldFieldDisplayName}");
+            }
+            return fieldHash;
+        }
         public static IEnumerable<ClassPropertyMetadataData> EnumClassPropertyMetadata(this ITypeSymbol ptrSymbol)
         {
             foreach (var member in ptrSymbol.GetMembers())
@@ -536,6 +560,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 if (att is not null)
                 {
 
+
                     var metadata = new ClassPropertyMetadataData()
                     {
                         PropertySymbol = propertySymbol,
@@ -548,12 +573,25 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         metadata.Utf8PropertyType = utf8Type;
                     }
-                    metadata.Code = MetadataSourceGeneratorCounter.Increment();
+
+                    metadata.Code = GetPropertyCode(propertySymbol.ToDisplayString());
+
                     yield return metadata;
                 }
             }
 
         }
+
+        private static ulong GetMethodCode(string methodDisplayString)
+        {
+
+            if (false == MetadataSourceGeneratorCounter.TryGetFieldHash(methodDisplayString, out var methodHash, out var oldMethodDisplayName))
+            {
+                return MetadataSourceGeneratorException.Throw<ulong>($"{methodDisplayString} hash already exists:{oldMethodDisplayName}");
+            }
+            return methodHash;
+        }
+
         public static IEnumerable<ClassMethodMetadataData> EnumClassMethodMetadata(this ITypeSymbol ptrSymbol)
         {
             foreach (var member in ptrSymbol.GetMembers())
@@ -599,8 +637,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         metadata.Utf8MethodParameterTypes = parameterTypes;
                     }
-                    metadata.Code = MetadataSourceGeneratorCounter.Increment();
 
+                    metadata.Code = GetMethodCode(methodSymbol.ToDisplayString());
 
                     yield return metadata;
                 }
@@ -670,7 +708,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                     )
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
                                 [
-                                    SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(classProperty.Code)))
+                                    SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classProperty.Code)))
                                 ]
                                 ))
                         )
@@ -1249,7 +1287,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                     callMethod
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
                                 [
-                                    SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(classMethod.Code)))
+                                    SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classMethod.Code)))
                                 ]
                                 ))
                         )
@@ -1504,7 +1542,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var newData = SyntaxFactory.ObjectCreationExpression(baseType)
                 .WithArgumentList(SyntaxFactory.ArgumentList(
                         [
-                          SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(classMember.Code))),
+                          SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classMember.Code))),
                           SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8ImageName)),
                           SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8Namespace)),
                           SyntaxFactory.Argument(ArrayInitializerExpression(classMember.Utf8ClassName)),
@@ -1560,7 +1598,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
                      .WithArgumentList(SyntaxFactory.ArgumentList(
                              [
-                                 SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(p.Code))),
+                                 SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(p.Code))),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyName)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyType)),
                                 SyntaxFactory.Argument(p.PropertySymbol.IsStatic?SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression):
@@ -1609,7 +1647,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
                      .WithArgumentList(SyntaxFactory.ArgumentList(
                              [
-                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(m.Code))),
+                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,ConvertToHexLiteral(m.Code))),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodName)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodParameterTypes)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodReturnType)),

@@ -83,15 +83,15 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == SearchService.TrySearchClass(code, out var descriptionClassDTO))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code:X8}");
             }
             if (false == TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code:X8}");
             }
             if (false == TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code:X8}");
             }
             return classMetadataCollection;
         }

@@ -21,11 +21,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string GetDelegatePointerStructMemberName() => $"m_{nameof(Pointer)}";
         public string GetDelegatePointerStructCaller() => nameof(Delegate);
 
-        public string GetDelegatePointerStructName() => $"{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code}";
-        public string GetDelegatePointerStaticFieldName() => $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code}";
+        public string GetDelegatePointerStructName() => $"{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
+        public string GetDelegatePointerStaticFieldName() => $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
 
 
-        internal MonoJsonMethodDTO GetMonoJsonMethodDTO() => new(this.Code, this.Utf8MethodName, this.Utf8MethodParameterTypes, this.Utf8MethodReturnType);
+        //internal MonoJsonMethodDTO GetMonoJsonMethodDTO() => new(this.Code, this.Utf8MethodName, this.Utf8MethodParameterTypes, this.Utf8MethodReturnType);
     }
 
 }

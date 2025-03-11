@@ -522,11 +522,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// </summary>
             /// <param name = "heroKey">class System.String</param>
             /// <returns>class GameMain.UnitSystem.UnitSetting</returns>
-             /*
+             
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetUnitSetting", "GameMain.UnitSystem.UnitSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
             public static partial nint GET_UNIT_SETTING(nint heroKey); 
-*/
+
             /// <summary>
             /// static  System.Boolean ProcedureIsTransfer(System.Boolean excludeInternetCafe)
             /// </summary>

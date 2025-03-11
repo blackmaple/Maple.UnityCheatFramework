@@ -26,15 +26,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string? ProjectPath { set; get; }
 
 
-        internal MonoJsonCollectionDTO GetJsonCollectionDTO()
-        {
-            return new MonoJsonCollectionDTO()
-            {
-                Classes = [new MonoJsonClassDTO(this.Code, this.Utf8ImageName, this.Utf8Namespace, this.Utf8ClassName, this.Utf8FullName)],
-                Fields = [.. PropertyMetadataDatas.Select(p => p.GetMonoJsonFieldDTO())],
-                Methods = [.. MethodMetadataDatas.Select(p => p.GetMonoJsonMethodDTO())]
-            };
-        }
+        //internal MonoJsonCollectionDTO GetJsonCollectionDTO()
+        //{
+        //    return new MonoJsonCollectionDTO()
+        //    {
+        //        Classes = [new MonoJsonClassDTO(this.Code, this.Utf8ImageName, this.Utf8Namespace, this.Utf8ClassName, this.Utf8FullName)],
+        //        Fields = [.. PropertyMetadataDatas.Select(p => p.GetMonoJsonFieldDTO())],
+        //        Methods = [.. MethodMetadataDatas.Select(p => p.GetMonoJsonMethodDTO())]
+        //    };
+        //}
     }
 
 }

@@ -1,8 +1,11 @@
 ﻿#pragma warning disable IDE0060 // 删除未使用的参数
 
+using System.Diagnostics;
+
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
 
+    [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 #if MetadataSourceGenerator
     internal 

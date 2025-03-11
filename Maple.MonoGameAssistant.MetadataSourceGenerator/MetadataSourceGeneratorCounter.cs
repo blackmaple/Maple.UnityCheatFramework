@@ -1,36 +1,54 @@
 ﻿using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public static class MetadataSourceGeneratorCounter
     {
-        private static ulong Value { set; get; }
-        private static ulong AddNumber { set; get; }
-        static MetadataSourceGeneratorCounter()
-        {
-            var dt = DateTime.Now;
-            Value = (ulong)(dt.Year + dt.Month + dt.Day + dt.DayOfYear);
-            AddNumber = (ulong)(dt.Hour + dt.Minute + dt.Second + dt.Millisecond);
-        }
-
-
         private readonly static object s_lock = new();
+        static Dictionary<ulong, string> ClassHashCache { get; } = new Dictionary<ulong, string>(128);
+        static Dictionary<ulong, string> FieldHashCache { get; } = new Dictionary<ulong, string>(128);
+        static Dictionary<ulong, string> MethodHashCache { get; } = new Dictionary<ulong, string>(128);
 
 
-        public static ulong Increment()
+
+        public static bool TryAddMemberHashCache(Dictionary<ulong, string> cache, ulong hash, string txt, out string oldText)
         {
             lock (s_lock)
             {
-                Value += AddNumber;
-                return Value;
+                if (cache.TryGetValue(hash, out oldText))
+                {
+                    return oldText == txt;
+                }
+                cache.Add(hash, txt);
+                return true;
             }
         }
 
-        public static ulong IncrementClass(string classDisplayName)
+        private static bool TryAddClassHashCache(ulong hash, string txt, out string oldText) => TryAddMemberHashCache(ClassHashCache, hash, txt, out oldText);
+        private static bool TryAddFieldHashCache(ulong hash, string txt, out string oldText) => TryAddMemberHashCache(FieldHashCache, hash, txt, out oldText);
+        private static bool TryAddMethodHashCache(ulong hash, string txt, out string oldText) => TryAddMemberHashCache(MethodHashCache, hash, txt, out oldText);
+
+        public static bool TryGetClassHash(string classDisplayName, out ulong hash, out string oldClassDisplayName)
         {
-            return CalculateFNV1AHash(classDisplayName);
+            hash = CalculateFNV1AHash_64(classDisplayName);
+            return TryAddClassHashCache(hash, classDisplayName, out oldClassDisplayName);
         }
-        static ulong CalculateFNV1AHash(string text)
+
+        public static bool TryGetFieldHash(string fieldDisplayName, out ulong hash, out string oldFieldDisplayName)
+        {
+
+            hash = CalculateFNV1AHash_64(fieldDisplayName);
+            return TryAddFieldHashCache(hash, fieldDisplayName, out oldFieldDisplayName);
+        }
+
+        public static bool TryGetMethodHash(string methodDisplayName, out ulong hash, out string oldMethodDisplayName)
+        {
+            hash = CalculateFNV1AHash_64(methodDisplayName);
+            return TryAddMethodHashCache(hash, methodDisplayName, out oldMethodDisplayName);
+        }
+
+        static ulong CalculateFNV1AHash_64(string text)
         {
             const ulong fnvOffsetBasis = 14695981039346656037UL; // FNV-1a 64-bit offset basis
             const ulong fnvPrime = 1099511628211UL; // FNV-1a 64-bit prime
@@ -46,5 +64,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return hash;
         }
+
+
     }
 }

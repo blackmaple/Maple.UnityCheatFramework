@@ -45,6 +45,10 @@
 		<ProjectReference Include="..\Maple.MonoGameAssistant.MonoCollector\Maple.MonoGameAssistant.MonoCollector.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	</ItemGroup>
+
 
 
 
