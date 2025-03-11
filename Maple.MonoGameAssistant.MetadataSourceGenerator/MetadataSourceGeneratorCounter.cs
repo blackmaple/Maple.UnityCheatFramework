@@ -1,4 +1,6 @@
-﻿namespace Maple.MonoGameAssistant.MetadataSourceGenerator
+﻿using System.Text;
+
+namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
     public static class MetadataSourceGeneratorCounter
     {
@@ -24,6 +26,25 @@
             }
         }
 
+        public static ulong IncrementClass(string classDisplayName)
+        {
+            return CalculateFNV1AHash(classDisplayName);
+        }
+        static ulong CalculateFNV1AHash(string text)
+        {
+            const ulong fnvOffsetBasis = 14695981039346656037UL; // FNV-1a 64-bit offset basis
+            const ulong fnvPrime = 1099511628211UL; // FNV-1a 64-bit prime
 
+            ulong hash = fnvOffsetBasis;
+            byte[] textBytes = Encoding.UTF8.GetBytes(text);
+
+            foreach (byte b in textBytes)
+            {
+                hash ^= b;
+                hash *= fnvPrime;
+            }
+
+            return hash;
+        }
     }
 }

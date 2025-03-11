@@ -486,7 +486,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             var metadata = new ClassMemberMetadataData()
             {
-                Code = MetadataSourceGeneratorCounter.Increment(),
+                Code = MetadataSourceGeneratorCounter.IncrementClass(ctx.TargetSymbol.ToDisplayString()),
                 ParentSymbol = parentMetadata.AttributeClass.TypeArguments[0],
                 PtrSymbol = ptrSymbol,
 
