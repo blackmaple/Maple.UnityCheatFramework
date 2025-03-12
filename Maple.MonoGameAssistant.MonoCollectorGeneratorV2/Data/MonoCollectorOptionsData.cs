@@ -1,5 +1,4 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
 {
@@ -37,7 +36,7 @@ namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
         public MonoCollectorMethodData MonoCollectorMember_GetMemberFieldValue { set; get; }
         public MonoCollectorMethodData MonoCollectorMember_SetMemberFieldValue { set; get; }
 
-        
+
 
         public string MonoRuntimeContext { set; get; }
 

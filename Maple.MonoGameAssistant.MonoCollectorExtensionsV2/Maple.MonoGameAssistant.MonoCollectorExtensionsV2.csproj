@@ -8,14 +8,15 @@
 		<LangVersion>preview</LangVersion>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>Maple.MonoGameAssistant.MetadataExtensions</Title>
+		<Title>Maple.MonoGameAssistant.MonoCollectorExtensionsV2</Title>
 		<RepositoryUrl>https://github.com/blackmaple/Maple.MonoGameAssistant</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.1.6-rc</Version>
+		<Version>1.2.0-rc</Version>
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,9 +31,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />
-		<ProjectReference Include="..\Maple.MonoGameAssistant.Model\Maple.MonoGameAssistant.Model.csproj" />
+	  <ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />
+	  <ProjectReference Include="..\Maple.MonoGameAssistant.Model\Maple.MonoGameAssistant.Model.csproj" />
 	</ItemGroup>
+
 
 
 

@@ -1,14 +1,8 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime;
-using System.Text;
 
 namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
 {
@@ -42,7 +36,7 @@ namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
 
                     if (r_settingsClasses.Length > 0)
                     {
-                      
+
                         foreach (var settings in r_settingsClasses)
                         {
                             l_genOptions.VersionDatas.Add(settings);

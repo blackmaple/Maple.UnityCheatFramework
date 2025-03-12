@@ -1,12 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
     /// <summary>
     /// 指定Class的基类,并继承基类的方法(Mono将递归基类查询方法)
     /// 按次数递归;所以基类需要连续指定
     /// </summary>
+    [Conditional("DEBUG")]
     [Description("内部使用")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 #if SOURCE_GEN
@@ -23,7 +25,7 @@ namespace Maple.MonoGameAssistant.MonoCollectorDataV2
 
         public MonoCollectorInheritViewAttribute(Type baseClasses)
         {
-            this.BaseClass = baseClasses;
+            BaseClass = baseClasses;
         }
     }
 }

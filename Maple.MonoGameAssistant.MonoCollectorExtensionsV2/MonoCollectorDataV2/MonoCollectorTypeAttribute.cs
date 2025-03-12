@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
 
+    [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 
 #if SOURCE_GEN
@@ -19,7 +21,7 @@ namespace Maple.MonoGameAssistant.MonoCollectorDataV2
 
         public MonoCollectorTypeAttribute(Type classType)
         {
-            this.ClassType = classType;
+            ClassType = classType;
         }
 
 

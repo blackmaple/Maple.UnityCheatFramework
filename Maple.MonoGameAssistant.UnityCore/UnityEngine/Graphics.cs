@@ -1,5 +1,5 @@
-﻿using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -457,7 +457,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             /// static  System.Void Blit(UnityEngine.Texture source, UnityEngine.RenderTexture dest, UnityEngine.Material mat)
             /// </summary>
             public static bool BLIT_02(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "Blit", "UnityEngine.Texture", "UnityEngine.RenderTexture", "UnityEngine.Material");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "Blit", "UnityEngine.Texture", "UnityEngine.RenderTexture", "UnityEngine.Material");
             ///     
             ///  
             /// 

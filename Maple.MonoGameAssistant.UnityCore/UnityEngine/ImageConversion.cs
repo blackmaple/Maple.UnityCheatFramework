@@ -1,6 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -168,7 +168,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             /// static  System.Byte[] EncodeToJPG(UnityEngine.Texture2D tex)
             /// </summary>
             public static bool ENCODE_TO_JPG_01(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "EncodeToJPG", "UnityEngine.Texture2D");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "EncodeToJPG", "UnityEngine.Texture2D");
             ///     
             ///  
             /// 

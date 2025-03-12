@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
 #if SOURCE_GEN
     internal

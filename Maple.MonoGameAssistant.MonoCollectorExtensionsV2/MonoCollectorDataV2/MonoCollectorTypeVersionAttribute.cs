@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
     [Obsolete("remove...")]
+    [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 
 #if SOURCE_GEN

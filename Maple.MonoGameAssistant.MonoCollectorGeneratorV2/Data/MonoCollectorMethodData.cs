@@ -1,8 +1,7 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2

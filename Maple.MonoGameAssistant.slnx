@@ -9,9 +9,8 @@
     <Project Path="Maple.MonoGameAssistant.Logger\Maple.MonoGameAssistant.Logger.csproj" />
   </Folder>
   <Folder Name="/Generator/">
-    <Project Path="Maple.MonoGameAssistant.MonoCollectorDataV2\Maple.MonoGameAssistant.MonoCollectorDataV2.csproj" />
+    <Project Path="Maple.MonoGameAssistant.MonoCollectorExtensionsV2/Maple.MonoGameAssistant.MonoCollectorExtensionsV2.csproj" Id="f80540a1-56af-4084-a3cf-64699d42896d" />
     <Project Path="Maple.MonoGameAssistant.MonoCollectorGeneratorV2\Maple.MonoGameAssistant.MonoCollectorGeneratorV2.csproj" />
-    <Project Path="Maple.MonoGameAssistant.MonoCollector\Maple.MonoGameAssistant.MonoCollector.csproj" />
   </Folder>
   <Folder Name="/Metadata/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
     <Project Path="Maple.MonoGameAssistant.MetadataDemo/Maple.MonoGameAssistant.MetadataDemo.csproj" Id="dd646e1a-5d9e-425f-8a4f-130d22f73687" />

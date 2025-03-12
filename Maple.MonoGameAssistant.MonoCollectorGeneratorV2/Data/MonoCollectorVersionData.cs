@@ -1,4 +1,4 @@
-﻿using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System.Collections.Generic;
 
 namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
@@ -11,6 +11,6 @@ namespace Maple.MonoGameAssistant.MonoCollectorGeneratorV2
         public EnumMonoCollectorTypeVersion Ver { get; set; }
         public List<MonoCollectorTypeData> TypeDatas { set; get; } = new List<MonoCollectorTypeData>(256);
 
-       
+
     }
 }

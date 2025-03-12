@@ -1,5 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
 
     public static class MonoCollectorGeneratorV0
@@ -154,7 +155,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
         }
         static string BuildMemberField_RefType(this MonoFieldInfoDTO fieldInfoDTO)
         {
-            return BuildMemberField_ValueType(fieldInfoDTO);
+            return fieldInfoDTO.BuildMemberField_ValueType();
             //return $@"            
             ///// <summary>
             ///// {fieldInfoDTO.FieldType.GetObjectTypeInfo()} 0x{fieldInfoDTO.RawOffset:X} {fieldInfoDTO.FieldType.TypeName} {fieldInfoDTO.Name}
@@ -536,7 +537,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
             {p.method.BuildMethod($"_{p.index:X2}", fixClassName)}";
             }));
 
-            var overrideMethodSearchContent = OutputMethodSearchContent(overrideMethods, fixClassName);
+            var overrideMethodSearchContent = overrideMethods.OutputMethodSearchContent(fixClassName);
 
             return $@"
         /// <summary>
@@ -713,7 +714,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
             int chuck = 256)
         {
             var sb = new StringBuilder();
-            foreach (var line in OutputFiles(classInfoDTO, fieldInfoDTOs, methodInfoDTOs, parentClasses, interfaceInfoDTOs, chuck))
+            foreach (var line in classInfoDTO.OutputFiles(fieldInfoDTOs, methodInfoDTOs, parentClasses, interfaceInfoDTOs, chuck))
             {
                 sb.AppendLine(line);
             }

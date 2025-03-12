@@ -1,6 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Model;
 
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
     [Obsolete("remove...")]
     public class MonoCollectorImageInfo(MonoImageInfoDTO imageInfoDTO)

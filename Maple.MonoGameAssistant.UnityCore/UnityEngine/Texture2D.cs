@@ -1,5 +1,5 @@
-﻿using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+﻿using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -2262,7 +2262,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             ///   System.Void .ctor(System.Int32 width, System.Int32 height)
             /// </summary>
             public static bool CTOR_08(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-               => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, ".ctor", "System.Int32", "System.Int32");
+               => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, ".ctor", "System.Int32", "System.Int32");
             ///     
             ///  
             /// 
@@ -2312,7 +2312,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             ///   System.Void Apply()
             /// </summary>
             public static bool APPLY_02(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "Apply");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "Apply");
             ///     
             ///  
             /// 
@@ -2582,7 +2582,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             ///   System.Byte[] GetRawTextureData()
             /// </summary>
             public static bool GET_RAW_TEXTURE_DATA_00(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfoEx(monoMethodInfoDTO, "GetRawTextureData", "System.Byte[]");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfoEx(monoMethodInfoDTO, "GetRawTextureData", "System.Byte[]");
             ///     
             ///  
             /// 
@@ -2712,7 +2712,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             ///   System.Void LoadRawTextureData(System.Byte[] data)
             /// </summary>
             public static bool LOAD_RAW_TEXTURE_DATA_01(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "LoadRawTextureData", "System.Byte[]");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "LoadRawTextureData", "System.Byte[]");
             ///     
             ///  
             /// 
@@ -2772,7 +2772,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
             ///   System.Void ReadPixels(UnityEngine.Rect source, System.Int32 destX, System.Int32 destY)
             /// </summary>
             public static bool READ_PIXELS_01(Maple.MonoGameAssistant.Model.MonoMethodInfoDTO monoMethodInfoDTO)
-                => Maple.MonoGameAssistant.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "ReadPixels", "UnityEngine.Rect", "System.Int32", "System.Int32");
+                => Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector.MonoCollectorExtensions.SearchMonoMethodInfo(monoMethodInfoDTO, "ReadPixels", "UnityEngine.Rect", "System.Int32", "System.Int32");
             ///     
             ///  
             /// 

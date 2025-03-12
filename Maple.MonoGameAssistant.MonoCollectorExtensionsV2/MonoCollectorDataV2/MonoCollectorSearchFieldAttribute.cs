@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
+    [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 
 #if SOURCE_GEN
@@ -18,10 +20,10 @@ namespace Maple.MonoGameAssistant.MonoCollectorDataV2
         public bool IsReadOnly { set; get; } = true;
         public MonoCollectorSearchFieldAttribute(Type fieldType, string entryPoint, string propertyName, bool isStatic = false)
         {
-            this.FieldType = fieldType;
-            this.EntryPoint = entryPoint;
-            this.PropertyName = propertyName;
-            this.IsStatic = isStatic;
+            FieldType = fieldType;
+            EntryPoint = entryPoint;
+            PropertyName = propertyName;
+            IsStatic = isStatic;
         }
     }
 }

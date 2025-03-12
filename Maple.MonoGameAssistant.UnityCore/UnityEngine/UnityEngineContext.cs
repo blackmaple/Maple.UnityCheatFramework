@@ -1,7 +1,7 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.UnityCore.UnityEngine.Sprite;
@@ -26,7 +26,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
     public partial class UnityEngineContext : MonoCollectorContext
     {
 
-        Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_Sprite { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings
+        MonoCollecotrClassSettings Settings_Sprite { get; } = new MonoCollecotrClassSettings
         {
             Utf8ImageName = [85, 110, 105, 116, 121, 69, 110, 103, 105, 110, 101, 46, 67, 111, 114, 101, 77, 111, 100, 117, 108, 101, 46, 100, 108, 108],
             ImageName = "UnityEngine.CoreModule.dll",
@@ -41,7 +41,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
         };
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.Sprite Sprite { get; }
 
-        Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_Texture2D { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings
+        MonoCollecotrClassSettings Settings_Texture2D { get; } = new MonoCollecotrClassSettings
         {
             Utf8ImageName = [85, 110, 105, 116, 121, 69, 110, 103, 105, 110, 101, 46, 67, 111, 114, 101, 77, 111, 100, 117, 108, 101, 46, 100, 108, 108],
             ImageName = "UnityEngine.CoreModule.dll",
@@ -56,7 +56,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
         };
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.Texture2D Texture2D { get; }
 
-        Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_RenderTexture { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings
+        MonoCollecotrClassSettings Settings_RenderTexture { get; } = new MonoCollecotrClassSettings
         {
             Utf8ImageName = [85, 110, 105, 116, 121, 69, 110, 103, 105, 110, 101, 46, 67, 111, 114, 101, 77, 111, 100, 117, 108, 101, 46, 100, 108, 108],
             ImageName = "UnityEngine.CoreModule.dll",
@@ -69,7 +69,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
         };
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.RenderTexture RenderTexture { get; }
 
-        Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_Graphics { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings
+        MonoCollecotrClassSettings Settings_Graphics { get; } = new MonoCollecotrClassSettings
         {
             Utf8ImageName = [85, 110, 105, 116, 121, 69, 110, 103, 105, 110, 101, 46, 67, 111, 114, 101, 77, 111, 100, 117, 108, 101, 46, 100, 108, 108],
             ImageName = "UnityEngine.CoreModule.dll",
@@ -84,7 +84,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
         };
         public Maple.MonoGameAssistant.UnityCore.UnityEngine.Graphics Graphics { get; }
 
-        Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings Settings_ImageConversion { get; } = new Maple.MonoGameAssistant.MonoCollectorDataV2.MonoCollecotrClassSettings
+        MonoCollecotrClassSettings Settings_ImageConversion { get; } = new MonoCollecotrClassSettings
         {
             Utf8ImageName = [85, 110, 105, 116, 121, 69, 110, 103, 105, 110, 101, 46, 73, 109, 97, 103, 101, 67, 111, 110, 118, 101, 114, 115, 105, 111, 110, 77, 111, 100, 117, 108, 101, 46, 100, 108, 108],
             ImageName = "UnityEngine.ImageConversionModule.dll",

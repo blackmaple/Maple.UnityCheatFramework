@@ -1,10 +1,11 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
     public static class MonoCollectorExtensions
     {
@@ -25,7 +26,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
                 return false;
             }
 
-            return !pointer || (leftClass.Pointer == rightClass.Pointer);
+            return !pointer || leftClass.Pointer == rightClass.Pointer;
 
         }
 
@@ -290,11 +291,11 @@ namespace Maple.MonoGameAssistant.MonoCollector
             return imageInfoDTO is not null;
             static bool SequenceEqual(ReadOnlySpan<byte> dest, ReadOnlySpan<byte> findSearch)
             {
-                if (MemoryExtensions.SequenceEqual<byte>(dest, findSearch))
+                if (dest.SequenceEqual(findSearch))
                 {
                     return true;
                 }
-                return findSearch.EndsWith(".dll"u8) && MemoryExtensions.SequenceEqual<byte>(dest, findSearch[..^4]);
+                return findSearch.EndsWith(".dll"u8) && dest.SequenceEqual(findSearch[..^4]);
             }
         }
         #endregion

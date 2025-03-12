@@ -479,7 +479,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         #region ClassMemberMetadataData
         private static ulong GetClassCode(string classDisplayString)
         {
-            if (false == MetadataSourceGeneratorCounter.TryGetClassHash(classDisplayString, out var classHash, out var oldclassDisplayName))
+            if (false == MetadataSourceGeneratorHashAlgorithm.TryGetClassHash(classDisplayString, out var classHash, out var oldclassDisplayName))
             {
                 return MetadataSourceGeneratorException.Throw<ulong>($"{classDisplayString} hash already exists:{oldclassDisplayName}");
             }
@@ -534,7 +534,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         private static ulong GetPropertyCode(string fieldDisplayString)
         {
 
-            if (false == MetadataSourceGeneratorCounter.TryGetFieldHash(fieldDisplayString, out var fieldHash, out var oldFieldDisplayName))
+            if (false == MetadataSourceGeneratorHashAlgorithm.TryGetFieldHash(fieldDisplayString, out var fieldHash, out var oldFieldDisplayName))
             {
                 return MetadataSourceGeneratorException.Throw<ulong>($"{fieldDisplayString} hash already exists:{oldFieldDisplayName}");
             }
@@ -585,7 +585,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         private static ulong GetMethodCode(string methodDisplayString)
         {
 
-            if (false == MetadataSourceGeneratorCounter.TryGetFieldHash(methodDisplayString, out var methodHash, out var oldMethodDisplayName))
+            if (false == MetadataSourceGeneratorHashAlgorithm.TryGetFieldHash(methodDisplayString, out var methodHash, out var oldMethodDisplayName))
             {
                 return MetadataSourceGeneratorException.Throw<ulong>($"{methodDisplayString} hash already exists:{oldMethodDisplayName}");
             }

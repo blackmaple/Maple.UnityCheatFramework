@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 
-namespace Maple.MonoGameAssistant.MonoCollectorDataV2
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
     /// <summary>
     /// 源生成器对象配置器
     /// </summary>
+    [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 #if SOURCE_GEN
     internal

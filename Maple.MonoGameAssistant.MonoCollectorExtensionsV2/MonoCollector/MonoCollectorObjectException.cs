@@ -1,7 +1,7 @@
 ﻿using Maple.MonoGameAssistant.Model;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
     public class MonoCollectorObjectException : MonoCommonException
     {

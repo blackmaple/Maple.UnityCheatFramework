@@ -1,13 +1,14 @@
 ﻿using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
 
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
 
     [method: MonoCollectorFlag(EnumMonoCollectorFlag.ContextCtor)]

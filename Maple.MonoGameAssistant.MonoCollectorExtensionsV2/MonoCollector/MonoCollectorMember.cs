@@ -1,11 +1,11 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
-namespace Maple.MonoGameAssistant.MonoCollector
+namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector
 {
     /// <summary>
     /// 源生成器约定请勿修改 可追加 2024年1月4日21点41分
@@ -104,7 +104,7 @@ namespace Maple.MonoGameAssistant.MonoCollector
         public T_MonoObject IsFrom<T_MonoObject>(PMonoObject pMonoObject)
         where T_MonoObject : unmanaged
         {
-            var pMonoClass = this.RuntimeContext.RuntiemProvider.GetMonoClass(pMonoObject);// pMonoObject.MonoClass;
+            var pMonoClass = RuntimeContext.RuntiemProvider.GetMonoClass(pMonoObject);// pMonoObject.MonoClass;
             if (pMonoClass == ClassInfo.ClassInfoDTO.Pointer)
             {
                 return pMonoObject.To<T_MonoObject>();

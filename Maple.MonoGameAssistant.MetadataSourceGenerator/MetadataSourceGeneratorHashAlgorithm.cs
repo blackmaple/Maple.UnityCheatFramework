@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 {
-    public static class MetadataSourceGeneratorCounter
+
+    public static class MetadataSourceGeneratorHashAlgorithm
     {
         private readonly static object s_lock = new();
         static Dictionary<ulong, string> ClassHashCache { get; } = new Dictionary<ulong, string>(128);
