@@ -162,7 +162,7 @@ namespace Maple.MonoGameAssistant.GameShared.Service
                 return;
             }
 
-            var dto = await this.Http.GetCurrencyInfoAsync(this.GameSessionInfo, selectedData.ObjectId);
+            var dto = await this.Http.GetCurrencyInfoAsync(this.GameSessionInfo, selectedData.ObjectId, selectedData.DisplayCategory);
             if (false == dto.TryGet(out var currencyInfo))
             {
                 await this.ShowErrorAsync(dto.MSG);
@@ -175,14 +175,14 @@ namespace Maple.MonoGameAssistant.GameShared.Service
                 { nameof(UICurrencyDialog.CurrencyInfo), currencyInfo }
             });
         }
-        public async ValueTask OnUpdateCurrency(GameCurrencyInfoDTO? selectedData)
+        public async ValueTask OnUpdateCurrency(GameCurrencyInfoDTO? selectedData,string? category =default)
         {
             if (this.GameSessionInfo is null || selectedData is null)
             {
                 return;
             }
 
-            var dto = await this.Http.UpdateCurrencyInfoAsync(this.GameSessionInfo, selectedData);
+            var dto = await this.Http.UpdateCurrencyInfoAsync(this.GameSessionInfo, selectedData, category);
             if (false == dto.TryGet(out var currencyInfo))
             {
                 await this.ShowErrorAsync(dto.MSG);

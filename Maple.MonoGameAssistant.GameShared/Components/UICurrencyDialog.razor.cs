@@ -24,7 +24,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             try
             {
                 CurrencyDisplay.Loading = true;
-                await this.Core.OnUpdateCurrency(CurrencyInfo);
+                await this.Core.OnUpdateCurrency(CurrencyInfo, CurrencyDisplay.DisplayCategory);
             }
             finally
             {

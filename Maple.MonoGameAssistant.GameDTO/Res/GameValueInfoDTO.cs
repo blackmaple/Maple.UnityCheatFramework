@@ -39,7 +39,7 @@ namespace Maple.MonoGameAssistant.GameDTO
 
 
         [JsonIgnore]
-        public bool? BoolValue
+        public bool BoolValue
         {
             get
             {
@@ -49,7 +49,7 @@ namespace Maple.MonoGameAssistant.GameDTO
                 }
                 return default;
             }
-            set => DisplayValue = value.HasValue ? value.ToString() : string.Empty;
+            set => DisplayValue = value.ToString();
         }
 
         [JsonIgnore]
