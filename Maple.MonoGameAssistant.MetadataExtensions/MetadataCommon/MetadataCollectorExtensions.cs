@@ -1,5 +1,8 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.Model;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 {
@@ -78,9 +81,58 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
             {
                 return true;
             }
+
             return MemoryExtensions.SequenceEqual(fieldInfoDTO.FieldType.Utf8FullName, descriptionFieldDTO.Utf8FieldType);
         }
 
 
+        public static bool TryGetFieldMetadata(this MonoClassMetadataCollection classMetadata, MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
+        {
+            Unsafe.SkipInit(out fieldInfoDTO);
+
+            IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
+                descriptionFieldDTO.IsStatic
+                ? classMetadata.EnumStaticFieldInfos()
+                : classMetadata.EnumMemberFieldInfos();
+
+            foreach (var field in fieldInfoDTOs)
+            {
+                if (field.EqualFieldName(descriptionFieldDTO)
+                    && field.EqualFieldType(descriptionFieldDTO))
+                {
+                    fieldInfoDTO = field;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool TryGetMethodMetadata(this MonoClassMetadataCollection classMetadata, MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
+        {
+            Unsafe.SkipInit(out methodInfoDTO);
+            foreach (var method in classMetadata.MethodInfos)
+            {
+                if (method.EqualMethodName(descriptionMethodDTO)
+                    && method.EqualMethodReturnType(descriptionMethodDTO)
+                    && method.EqualMethodParameterTypes(descriptionMethodDTO))
+                {
+                    methodInfoDTO = method;
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+        public static MonoClassMetadataCollection GetMonoClassMetadataCollection(this MonoRuntimeContext runtimeContext, PMonoClass pMonoClass)
+        {
+            var classInfoDTO = runtimeContext.GetMonoClassInfoDTO(pMonoClass);
+            return new MonoClassMetadataCollection()
+            {
+                ClassInfo = classInfoDTO,
+                MethodInfos = [.. runtimeContext.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
+                FieldInfos = [.. runtimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
+            };
+        }
     }
 }

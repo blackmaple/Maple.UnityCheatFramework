@@ -115,6 +115,7 @@ namespace Maple.MonoGameAssistant.WebApi
                 }),
                 HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
             });
+            app.UseDefaultFiles();
             app.UseCors();
             return app;
         }

@@ -52,14 +52,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             if (RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Namespace, descriptionClassDTO.Utf8ClassName, out var pMonoClass)
               || RuntimeContext.TryGetFirstMonoClass(imageNameDTO.Pointer, descriptionClassDTO.Utf8Name, out pMonoClass))
             {
-                var classInfoDTO = RuntimeContext.GetMonoClassInfoDTO(pMonoClass);
-                classMetadataCollection = new MonoClassMetadataCollection()
-                {
-                    ClassInfo = classInfoDTO,
-                    MethodInfos = [.. RuntimeContext.EnumMonoMethods(pMonoClass, classInfoDTO.IsValueType)],
-                    FieldInfos = [.. RuntimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
-                };
-
+                classMetadataCollection = RuntimeContext.GetMonoClassMetadataCollection(pMonoClass);
                 return true;
             }
             return false;

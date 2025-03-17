@@ -30,18 +30,19 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
         public bool DefaultTryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
-            Unsafe.SkipInit(out methodInfoDTO);
-            foreach (var method in ClassMetadata.MethodInfos)
-            {
-                if (method.EqualMethodName(descriptionMethodDTO)
-                    && method.EqualMethodReturnType(descriptionMethodDTO)
-                    && method.EqualMethodParameterTypes(descriptionMethodDTO))
-                {
-                    methodInfoDTO = method;
-                    return true;
-                }
-            }
-            return false;
+            return this.ClassMetadata.TryGetMethodMetadata(descriptionMethodDTO, out methodInfoDTO);
+            //Unsafe.SkipInit(out methodInfoDTO);
+            //foreach (var method in ClassMetadata.MethodInfos)
+            //{
+            //    if (method.EqualMethodName(descriptionMethodDTO)
+            //        && method.EqualMethodReturnType(descriptionMethodDTO)
+            //        && method.EqualMethodParameterTypes(descriptionMethodDTO))
+            //    {
+            //        methodInfoDTO = method;
+            //        return true;
+            //    }
+            //}
+            //return false;
 
         }
         public bool TryGetMethodMetadata(MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
@@ -68,21 +69,22 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
         public bool DefaultTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
-            Unsafe.SkipInit(out fieldInfoDTO);
-            IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
-                descriptionFieldDTO.IsStatic
-                ? ClassMetadata.EnumStaticFieldInfos()
-                : ClassMetadata.EnumMemberFieldInfos();
-            foreach (var field in fieldInfoDTOs)
-            {
-                if (field.EqualFieldName(descriptionFieldDTO)
-                    && field.EqualFieldType(descriptionFieldDTO))
-                {
-                    fieldInfoDTO = field;
-                    return true;
-                }
-            }
-            return false;
+            return this.ClassMetadata.TryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
+            //Unsafe.SkipInit(out fieldInfoDTO);
+            //IEnumerable<MonoFieldInfoDTO> fieldInfoDTOs =
+            //    descriptionFieldDTO.IsStatic
+            //    ? ClassMetadata.EnumStaticFieldInfos()
+            //    : ClassMetadata.EnumMemberFieldInfos();
+            //foreach (var field in fieldInfoDTOs)
+            //{
+            //    if (field.EqualFieldName(descriptionFieldDTO)
+            //        && field.EqualFieldType(descriptionFieldDTO))
+            //    {
+            //        fieldInfoDTO = field;
+            //        return true;
+            //    }
+            //}
+            //return false;
         }
         public virtual bool CustomTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
