@@ -47,9 +47,9 @@ namespace Maple.MonoGameAssistant.GameDTO
             }
             set => ContentValue = value.ToString();
         }
+
         [JsonIgnore]
         public string? CacheValue { set; get; }
-
         [JsonIgnore]
         public int IntCache
         {
@@ -66,7 +66,6 @@ namespace Maple.MonoGameAssistant.GameDTO
                 this.CacheValue = value.ToString();
             }
         }
-
         [JsonIgnore]
         public float FloatCache
         {

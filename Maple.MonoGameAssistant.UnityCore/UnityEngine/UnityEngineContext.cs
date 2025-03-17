@@ -307,9 +307,21 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
     public sealed partial class UnityEngineContext_MONO(MonoRuntimeContext runtimeContext, ILogger logger) : UnityEngineContext(runtimeContext, logger)
     {
         public static nint UnityPlayer { get; set; } = MonoCollectorMember.GetModuleBaseAddress("UnityPlayer.dll");
+        /// <summary>
+        /// class ["UnityEngine.ImageConversionModule.dll"."UnityEngine"."ImageConversion"]
+        /// </summary>
         public static int Func_ENCODE_TO_PNG { get; set; }
+        /// <summary>
+        /// class ["UnityEngine.CoreModule.dll"."UnityEngine"."Graphics"]
+        /// </summary>
         public static int Func_BLIT2 { get; set; }
+        /// <summary>
+        /// class ["UnityEngine.CoreModule.dll"."UnityEngine"."Sprite"]
+        /// </summary>
         public static int Func_GET_TEXTURE_RECT_INJECTED { get; set; }
+        /// <summary>
+        /// class ["UnityEngine.CoreModule.dll"."UnityEngine"."Texture2D"]
+        /// </summary>
         public static int Func_READ_PIXELS_IMPL_INJECTED { get; set; }
 
         protected sealed override bool TryGetCustomMethodPointer(MonoCollecotrClassSettings classSettings, string methodName, out nint address)

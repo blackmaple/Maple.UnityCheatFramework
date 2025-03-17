@@ -14,6 +14,8 @@ namespace Maple.MonoGameAssistant.GameDTO
         /// <summary>
         /// 装备适应角色
         /// </summary>
+        [JsonIgnore]
+        [Obsolete("remove...")]
         public GameValueInfoDTO[]? ValidCharacters { set; get; }
 
         [JsonIgnore]

@@ -98,9 +98,9 @@ namespace Maple.MonoGameAssistant.GameCore
         /// <param name="gameSessionInfo"></param>
         /// <param name="gameCurrencyId"></param>
         /// <returns></returns>
-        public Task<MonoResultDTO<GameCurrencyInfoDTO>> GetCurrencyInfoAsync(GameSessionInfoDTO gameSessionInfo, string gameCurrencyId)
+        public Task<MonoResultDTO<GameCurrencyInfoDTO>> GetCurrencyInfoAsync(GameSessionInfoDTO gameSessionInfo, string gameCurrencyId, string? category = default)
         {
-            return this.TrySendAsync<GameCurrencyObjectDTO, GameCurrencyInfoDTO>("game/GetCurrencyInfo", new GameCurrencyObjectDTO() { Session = gameSessionInfo.ObjectId, CurrencyObject = gameCurrencyId });
+            return this.TrySendAsync<GameCurrencyObjectDTO, GameCurrencyInfoDTO>("game/GetCurrencyInfo", new GameCurrencyObjectDTO() { Session = gameSessionInfo.ObjectId, CurrencyObject = gameCurrencyId, CurrencyCategory = category });
         }
         /// <summary>
         /// Api.修改指定的游戏货币数量
@@ -108,9 +108,9 @@ namespace Maple.MonoGameAssistant.GameCore
         /// <param name="gameSessionInfo"></param>
         /// <param name="gameCurrency"></param>
         /// <returns></returns>
-        public Task<MonoResultDTO<GameCurrencyInfoDTO>> UpdateCurrencyInfoAsync(GameSessionInfoDTO gameSessionInfo, GameCurrencyInfoDTO gameCurrency)
+        public Task<MonoResultDTO<GameCurrencyInfoDTO>> UpdateCurrencyInfoAsync(GameSessionInfoDTO gameSessionInfo, GameCurrencyInfoDTO gameCurrency, string? category = default)
         {
-            return this.TrySendAsync<GameCurrencyModifyDTO, GameCurrencyInfoDTO>("game/UpdateCurrencyInfo", new GameCurrencyModifyDTO() { Session = gameSessionInfo.ObjectId, CurrencyObject = gameCurrency.ObjectId, NewValue = gameCurrency.DisplayValue });
+            return this.TrySendAsync<GameCurrencyModifyDTO, GameCurrencyInfoDTO>("game/UpdateCurrencyInfo", new GameCurrencyModifyDTO() { Session = gameSessionInfo.ObjectId, CurrencyObject = gameCurrency.ObjectId, CurrencyCategory = category, NewValue = gameCurrency.DisplayValue });
         }
         #endregion
 
