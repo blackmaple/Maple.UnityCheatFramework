@@ -1,15 +1,8 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
-using Maple.MonoGameAssistant.Model;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 {
@@ -36,17 +29,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 
 
 
-    }
-
-    public struct ReflectionObject(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection metadataCollection)
-    {
-        public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
-        public MonoClassMetadataCollection MetadataCollection { get; } = metadataCollection;
-
-        public bool TryGetFieldValue<T_VALUE>(Predicate predicate, out T_VALUE val) where T_VALUE : unmanaged
-        {
-            this.MetadataCollection.FieldInfos
-        }
     }
 
 }

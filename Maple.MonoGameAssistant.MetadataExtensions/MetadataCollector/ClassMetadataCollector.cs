@@ -6,6 +6,7 @@ using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
@@ -155,14 +156,33 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return fieldSource.Offset;
         }
 
+
+        public static bool TryGetMethodPointer<T_Method>(MonoMethodInfoDTO methodInfoDTO, out T_Method method) where T_Method : unmanaged
+        {
+            Unsafe.SkipInit(out method);
+            var context = MonoRuntimeContext.GlobalInstance;
+            if (context is null)
+            {
+                return false;
+            }
+            nint pointer = context.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
+            var ok = pointer != nint.Zero;
+            if (ok)
+            {
+                method = Unsafe.As<nint, T_Method>(ref pointer);
+            }
+            return ok;
+        }
+
         public static T_FieldValue GetStaticFieldValue<T_FieldValue>(MonoStaticFieldSource staticFieldSource)
             where T_FieldValue : unmanaged
         {
-            if (MonoRuntimeContext.GlobalInstance is null)
+            var context = MonoRuntimeContext.GlobalInstance;
+            if (context is null)
             {
                 return default;
             }
-            return MonoRuntimeContext.GlobalInstance.GetMonoStaticFieldValueAsUnmanaged<T_FieldValue>(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
+            return context.GetMonoStaticFieldValueAsUnmanaged<T_FieldValue>(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
         }
         public static void SetStaticFieldValue<T_FieldValue>(MonoStaticFieldSource staticFieldSource, in T_FieldValue value)
             where T_FieldValue : unmanaged
