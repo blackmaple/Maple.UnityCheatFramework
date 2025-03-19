@@ -3,12 +3,7 @@ using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using Maple.MonoGameAssistant.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 {

@@ -1,5 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.Model;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -22,12 +23,25 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             return true;
         }
 
-        private static MonoClassMetadataCollection GetClassMetadataImp(this MonoRuntimeContext @this, PMonoClass pMonoClass)
+        public static MonoClassMetadataCollection GetClassMetadata(this MonoRuntimeContext @this, PMonoClass pMonoClass)
         {
             return MetadataObjectCache.GetOrAdd(pMonoClass, klass => @this.GetMonoClassMetadataCollection(klass));
         }
 
+        public static MonoClassMetadataCollection GetClassMetadata(this MonoRuntimeContext @this, MonoFieldInfoDTO fieldInfoDTO)
+        {
+            return MetadataObjectCache.GetOrAdd(fieldInfoDTO.FieldType.Pointer, klass => @this.GetMonoClassMetadataCollection(klass));
+        }
 
+        public static MonoClassMetadataCollection GetClassMetadata(this MonoRuntimeContext @this, MonoParameterTypeDTO parameterTypeDTO)
+        {
+            return MetadataObjectCache.GetOrAdd(parameterTypeDTO.Pointer, klass => @this.GetMonoClassMetadataCollection(klass));
+        }
+
+        public static MonoClassMetadataCollection GetClassMetadata(this MonoRuntimeContext @this, MonoReturnTypeDTO returnTypeDTO)
+        {
+            return MetadataObjectCache.GetOrAdd(returnTypeDTO.Pointer, klass => @this.GetMonoClassMetadataCollection(klass));
+        }
 
     }
 
