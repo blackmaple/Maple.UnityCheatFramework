@@ -19,7 +19,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
                 return false;
             }
             var pMonoClass = @this.RuntiemProvider.GetMonoClass(pMonoObject);
-            classMetadataCollection = @this.GetClassMetadataImp(pMonoClass);
+            classMetadataCollection = @this.GetClassMetadata(pMonoClass);
             return true;
         }
 
@@ -45,4 +45,61 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 
     }
 
+
+
+
+    public class System_Collections_Generic_List
+    {
+
+        public System_Collections_Generic_List()
+        { 
+        
+        }
+
+        public unsafe struct Ptr_System_Collections_Generic_List
+        {
+            /// <summary>
+            /// 0x10 T[] _items
+            /// class ["mscorlib"."System.Collections.Generic"."T[]"]
+            /// </summary>
+            /// <returns>class T[]</returns>
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
+           public partial nint _ITEMS { get; set; } 
+*/
+
+            /// <summary>
+            /// 0x18 System.Int32 _size
+            /// struct ["mscorlib"."System"."Int32"]
+            /// </summary>
+            /// <returns>struct System.Int32</returns>
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
+           public partial System.Int32 _SIZE { get; set; } 
+*/
+
+            /// <summary>
+            /// 0x1C System.Int32 _version
+            /// struct ["mscorlib"."System"."Int32"]
+            /// </summary>
+            /// <returns>struct System.Int32</returns>
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
+           public partial System.Int32 _VERSION { get; set; } 
+*/
+
+            /// <summary>
+            /// 0x20 System.Object _syncRoot
+            /// class ["mscorlib"."System"."Object"]
+            /// </summary>
+            /// <returns>class System.Object</returns>
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
+           public partial nint _SYNC_ROOT { get; set; } 
+*/
+
+        }
+
+
+    }
 }
