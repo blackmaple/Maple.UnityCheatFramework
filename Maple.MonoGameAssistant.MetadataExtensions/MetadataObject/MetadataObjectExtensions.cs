@@ -1,6 +1,7 @@
 ﻿using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using Maple.MonoGameAssistant.Model;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
@@ -54,131 +55,204 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 
 
 
-    public class System_Collections_Generic_List : AbstractClassMetadataCollector
+    public class SysGenericList : AbstractClassMetadataCollector
     {
-        static bool s_init;
-        static readonly Lock s_lock = new();
+        protected static bool InitFieldMetadata { set; get; }
+
         static readonly MonoDescriptionFieldDTO s_Desc__ITEMS = new()
         {
             IsStatic = false,
             Utf8Name = [95, 105, 116, 101, 109, 115]//"_items"u8.ToArray()
         };
-
-        static int s_Field__ITEMS;
-
-
+        public static int FiledItemsOffset { set; get; }
         static readonly MonoDescriptionFieldDTO s_Desc__SIZE = new()
         {
             IsStatic = false,
             Utf8Name = [95, 115, 105, 122, 101]//"_size"u8.ToArray()
         };
-        static int s_Field__SIZE;
+        public static int FiledSizeOffset { set; get; }
 
 
-        protected virtual void InitMetadata()
+        protected virtual void LoadFieldMetadata()
         {
-            lock (s_lock)
+            if (InitFieldMetadata)
             {
-                if (s_init == false)
-                {
-                    s_init = true;
-
-                    if (this.ClassMetadata.TryGetFieldMetadata(s_Desc__ITEMS, out var itemMetdata))
-                    {
-                        s_Field__ITEMS = itemMetdata.Offset;
-                    }
-                    if (this.ClassMetadata.TryGetFieldMetadata(s_Desc__SIZE, out var sizeMetadata))
-                    {
-                        s_Field__SIZE = sizeMetadata.Offset;
-                    }
-
-                }
+                return;
             }
+            if (!this.DefaultTryGetFieldMetadata(s_Desc__ITEMS, out var itemMetdata))
+            {
+                MetadataCollectorException.Throw($"{nameof(LoadFieldMetadata)}:{nameof(PtrList.ITEMS)}");
+            }
+            if (!this.DefaultTryGetFieldMetadata(s_Desc__SIZE, out var sizeMetadata))
+            {
+                MetadataCollectorException.Throw($"{nameof(LoadFieldMetadata)}:{nameof(PtrList.SIZE)}");
+            }
+            FiledItemsOffset = itemMetdata.Offset;
+            FiledSizeOffset = sizeMetadata.Offset;
+            InitFieldMetadata = true;
         }
-
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection) : base(contextMetadata, classMetadataCollection)
-        {
-            InitMetadata();
-        }
-
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, PMonoObject pMonoObject) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(pMonoObject))
-        {
-
-        }
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, PMonoClass pMonoClass) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(pMonoClass))
-        {
-
-        }
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, MonoFieldInfoDTO fieldInfoDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(fieldInfoDTO))
+        protected virtual void LoadMethodMetadata()
         {
 
         }
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, MonoParameterTypeDTO parameterTypeDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(parameterTypeDTO))
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection) : base(contextMetadata, classMetadataCollection)
+        {
+            LoadFieldMetadata();
+            LoadMethodMetadata();
+        }
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, PMonoObject pMonoObject) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(pMonoObject))
         {
 
         }
-        public System_Collections_Generic_List(ContextMetadataCollector contextMetadata, MonoReturnTypeDTO returnTypeDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(returnTypeDTO))
+        public SysGenericList(ContextMetadataCollector contextMetadata, PMonoClass pMonoClass) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(pMonoClass))
         {
 
+        }
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoFieldInfoDTO fieldInfoDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(fieldInfoDTO))
+        {
+
+        }
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoParameterTypeDTO parameterTypeDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(parameterTypeDTO))
+        {
+
+        }
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoReturnTypeDTO returnTypeDTO) : this(contextMetadata, contextMetadata.RuntimeContext.GetClassMetadata(returnTypeDTO))
+        {
+
+        }
+
+
+
+
+
+    }
+
+    public class SysGenericList<TITEM> : SysGenericList where TITEM : unmanaged
+    {
+        static FunctionPointerType_ADD_C51EC44DDD54EC33 s_FunctionPointerType_ADD_C51EC44DDD54EC33;
+        static FunctionPointerType_CLEAR_F7EDAD10DE185E80 s_FunctionPointerType_CLEAR_F7EDAD10DE185E80;
+
+        [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+        unsafe readonly struct FunctionPointerType_ADD_C51EC44DDD54EC33(System.IntPtr pointer)
+        {
+            [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.SysInt)]
+            readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<System.IntPtr, TITEM, void> m_Pointer = (delegate* unmanaged[Cdecl, SuppressGCTransition]<System.IntPtr, TITEM, void>)pointer;
+            [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            public void Delegate(System.IntPtr @this, TITEM item) => this.m_Pointer(@this, item);
+            public static implicit operator FunctionPointerType_ADD_C51EC44DDD54EC33(System.IntPtr pointer) => new FunctionPointerType_ADD_C51EC44DDD54EC33(pointer);
         }
 
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        public unsafe readonly partial struct Ptr_System_Collections_Generic_List(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
+        unsafe readonly struct FunctionPointerType_CLEAR_F7EDAD10DE185E80(System.IntPtr pointer)
         {
             [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.SysInt)]
-            readonly System.IntPtr m_Pointer = ptr;
-            public System.IntPtr Ptr => m_Pointer;
-
-            public static implicit operator Ptr_System_Collections_Generic_List(System.IntPtr ptr) => new(ptr);
-            public static implicit operator System.IntPtr(Ptr_System_Collections_Generic_List ptr) => ptr.m_Pointer;
-            public static implicit operator bool(Ptr_System_Collections_Generic_List ptr) => ptr.m_Pointer != System.IntPtr.Zero;
+            readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<System.IntPtr, void> m_Pointer = (delegate* unmanaged[Cdecl, SuppressGCTransition]<System.IntPtr, void>)pointer;
+            [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            public void Delegate(System.IntPtr @this) => this.m_Pointer(@this);
+            public static implicit operator FunctionPointerType_CLEAR_F7EDAD10DE185E80(System.IntPtr pointer) => new FunctionPointerType_CLEAR_F7EDAD10DE185E80(pointer);
         }
 
 
-        partial struct Ptr_System_Collections_Generic_List
+
+
+
+
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection) : base(contextMetadata, classMetadataCollection)
         {
-            /// <summary>
-            /// 0x10 T[] _items
-            /// class ["mscorlib"."System.Collections.Generic"."T[]"]
-            /// </summary>
-            /// <returns>class T[]</returns>
-
-            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
-            public PMonoArray ITEMS => ClassMetadataCollector.GetMemberFieldValue<PMonoArray>(this, s_Field__ITEMS);
-
-
-            /// <summary>
-            /// 0x18 System.Int32 _size
-            /// struct ["mscorlib"."System"."Int32"]
-            /// </summary>
-            /// <returns>struct System.Int32</returns>
-
-            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
-            public System.Int32 SIZE => ClassMetadataCollector.GetMemberFieldValue<int>(this, s_Field__SIZE);
-
-
-            /// <summary>
-            /// 0x1C System.Int32 _version
-            /// struct ["mscorlib"."System"."Int32"]
-            /// </summary>
-            /// <returns>struct System.Int32</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
-           public partial System.Int32 _VERSION { get; set; } 
-*/
-
-            /// <summary>
-            /// 0x20 System.Object _syncRoot
-            /// class ["mscorlib"."System"."Object"]
-            /// </summary>
-            /// <returns>class System.Object</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
-           public partial nint _SYNC_ROOT { get; set; } 
-*/
-
         }
 
+        public SysGenericList(ContextMetadataCollector contextMetadata, PMonoObject pMonoObject) : base(contextMetadata, pMonoObject)
+        {
+        }
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, PMonoClass pMonoClass) : base(contextMetadata, pMonoClass)
+        {
+        }
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoFieldInfoDTO fieldInfoDTO) : base(contextMetadata, fieldInfoDTO)
+        {
+        }
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoParameterTypeDTO parameterTypeDTO) : base(contextMetadata, parameterTypeDTO)
+        {
+        }
+
+        public SysGenericList(ContextMetadataCollector contextMetadata, MonoReturnTypeDTO returnTypeDTO) : base(contextMetadata, returnTypeDTO)
+        {
+        }
+
+
+
+
+
+
+    }
+
+    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    public unsafe readonly partial struct PtrSysList<TITEM>(System.IntPtr ptr) : IPtrMetadata
+        where TITEM : unmanaged
+    {
+        [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.SysInt)]
+        readonly System.IntPtr m_Pointer = ptr;
+        public System.IntPtr Ptr => m_Pointer;
+
+        public static implicit operator PtrSysList<TITEM>(System.IntPtr ptr) => new(ptr);
+        public static implicit operator System.IntPtr(PtrSysList<TITEM> ptr) => ptr.m_Pointer;
+        public static implicit operator bool(PtrSysList<TITEM> ptr) => ptr.m_Pointer != System.IntPtr.Zero;
+
+    }
+
+    partial struct PtrSysList<TITEM>
+    {
+        /// <summary>
+        /// 0x10 T[] _items
+        /// class ["mscorlib"."System.Collections.Generic"."T[]"]
+        /// </summary>
+        /// <returns>class T[]</returns>
+
+        //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
+        public PMonoArray<TITEM> ITEMS => ClassMetadataCollector.GetMemberFieldValue<PMonoArray<TITEM>>(this, SysGenericList<TITEM>.FiledItemsOffset);
+
+
+        /// <summary>
+        /// 0x18 System.Int32 _size
+        /// struct ["mscorlib"."System"."Int32"]
+        /// </summary>
+        /// <returns>struct System.Int32</returns>
+
+        //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
+        public System.Int32 SIZE => ClassMetadataCollector.GetMemberFieldValue<int>(this, SysGenericList<TITEM>.FiledSizeOffset);
+
+
+        /// <summary>
+        /// 0x1C System.Int32 _version
+        /// struct ["mscorlib"."System"."Int32"]
+        /// </summary>
+        /// <returns>struct System.Int32</returns>
+        /*
+       [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
+       public partial System.Int32 _VERSION { get; set; } 
+*/
+
+        /// <summary>
+        /// 0x20 System.Object _syncRoot
+        /// class ["mscorlib"."System"."Object"]
+        /// </summary>
+        /// <returns>class System.Object</returns>
+        /*
+       [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
+       public partial nint _SYNC_ROOT { get; set; } 
+*/
+
+        public void ADD(TITEM item) => SysGenericList<TITEM>.s_FunctionPointerType_ADD_C51EC44DDD54EC33.Delegate(this, item);
+        public void CLEAR() => SysGenericList < TITEM > s_FunctionPointerType_CLEAR_F7EDAD10DE185E80.Delegate(this);
+
+
+        public ReadOnlySpan<TITEM> AsReadOnlySpan() => ITEMS.AsReadOnlySpan(SIZE);
+        public Span<TITEM> AsSpan() => ITEMS.AsSpan(SIZE);
 
     }
 }

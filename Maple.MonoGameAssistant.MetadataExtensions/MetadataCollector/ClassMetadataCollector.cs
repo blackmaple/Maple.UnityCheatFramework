@@ -29,12 +29,10 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return pointer != nint.Zero;
 
         }
-
         public bool DefaultTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
             return this.ClassMetadata.TryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
         }
-
     }
 
     public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
