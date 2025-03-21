@@ -49,20 +49,20 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib"."System.Collections.Generic"."T[]"]
             /// </summary>
             /// <returns>class T[]</returns>
-             /*
+         
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
             public partial nint _ITEMS { get; set; } 
-*/
+ 
 
             /// <summary>
             /// 0x18 System.Int32 _size
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
+             
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
             public partial System.Int32 _SIZE { get; set; } 
-*/
+ 
 
             /// <summary>
             /// 0x1C System.Int32 _version
