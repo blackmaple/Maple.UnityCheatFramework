@@ -567,11 +567,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// </summary>
             /// <param name = "item">class T</param>
             /// <returns>struct System.Boolean</returns>
-            /*
+           
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Remove", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("T", 0)]
            public partial System.Boolean REMOVE(nint item); 
-*/
+ 
             /// <summary>
             ///   System.Int32 RemoveAll(System.Predicate<T> match)
             /// </summary>

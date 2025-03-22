@@ -123,6 +123,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
             return false;
 
         }
+        public static bool TryGetMethodPointer(this MonoRuntimeContext @this, MonoMethodInfoDTO methodInfoDTO, out nint pointer)
+        {
+            pointer = @this.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
+            return pointer != nint.Zero;
+        }
 
         public static MonoClassMetadataCollection GetMonoClassMetadataCollection(this MonoRuntimeContext runtimeContext, PMonoClass pMonoClass)
         {
@@ -134,5 +139,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
                 FieldInfos = [.. runtimeContext.EnumMonoFields(pMonoClass, EnumMonoFieldOptions.None)],
             };
         }
+
+
     }
 }

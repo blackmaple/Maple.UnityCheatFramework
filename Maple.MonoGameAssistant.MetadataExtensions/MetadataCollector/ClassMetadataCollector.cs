@@ -25,9 +25,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
         public bool DefaultTryGetMethodPointer(MonoMethodInfoDTO methodInfoDTO, out nint pointer)
         {
-            pointer = RuntimeContext.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
-            return pointer != nint.Zero;
-
+            return RuntimeContext.TryGetMethodPointer(methodInfoDTO, out pointer);
         }
         public bool DefaultTryGetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO, [MaybeNullWhen(false)] out MonoFieldInfoDTO fieldInfoDTO)
         {
