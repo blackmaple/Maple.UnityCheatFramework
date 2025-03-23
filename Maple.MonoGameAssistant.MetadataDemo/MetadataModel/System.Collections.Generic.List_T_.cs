@@ -1,3 +1,7 @@
+using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     /// <summary>
@@ -5,9 +9,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     /// [System.Object]
     /// [System.Collections.Generic.IList<T>]=>[System.Collections.Generic.ICollection<T>]=>[System.Collections.Generic.IEnumerable<T>]=>[System.Collections.IEnumerable]=>[System.Collections.IList]=>[System.Collections.ICollection]=>[System.Collections.Generic.IReadOnlyList<T>]=>[System.Collections.Generic.IReadOnlyCollection<T>]
     /// </summary>
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassParentMetadataAttribute<Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector.ClassMetadataCollector<Ptr_ListGeneric>, Ptr_ListGeneric>]
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassModelMetadataAttribute("mscorlib", "System.Collections.Generic", "List`1", "System.Collections.Generic.List<T>")]
-    public partial class ListGeneric
+    //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassParentMetadataAttribute<Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector.GenericClassMetadataCollector<ListGeneric<TITEM>>, Ptr_ListGeneric>]
+    //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
+    public partial class ListGeneric<TITEM>(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
+        : GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(runtimeContext, classMetadataCollection)
+        where TITEM : unmanaged
     {
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_ListGeneric(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
@@ -567,11 +573,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// </summary>
             /// <param name = "item">class T</param>
             /// <returns>struct System.Boolean</returns>
-           
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Remove", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("T", 0)]
-           public partial System.Boolean REMOVE(nint item); 
- 
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Remove", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("T", 0)]
+            public partial System.Boolean REMOVE(nint item);
+
             /// <summary>
             ///   System.Int32 RemoveAll(System.Predicate<T> match)
             /// </summary>
