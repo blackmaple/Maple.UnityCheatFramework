@@ -12,9 +12,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             try
             {
-                Test();
-                InitializeClassMetadata(context);
 
+                InitializeClassMetadata(context);
+                InitializeGenericClassModelMetadata(context);
                 InitializeContextMetadata(context);
 
             }
@@ -26,14 +26,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         public static void InitializeClassMetadata(IncrementalGeneratorInitializationContext context)
         {
-            //var path = context.AnalyzerConfigOptionsProvider.Select((p, _) =>
-            //{
-            //    if (p.GlobalOptions.TryGetValue("build_property.projectdir", out var path))
-            //    {
-            //        return path;
-            //    }
-            //    return default;
-            //});
 
             var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(ClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax, (ctx, _) =>
             {
@@ -41,11 +33,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             });
 
-            //classMetadatas = classMetadatas.Combine(path).Select((data, _) =>
-            //{
-            //    data.Left.ProjectPath = data.Right;
-            //    return data.Left;
-            //});
 
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
@@ -66,7 +53,47 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
 
-                // MetadataSourceGeneratorJson.WriteJson2File(metadata);
+            });
+        }
+        public static void InitializeGenericClassModelMetadata(IncrementalGeneratorInitializationContext context)
+        {
+
+            var classMetadatas = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(GenericClassModelMetadataAttribute).FullName, (node, _) => node is ClassDeclarationSyntax klass && klass.TypeParameterList is not null, (ctx, _) =>
+            {
+                return ctx.GetGenericClassMemberMetadataData(ctx.Attributes[0]);
+
+            });
+            context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
+            {
+                var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
+                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, []);
+
+
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [  mainCtor,  ]);
+
+
+            });
+            return;
+            context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
+            {
+                List<MemberDeclarationSyntax> fields = [];
+                List<ExpressionStatementSyntax> expressions = [];
+                List<StructDeclarationSyntax> structs = [];
+
+                metadata.BuildClassMetadataJson(fields);
+                metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
+                metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
+
+                var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
+                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
+
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
+                var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
+                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
+
+
             });
         }
 
@@ -99,23 +126,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
 
-        public static void Test()
-        {
 
-
-            //context.RegisterPostInitializationOutput(ctx =>
-            //{
-            //    // 写入到文件
-            //    var projectDirectory = ctx.AnalyzerConfigOptions.GlobalOptions["build_property.MSBuildProjectDirectory"];
-            //    var filePath = Path.Combine(projectDirectory, "GeneratedData.json");
-            //    File.WriteAllText(filePath, jsonString);
-
-            //});
-
-
-
-
-        }
 
 
 

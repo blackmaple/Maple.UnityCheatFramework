@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace Maple.MonoGameAssistant.MetadataSourceGenerator
@@ -85,6 +86,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return false;
         }
+
         static bool TryReadImmutableArray<T>(this ImmutableArray<TypedConstant> offsetSymbols, out T[]? values)
         // where T : struct
         {
@@ -506,6 +508,66 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
                 ContextSymbol = ctx.TargetSymbol,
 
+                PropertyMetadataDatas = [.. ptrSymbol.EnumClassPropertyMetadata().OrderBy(p => p.PropertySymbol.IsStatic ? 1 : 0)],
+                MethodMetadataDatas = [.. ptrSymbol.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
+            };
+
+            if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8ImageName))
+            {
+                metadata.Utf8ImageName = utf8ImageName;
+            }
+            if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Namespace))
+            {
+                metadata.Utf8Namespace = utf8Namespace;
+            }
+            if (att.TryGetAttributeBytes_CtorArgs(2, out byte[]? utf8ClassName))
+            {
+                metadata.Utf8ClassName = utf8ClassName;
+            }
+            if (att.TryGetAttributeBytes_CtorArgs(3, out byte[]? utf8FullName))
+            {
+                metadata.Utf8FullName = utf8FullName;
+            }
+            //  if(ctx.)
+            return metadata;
+
+        }
+        public static GenericClassMemberMetadataData GetGenericClassMemberMetadataData(this GeneratorAttributeSyntaxContext ctx, AttributeData att)
+        {
+            var typeSymbol = (ctx.TargetSymbol as INamedTypeSymbol)?.TypeParameters.ElementAtOrDefault(0);
+            if (typeSymbol is null)
+            {
+                return MetadataSourceGeneratorException.Throw<GenericClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} type error");
+            }
+            var parentMetadata = ctx.TargetSymbol.GetAttributes().Where(p =>
+              p.AttributeClass!.ContainingNamespace.ToDisplayString() == typeof(GenericClassParentMetadataAttribute).Namespace
+              && p.AttributeClass.MetadataName == typeof(GenericClassParentMetadataAttribute).Name
+              ).FirstOrDefault();
+            if (parentMetadata is null)
+            {
+                return MetadataSourceGeneratorException.Throw<GenericClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} not found {typeof(GenericClassParentMetadataAttribute).FullName}");
+            }
+            if (!parentMetadata.ConstructorArguments.Any()
+                || (!parentMetadata.TryGetAttributeValue_CtorArgs(0, out INamedTypeSymbol? parentSymbol) || parentSymbol is null)
+                || (!parentMetadata.TryGetAttributeValue_CtorArgs(1, out INamedTypeSymbol? ptrSymbol) || ptrSymbol is null)
+                )
+            {
+                return MetadataSourceGeneratorException.Throw<GenericClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} args error {typeof(GenericClassParentMetadataAttribute).FullName}");
+            }
+
+
+
+            //      var ptrSymbol = parentMetadata.AttributeClass!.TypeArguments[1];
+
+            var classDisplayString = ctx.TargetSymbol.ToDisplayString();
+            var metadata = new GenericClassMemberMetadataData()
+            {
+                Code = GetClassCode(classDisplayString),
+                ParentSymbol = parentSymbol,
+                PtrSymbol = ptrSymbol,
+
+                ContextSymbol = ctx.TargetSymbol,
+                TypeSymbol = typeSymbol,
                 PropertyMetadataDatas = [.. ptrSymbol.EnumClassPropertyMetadata().OrderBy(p => p.PropertySymbol.IsStatic ? 1 : 0)],
                 MethodMetadataDatas = [.. ptrSymbol.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
             };

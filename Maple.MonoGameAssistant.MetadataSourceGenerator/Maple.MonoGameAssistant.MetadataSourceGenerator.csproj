@@ -27,13 +27,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IClassMetadataCollectorBase.cs" Link="Ref\IClassMetadataCollectorBase.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IAbstractClassMetadataCollector.cs" Link="Ref\IAbstractClassMetadataCollector.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IClassMetadataCollector.cs" Link="Ref\IClassMetadataCollector.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IMetadataCollectorCollectionBase.cs" Link="Ref\IMetadataCollectorCollectionBase.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IPtrMetadata.cs" Link="Ref\IPtrMetadata.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IPtrMetadataCollector.cs" Link="Ref\IPtrMetadataCollector.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IRefMetadata.cs" Link="Ref\IRefMetadata.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\IRefMetadataCollector.cs" Link="Ref\IRefMetadataCollector.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassParentMetadataAttribute.cs" Link="Ref\ClassParentMetadataAttribute.cs" />
+		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\GenericClassModelMetadataAttribute.cs" Link="Ref\GenericClassModelMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ClassModelMetadataAttribute.cs" Link="Ref\ClassModelMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ContextParentMetadataAttribute.cs" Link="Ref\ContextParentMetadataAttribute.cs" />
 		<Compile Include="..\Maple.MonoGameAssistant.MetadataExtensions\MetadataGenerator\ContextMemberMetadataAttribute.cs" Link="Ref\ContextMemberMetadataAttribute.cs" />

@@ -1,5 +1,8 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using static Maple.MonoGameAssistant.Core.MonoRuntimeContext;
 
@@ -79,6 +82,20 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             return @this.TryConvert(new PMonoObject(ptr), out ptrMetadata);
         }
+
+
+        public static bool TryLoadMetadata<T_PtrMetadata>(this T_PtrMetadata @this,
+            [MaybeNullWhen(false)] out MonoRuntimeContext runtimeContext,
+            [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+            where T_PtrMetadata : unmanaged, IPtrMetadata
+        {
+            Unsafe.SkipInit(out classMetadataCollection);
+            runtimeContext = MonoRuntimeContext.GlobalInstance;
+            return runtimeContext is not null && runtimeContext.TryGetClassMetadata(@this.Ptr, out classMetadataCollection);
+        }
+
+
+
 
     }
 
