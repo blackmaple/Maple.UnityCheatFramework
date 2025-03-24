@@ -14,7 +14,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         , typeof(ListGeneric<>.Ptr_ListGeneric)
         )]
     [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
-    public partial class ListGeneric<TITEM>(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
+    public partial class ListGeneric<TITEM>/*(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)*/
     //: GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(runtimeContext, classMetadataCollection)
     //where TITEM : unmanaged
     {

@@ -238,10 +238,41 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         }
 
-        public static ClassDeclarationSyntax CreateClassDeclarationSyntaxExpression(
-            ISymbol symbol,
-            ISymbol baseSymbol,
+        public static ClassDeclarationSyntax CreateGenericClassDeclarationSyntaxExpression(
+            GenericClassMemberMetadataData metadataData,
             SyntaxList<MemberDeclarationSyntax> memberDeclarations)
+        {
+            var derivedClassFullName = metadataData.ContextSymbol.ToDisplayString();
+            var derivedClassName = SyntaxFactory.GenericName(SyntaxFactory.Identifier(metadataData.ContextSymbol.Name),
+                SyntaxFactory.TypeArgumentList([.. EnumTypeSyntax()]));
+
+
+
+            var derivedClass = SyntaxFactory.ClassDeclaration(derivedClassName.ToFullString());
+            var baseClass = SyntaxFactory.GenericName(SyntaxFactory.Identifier($"{metadataData.ParentSymbol.ContainingNamespace.ToDisplayString()}.{metadataData.ParentSymbol.Name}"), SyntaxFactory.TypeArgumentList(
+                [
+                    SyntaxFactory.ParseTypeName(derivedClassFullName),
+                    SyntaxFactory.ParseTypeName(metadataData.PtrSymbol.ToDisplayString())
+                ]));
+            var classDeclaration = derivedClass
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+                .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(baseClass)]))
+                .WithMembers(memberDeclarations);
+            return classDeclaration;
+
+            IEnumerable<TypeSyntax> EnumTypeSyntax()
+            {
+                foreach (var type in metadataData.TypeSymbols)
+                {
+                    yield return SyntaxFactory.ParseTypeName(type.Name);
+
+                }
+            }
+        }
+        public static ClassDeclarationSyntax CreateClassDeclarationSyntaxExpression(
+        ISymbol symbol,
+        ISymbol baseSymbol,
+        SyntaxList<MemberDeclarationSyntax> memberDeclarations)
         {
             var classDeclaration = SyntaxFactory.ClassDeclaration(symbol.Name)
                 .WithModifiers([SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
@@ -474,6 +505,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
+        public static IEnumerable<ParameterSyntax> BuildGenericClassParentCtorParameterExpression(IEnumerable<IParameterSymbol> parameterSymbols)
+        {
+            foreach (var arg in parameterSymbols)
+            {
+                var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Name))
+                           .WithType(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()));
+                yield return parameter;
+            }
+        }
 
 
         #endregion
@@ -534,8 +574,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
         public static GenericClassMemberMetadataData GetGenericClassMemberMetadataData(this GeneratorAttributeSyntaxContext ctx, AttributeData att)
         {
-            var typeSymbol = (ctx.TargetSymbol as INamedTypeSymbol)?.TypeParameters.ElementAtOrDefault(0);
-            if (typeSymbol is null)
+            var typeSymbols = (ctx.TargetSymbol as INamedTypeSymbol)?.TypeParameters ?? [];
+            if (typeSymbols.Length == 0)
             {
                 return MetadataSourceGeneratorException.Throw<GenericClassMemberMetadataData>($"{ctx.TargetSymbol.ToDisplayString()} type error");
             }
@@ -563,31 +603,31 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var metadata = new GenericClassMemberMetadataData()
             {
                 Code = GetClassCode(classDisplayString),
-                ParentSymbol = parentSymbol,
-                PtrSymbol = ptrSymbol,
+                ParentSymbol = parentSymbol.OriginalDefinition,
+                PtrSymbol = ptrSymbol.OriginalDefinition,
 
                 ContextSymbol = ctx.TargetSymbol,
-                TypeSymbol = typeSymbol,
+                TypeSymbols = [.. typeSymbols],
                 PropertyMetadataDatas = [.. ptrSymbol.EnumClassPropertyMetadata().OrderBy(p => p.PropertySymbol.IsStatic ? 1 : 0)],
                 MethodMetadataDatas = [.. ptrSymbol.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
             };
 
-            if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8ImageName))
-            {
-                metadata.Utf8ImageName = utf8ImageName;
-            }
-            if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Namespace))
-            {
-                metadata.Utf8Namespace = utf8Namespace;
-            }
-            if (att.TryGetAttributeBytes_CtorArgs(2, out byte[]? utf8ClassName))
-            {
-                metadata.Utf8ClassName = utf8ClassName;
-            }
-            if (att.TryGetAttributeBytes_CtorArgs(3, out byte[]? utf8FullName))
-            {
-                metadata.Utf8FullName = utf8FullName;
-            }
+            //if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8ImageName))
+            //{
+            //    metadata.Utf8ImageName = utf8ImageName;
+            //}
+            //if (att.TryGetAttributeBytes_CtorArgs(1, out byte[]? utf8Namespace))
+            //{
+            //    metadata.Utf8Namespace = utf8Namespace;
+            //}
+            //if (att.TryGetAttributeBytes_CtorArgs(2, out byte[]? utf8ClassName))
+            //{
+            //    metadata.Utf8ClassName = utf8ClassName;
+            //}
+            //if (att.TryGetAttributeBytes_CtorArgs(3, out byte[]? utf8FullName))
+            //{
+            //    metadata.Utf8FullName = utf8FullName;
+            //}
             //  if(ctx.)
             return metadata;
 

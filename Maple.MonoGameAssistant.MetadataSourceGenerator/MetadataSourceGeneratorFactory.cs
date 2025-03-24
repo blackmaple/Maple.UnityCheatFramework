@@ -66,35 +66,16 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
-                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
+                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildGenericClassParentCtorParameterExpression(parameterSymbols).ToArray();
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, []);
 
 
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [  mainCtor,  ]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateGenericClassDeclarationSyntaxExpression(metadata, [mainCtor,]);
 
 
             });
-            return;
-            context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
-            {
-                List<MemberDeclarationSyntax> fields = [];
-                List<ExpressionStatementSyntax> expressions = [];
-                List<StructDeclarationSyntax> structs = [];
-
-                metadata.BuildClassMetadataJson(fields);
-                metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
-                metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
-
-                var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
-                var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildClassParentCtorParameterExpression(parameterSymbols, metadata.Code).ToArray();
-
-                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateClassDeclarationSyntaxExpression(metadata.ContextSymbol, metadata.ParentSymbol, [.. fields, mainCtor, .. structs,]);
-                var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
-                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
 
-            });
         }
 
         public static void InitializeContextMetadata(IncrementalGeneratorInitializationContext context)
