@@ -21,7 +21,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public ClassPropertyMetadataData[] PropertyMetadataDatas { set; get; } = default!;
         public ClassMethodMetadataData[] MethodMetadataDatas { set; get; } = default!;
 
-        //  public string JsonName => "JsonClass";
+        public string MethodName_LoadMetadata => "LoadMetadata";
 
         public string? ProjectPath { set; get; }
 

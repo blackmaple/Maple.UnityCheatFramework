@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
+using System.Linq.Expressions;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -247,9 +248,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 SyntaxFactory.TypeArgumentList([.. EnumTypeSyntax()]));
 
 
+            var genericName = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.IdentifierName(metadataData.ParentSymbol.ContainingNamespace.ToDisplayString()),
+                SyntaxFactory.IdentifierName(metadataData.ParentSymbol.Name));
 
             var derivedClass = SyntaxFactory.ClassDeclaration(derivedClassName.ToFullString());
-            var baseClass = SyntaxFactory.GenericName(SyntaxFactory.Identifier($"{metadataData.ParentSymbol.ContainingNamespace.ToDisplayString()}.{metadataData.ParentSymbol.Name}"), SyntaxFactory.TypeArgumentList(
+            var baseClass = SyntaxFactory.GenericName(SyntaxFactory.Identifier(genericName.ToFullString()), SyntaxFactory.TypeArgumentList(
                 [
                     SyntaxFactory.ParseTypeName(derivedClassFullName),
                     SyntaxFactory.ParseTypeName(metadataData.PtrSymbol.ToDisplayString())
@@ -608,8 +613,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
                 ContextSymbol = ctx.TargetSymbol,
                 TypeSymbols = [.. typeSymbols],
-                PropertyMetadataDatas = [.. ptrSymbol.EnumClassPropertyMetadata().OrderBy(p => p.PropertySymbol.IsStatic ? 1 : 0)],
-                MethodMetadataDatas = [.. ptrSymbol.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
+                PropertyMetadataDatas = [.. ptrSymbol.OriginalDefinition.EnumClassPropertyMetadata().OrderBy(p => p.PropertySymbol.IsStatic ? 1 : 0)],
+                MethodMetadataDatas = [.. ptrSymbol.OriginalDefinition.EnumClassMethodMetadata().OrderBy(p => p.RuntimeMethod ? 1 : 0)]
             };
 
             //if (att.TryGetAttributeBytes_CtorArgs(0, out byte[]? utf8ImageName))
@@ -785,10 +790,24 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 : SyntaxFactory.VariableDeclaration(
                        SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
                    [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())]);
-
             return SyntaxFactory.FieldDeclaration(variableDeclaration).WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
 
         }
+
+        public static FieldDeclarationSyntax GenericBuildOffsetMemberExpression(ClassPropertyMetadataData classProperty)
+        {
+            VariableDeclarationSyntax variableDeclaration =
+                classProperty.PropertySymbol.IsStatic ?
+                SyntaxFactory.VariableDeclaration(
+                   SyntaxFactory.IdentifierName(typeof(MonoStaticFieldSource).FullName),
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName(true))])
+                : SyntaxFactory.VariableDeclaration(
+                       SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName(true))]);
+            return SyntaxFactory.FieldDeclaration(variableDeclaration);
+        }
+
+
         public static ExpressionStatementSyntax AssignmentOffsetMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
         {
             var callMethod = classProperty.PropertySymbol.IsStatic
@@ -811,6 +830,36 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
                                 [
                                     SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classProperty.Code)))
+                                ]
+                                ))
+                        )
+                    );
+
+
+
+        }
+        public static ExpressionStatementSyntax GenericAssignmentOffsetMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
+        {
+            var callMethod = classProperty.PropertySymbol.IsStatic
+                ? nameof(IGenericClassMetadataCollector.GetStaticFieldMetadata)
+                : nameof(IGenericClassMetadataCollector.GetMemberFieldOffset);
+            return SyntaxFactory.ExpressionStatement
+                    (
+                        SyntaxFactory.AssignmentExpression
+                        (
+                             SyntaxKind.SimpleAssignmentExpression,
+                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))),
+                                SyntaxFactory.InvocationExpression
+                                (
+                                    SyntaxFactory.MemberAccessExpression
+                                    (
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(callMethod)
+                                    )
+                                ).WithArgumentList(SyntaxFactory.ArgumentList(
+                                [
+                                       SyntaxFactory.Argument( SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classProperty.GetDescVariableName())))
                                 ]
                                 ))
                         )
@@ -1021,6 +1070,208 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
             }
         }
+        public static PropertyDeclarationSyntax GenericBuildPartialPropertyMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(classProperty.PropertySymbol.Type.ToDisplayString());
+            var propType = baseType;
+            var refKind = false;
+            if (classProperty.PropertySymbol.IsStatic == false)
+            {
+                if (classProperty.PropertySymbol.RefKind == RefKind.Ref)
+                {
+                    propType = SyntaxFactory.RefType(propType);
+                    refKind = true;
+                }
+                else if (classProperty.PropertySymbol.RefKind == RefKind.RefReadOnly)
+                {
+                    propType = SyntaxFactory.RefType(propType).WithReadOnlyKeyword(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword));
+                    refKind = true;
+                }
+            }
+
+            var classfullName = SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString());
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(propType, classProperty.PropertySymbol.Name)
+                .WithModifiers([.. EnumModifiers(classProperty)])
+                .WithAccessorList(
+                    SyntaxFactory.AccessorList([.. EnumAccessorDeclarationSyntax(classfullName, baseType, classProperty, refKind)])
+                 );
+
+            //      var content = propertyDeclaration.NormalizeWhitespace().ToFullString();
+
+            return propertyDeclaration;
+
+
+
+            static IEnumerable<SyntaxToken> EnumModifiers(ClassPropertyMetadataData classProperty)
+            {
+                if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Public)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.PublicKeyword);
+                }
+                else if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Internal)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.InternalKeyword);
+                }
+                else if (classProperty.PropertySymbol.DeclaredAccessibility == Accessibility.Private)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.PrivateKeyword);
+                }
+
+
+                if (classProperty.PropertySymbol.IsStatic)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.StaticKeyword);
+                }
+                //if (classProperty.PropertySymbol.IsReadOnly)
+                //{
+                //    yield return SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword);
+                //}
+                if (classProperty.PropertySymbol.IsPartialDefinition)
+                {
+                    yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
+                }
+            }
+
+            static IEnumerable<AccessorDeclarationSyntax> EnumAccessorDeclarationSyntax(
+                IdentifierNameSyntax classfullName,
+                TypeSyntax propType,
+                ClassPropertyMetadataData classProperty,
+                bool refKind)
+            {
+                ExpressionSyntax? getAccessorBody = null;
+                ExpressionSyntax? setAccessorBody = null;
+
+                if (classProperty.PropertySymbol.IsStatic)
+                {
+
+                    if (classProperty.PropertySymbol.GetMethod is not null)
+                    {
+                        getAccessorBody =
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    classfullName,
+                                    SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                )
+                            )
+                           .WithArgumentList(
+                               SyntaxFactory.ArgumentList([
+                                   SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                             SyntaxKind.SimpleMemberAccessExpression,
+                                             classfullName,
+                                             SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                        )
+                                    )
+                               ])
+                           );
+
+                    }
+                    if (classProperty.PropertySymbol.SetMethod is not null)
+                    {
+                        setAccessorBody =
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    classfullName,
+                                    SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetStaticFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                ),
+                                SyntaxFactory.ArgumentList([
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                        )),
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword( SyntaxFactory.Token(SyntaxKind.InKeyword))
+                                ])
+                            );
+                    }
+                }
+                else
+                {
+                    if (classProperty.PropertySymbol.GetMethod is not null)
+                    {
+                        getAccessorBody =
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    classfullName,
+                                    SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.GetMemberFieldValue)))
+                                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                )
+                            )
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList([
+                                    SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            classfullName,
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                        )
+                                    )
+                                ])
+                            );
+                    }
+                    if (classProperty.PropertySymbol.SetMethod is not null)
+                    {
+                        setAccessorBody =
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    classfullName,
+                                    SyntaxFactory.GenericName(SyntaxFactory.Identifier(nameof(IClassMetadataCollector.SetMemberFieldValue))).WithTypeArgumentList(SyntaxFactory.TypeArgumentList([propType]))
+                                ),
+                                SyntaxFactory.ArgumentList([
+                                    SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                      SyntaxFactory.Argument(
+                                          SyntaxFactory.MemberAccessExpression(
+                                              SyntaxKind.SimpleMemberAccessExpression,
+                                              classfullName,
+                                              SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
+                                          )
+                                      ),
+                                      SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.InKeyword))
+                                ])
+                            );
+                    }
+                }
+
+
+
+                if (getAccessorBody is not null)
+                {
+                    if (refKind)
+                    {
+                        getAccessorBody = SyntaxFactory.RefExpression(getAccessorBody);
+                    }
+                    yield return
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.ReturnStatement(
+                                    getAccessorBody
+                                )
+                            )
+                        );
+                }
+                if (setAccessorBody is not null)
+                {
+                    yield return
+                        SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.ExpressionStatement(
+                                    setAccessorBody
+                                )
+                            )
+                        );
+                }
+            }
+        }
+
         public static void BuildClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
         {
             if (classMember.PropertyMetadataDatas.Length == 0)
@@ -1037,6 +1288,27 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 expressions.Add(s);
 
                 var p = BuildPartialPropertyMemberExpression(classMember.ContextSymbol, member);
+                propertyDeclarations.Add(p);
+            }
+            var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. propertyDeclarations]);
+            structs.Add(ptr);
+        }
+        public static void BuildGenericClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
+        {
+            if (classMember.PropertyMetadataDatas.Length == 0)
+            {
+                return;
+            }
+            var propertyDeclarations = new List<PropertyDeclarationSyntax>();
+            foreach (var member in classMember.PropertyMetadataDatas)
+            {
+                var f = GenericBuildOffsetMemberExpression(member);
+                fields.Add(f);
+
+                var s = GenericAssignmentOffsetMemberExpression(classMember.ContextSymbol, member);
+                expressions.Add(s);
+
+                var p = GenericBuildPartialPropertyMemberExpression(classMember.ContextSymbol, member);
                 propertyDeclarations.Add(p);
             }
             var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. propertyDeclarations]);
@@ -1610,6 +1882,134 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
+        public static FieldDeclarationSyntax GenericBuildMethodMemberFieldExpression(ClassMethodMetadataData classMethod, StructDeclarationSyntax functionPointer)
+        {
+
+            VariableDeclarationSyntax variableDeclaration =
+                classMethod.RuntimeMethod ?
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
+                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
+                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName(true))])
+                : SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text),
+                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName(true))]);
+
+            return SyntaxFactory.FieldDeclaration(variableDeclaration);
+
+        }
+        public static ExpressionStatementSyntax GenericAssignmentMethodMemberExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod, StructDeclarationSyntax functionPointer)
+        {
+            var callMethod = SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.ThisExpression(),
+                    (
+                        classMethod.RuntimeMethod ?
+                        SyntaxFactory.GenericName(nameof(IGenericClassMetadataCollector.GetMethodDelegate))
+                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)]))
+                        : SyntaxFactory.IdentifierName(nameof(IGenericClassMetadataCollector.GetMethodPointer))
+                    )
+                );
+            return SyntaxFactory.ExpressionStatement
+                    (
+                        SyntaxFactory.AssignmentExpression
+                        (
+                             SyntaxKind.SimpleAssignmentExpression,
+                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())),
+                                SyntaxFactory.InvocationExpression
+                                (
+                                    callMethod
+                                ).WithArgumentList(SyntaxFactory.ArgumentList(
+                                [
+                                    SyntaxFactory.Argument( SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerDescName())))
+
+                                   // SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classMethod.Code)))
+                                ]
+                                ))
+                        )
+                    );
+
+        }
+
+        static MemberDeclarationSyntax CreateMethod_LoadMetadata(ClassMemberMetadataData classMember)
+        {
+
+            var typeSyntax = SyntaxFactory.ParseTypeName(classMember.ContextSymbol.ToDisplayString());
+            var argSyntax = SyntaxFactory.Parameter(SyntaxFactory.Identifier($"@{SyntaxFactory.ThisExpression().ToFullString()}")).WithType(SyntaxFactory.ParseTypeName(classMember.PtrSymbol.ToDisplayString()));
+
+
+
+            return
+                    SyntaxFactory.MethodDeclaration(typeSyntax, classMember.MethodName_LoadMetadata)
+                    .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                    .WithParameterList(SyntaxFactory.ParameterList([
+                         argSyntax
+                    ]))
+                    .WithExpressionBody(
+                        CallExpression()
+                    )
+                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+
+            ArrowExpressionClauseSyntax CallExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
+            {
+
+                var lambdaParameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier("p"));
+                var lambdaBody = SyntaxFactory.ObjectCreationExpression(typeSyntax)
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            [SyntaxFactory.Argument(SyntaxFactory.IdentifierName("p"))]
+                            ));
+
+
+                var lambdaExpression = SyntaxFactory.SimpleLambdaExpression(
+                    lambdaParameter,
+                    lambdaBody);
+
+                return SyntaxFactory.ArrowExpressionClause(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.IdentifierName(classMember.MethodName_LoadMetadata))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]{
+                                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("ptr")),
+                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                    SyntaxFactory.Argument(lambdaExpression)
+                                        }))));
+            }
+
+        }
+        public static void BuildGenericClassPartialMethodExpression(this ClassMemberMetadataData classMember,
+            List<StructDeclarationSyntax> structs,
+            List<MemberDeclarationSyntax> fields,
+            List<ExpressionStatementSyntax> expressions)
+        {
+            if (classMember.MethodMetadataDatas.Length == 0)
+            {
+                return;
+            }
+            List<MemberDeclarationSyntax> members = [];
+            foreach (var member in classMember.MethodMetadataDatas)
+            {
+                var s = BuildMethodMemberPointerExpression(member);
+                structs.Add(s);
+
+                var f = GenericBuildMethodMemberFieldExpression(member, s);
+                fields.Add(f);
+
+                var e = GenericAssignmentMethodMemberExpression(classMember.ContextSymbol, member, s);
+                expressions.Add(e);
+
+                var m = BuildMethodMemberCallExpression(classMember.ContextSymbol, member);
+                members.Add(m);
+            }
+            var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. members]);
+            structs.Add(ptr);
+
+        }
+
+
 
         public static ExpressionSyntax ArrayInitializerExpression<T>(T[]? items) where T : struct
         {
@@ -1663,6 +2063,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return propertyDeclaration;
         }
+
         public static PropertyDeclarationSyntax BuildClassPropertyMetadataJson(ClassMemberMetadataData classMember)
         {
             var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonFieldDTO).FullName);
@@ -1693,25 +2094,29 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return propertyDeclaration;
 
-            static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassPropertyMetadataData[] propertyMetadataDatas, TypeSyntax typeSyntax)
+        }
+        static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassPropertyMetadataData[] propertyMetadataDatas, TypeSyntax typeSyntax)
+        {
+            foreach (var p in propertyMetadataDatas)
             {
-                foreach (var p in propertyMetadataDatas)
-                {
-                    yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
-                     .WithArgumentList(SyntaxFactory.ArgumentList(
-                             [
-                                 SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(p.Code))),
+                yield return GetObjectCreationExpressionSyntax(p, typeSyntax);
+            }
+        }
+        static ObjectCreationExpressionSyntax GetObjectCreationExpressionSyntax(ClassPropertyMetadataData p, TypeSyntax typeSyntax)
+        {
+            return SyntaxFactory.ObjectCreationExpression(typeSyntax)
+                  .WithArgumentList(SyntaxFactory.ArgumentList(
+                          [
+                              SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(p.Code))),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyName)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(p.Utf8PropertyType)),
                                 SyntaxFactory.Argument(p.PropertySymbol.IsStatic?SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression):
                                 SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression)),
-                             ]
-                         )
-                     );
-
-                }
-            }
+                          ]
+                      )
+                  );
         }
+
         public static PropertyDeclarationSyntax BuildClassMethodMetadataJson(ClassMemberMetadataData classMember)
         {
             var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonMethodDTO).FullName);
@@ -1742,25 +2147,29 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             return propertyDeclaration;
 
-            static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassMethodMetadataData[] methodMetadataDatas, TypeSyntax typeSyntax)
+
+        }
+        static IEnumerable<ObjectCreationExpressionSyntax> EnumObjectCreationExpressionSyntax(ClassMethodMetadataData[] methodMetadataDatas, TypeSyntax typeSyntax)
+        {
+            foreach (var m in methodMetadataDatas)
             {
-                foreach (var m in methodMetadataDatas)
-                {
-                    yield return SyntaxFactory.ObjectCreationExpression(typeSyntax)
-                     .WithArgumentList(SyntaxFactory.ArgumentList(
-                             [
-                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,ConvertToHexLiteral(m.Code))),
+                yield return GetObjectCreationExpressionSyntax(m, typeSyntax);
+            }
+        }
+        static ObjectCreationExpressionSyntax GetObjectCreationExpressionSyntax(ClassMethodMetadataData m, TypeSyntax typeSyntax)
+        {
+            return SyntaxFactory.ObjectCreationExpression(typeSyntax)
+                 .WithArgumentList(SyntaxFactory.ArgumentList(
+                         [
+                            SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,ConvertToHexLiteral(m.Code))),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodName)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodParameterTypes)),
                                 SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodReturnType)),
-                             ]
-                         )
-                     );
-
-                }
-            }
-
+                         ]
+                     )
+                 );
         }
+
         public static void BuildClassMetadataJson(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> members)
         {
             members.AddRange([
@@ -1769,6 +2178,56 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 BuildClassMethodMetadataJson(classMember)
                 ]);
         }
+
+
+        #region GenericClass
+        static PropertyDeclarationSyntax CreateMemberDeclarationSyntax(TypeSyntax typeSyntax, string name, ObjectCreationExpressionSyntax newData)
+        {
+            var body = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(typeSyntax, name)
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)])
+                .WithAccessorList(SyntaxFactory.AccessorList([body]))
+                .WithInitializer(SyntaxFactory.EqualsValueClause(newData))
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            return propertyDeclaration;
+        }
+
+        public static IEnumerable<PropertyDeclarationSyntax> BuildGenericClassPropertyMetadataJson(ClassMemberMetadataData classMember)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonFieldDTO).FullName);
+
+            foreach (var p in classMember.PropertyMetadataDatas)
+            {
+                var newData = GetObjectCreationExpressionSyntax(p, baseType);
+                yield return CreateMemberDeclarationSyntax(baseType, p.GetDescVariableName(), newData);
+            }
+
+        }
+        public static IEnumerable<PropertyDeclarationSyntax> BuildGenericClassMethodMetadataJson(ClassMemberMetadataData classMember)
+        {
+            var baseType = SyntaxFactory.ParseTypeName(typeof(MonoJsonMethodDTO).FullName);
+            foreach (var p in classMember.MethodMetadataDatas)
+            {
+                var newData = GetObjectCreationExpressionSyntax(p, baseType);
+                yield return CreateMemberDeclarationSyntax(baseType, p.GetDelegatePointerDescName(), newData);
+            }
+        }
+
+
+        public static void BuildGenericClassMetadataJson(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> members)
+        {
+            members.AddRange([
+              ..  BuildGenericClassPropertyMetadataJson(classMember),
+              ..  BuildGenericClassMethodMetadataJson(classMember)
+                ]);
+        }
+
+        #endregion
+
+
         #endregion
 
 

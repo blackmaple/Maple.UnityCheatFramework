@@ -8,6 +8,8 @@
         interface IAbstractClassMetadataCollector
     {
 
+        MonoMethodDelegate GetMethodDelegate(MonoJsonMethodDTO descriptionMethodDTO);
+
 #if !MetadataSourceGenerator
         static abstract
 #endif

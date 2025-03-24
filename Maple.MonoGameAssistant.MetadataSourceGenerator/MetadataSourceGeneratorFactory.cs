@@ -65,13 +65,25 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             });
             context.RegisterSourceOutput(classMetadatas, (context, metadata) =>
             {
+
+                List<MemberDeclarationSyntax> fields = [];
+                List<ExpressionStatementSyntax> expressions = [];
+                List<StructDeclarationSyntax> structs = [];
+
+                metadata.BuildGenericClassMetadataJson(fields);
+                metadata.BuildGenericClassPartialPropertyExpression(fields, expressions, structs);
+                metadata.BuildGenericClassPartialMethodExpression(structs, fields, expressions);
+
+
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildGenericClassParentCtorParameterExpression(parameterSymbols).ToArray();
-                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, []);
+                var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
 
 
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateGenericClassDeclarationSyntaxExpression(metadata, [mainCtor,]);
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateGenericClassDeclarationSyntaxExpression(metadata, [.. fields, mainCtor, .. structs]);
 
+                var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
+                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
 

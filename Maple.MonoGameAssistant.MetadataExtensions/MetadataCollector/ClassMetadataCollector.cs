@@ -61,7 +61,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
         }
 
-        public MonoMethodDelegate GetMethodDelegate(MonoDescriptionMethodDTO descriptionMethodDTO)
+        public MonoMethodDelegate GetMethodDelegate(MonoJsonMethodDTO descriptionMethodDTO)
         {
             if (false == TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
@@ -73,7 +73,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             return new(methodInfoDTO.Pointer, pointer);
         }
-        public MonoFieldInfoDTO GetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO)
+        public MonoFieldInfoDTO GetFieldMetadata(MonoJsonFieldDTO descriptionFieldDTO)
         {
             if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
@@ -129,13 +129,6 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         public ContextMetadataCollector ContextMetadata { get; } = contextMetadata;
         public MetadataCollectorSearchService SearchService => ContextMetadata.SearchService;
         public ILogger Logger => ContextMetadata.Logger;
-
-
-        public ClassMetadataCollector(ContextMetadataCollector contextMetadata, ulong code) : this(contextMetadata, contextMetadata.GetClassMetadataCollection(code))
-        {
-
-        }
-
 
         public MonoMethodDelegate GetMethodDelegate(ulong code)
         {
@@ -213,7 +206,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
     }
 
     public abstract partial class ClassMetadataCollector<T_PtrMetadata>(ContextMetadataCollector metadataCollector, ulong code)
-        : ClassMetadataCollector(metadataCollector, code)
+        : ClassMetadataCollector(metadataCollector, metadataCollector.GetClassMetadataCollection(code))
         , IPtrMetadataCollector<T_PtrMetadata>
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {

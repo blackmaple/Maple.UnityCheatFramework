@@ -40,4 +40,23 @@
 
         //        // static nint GetStaticFieldValueAsPointer(MonoStaticFieldSource staticFieldSource) { }
     }
+
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif 
+         interface IGenericClassMetadataCollector : IAbstractClassMetadataCollector
+    {
+        MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(MonoJsonMethodDTO descriptionMethodDTO) where TFUNC : unmanaged;
+        nint GetMethodPointer(MonoJsonMethodDTO descriptionMethodDTO);
+
+        MonoMemberFieldSource GetMemberFieldMetadata(MonoJsonFieldDTO descriptionFieldDTO);
+        MonoStaticFieldSource GetStaticFieldMetadata(MonoJsonFieldDTO descriptionFieldDTO);
+
+        int GetMemberFieldOffset(MonoJsonFieldDTO descriptionFieldDTO);
+
+
+ 
+    }
 }

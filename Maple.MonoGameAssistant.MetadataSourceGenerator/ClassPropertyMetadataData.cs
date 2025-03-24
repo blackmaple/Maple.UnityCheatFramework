@@ -15,7 +15,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public IPropertySymbol PropertySymbol { set; get; } = default!;
         public byte[]? Utf8PropertyName { set; get; }
         public byte[]? Utf8PropertyType { set; get; }
-        public string GetOffsetVariableName() => $"s_{SymbolKind.Field}_{PropertySymbol.Name}";
+        public string GetOffsetVariableName(bool generic = false) => generic ? $"m_{SymbolKind.Field}_{PropertySymbol.Name}" : $"s_{SymbolKind.Field}_{PropertySymbol.Name}";
+
+
+        public string GetDescVariableName() => $"s_{SymbolKind.Parameter}_{PropertySymbol.Name}";
 
         //internal MonoJsonFieldDTO GetMonoJsonFieldDTO() => new(this.Code, this.Utf8PropertyName, this.Utf8PropertyType, this.PropertySymbol.IsStatic);
     }
