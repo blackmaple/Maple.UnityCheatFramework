@@ -78,12 +78,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildGenericClassParentCtorParameterExpression(parameterSymbols).ToArray();
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
+                var loadmetadata = MetadataSourceGeneratorExtensions.BuildDerivedLoadMetadata(metadata );
 
-
-                var classDeclaration = MetadataSourceGeneratorExtensions.CreateGenericClassDeclarationSyntaxExpression(metadata, [.. fields, mainCtor, .. structs]);
+                
+                var classDeclaration = MetadataSourceGeneratorExtensions.CreateGenericClassDeclarationSyntaxExpression(metadata, [.. fields, mainCtor, loadmetadata, .. structs]);
 
                 var namespaceDeclaration = MetadataSourceGeneratorExtensions.BuildNamespaceExpression(metadata.ContextSymbol, classDeclaration);
-                context.AddSource($"{metadata.ContextSymbol.ToDisplayString()}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
+                context.AddSource($"{metadata.ContextSymbol.ContainingNamespace.ToDisplayString()}.{metadata.ContextSymbol.Name}.{metadata.Code:X8}.cs", namespaceDeclaration.NormalizeWhitespace().ToFullString());
 
             });
 

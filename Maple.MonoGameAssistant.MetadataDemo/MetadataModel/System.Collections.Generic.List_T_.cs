@@ -14,15 +14,16 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         , typeof(ListGeneric<>.Ptr_ListGeneric)
         )]
     [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
-    public partial class ListGeneric<TITEM>(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
-        : GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(ptr)
+    public partial class ListGeneric<TITEM>
+        //(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
+        //: GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(ptr)
      /*(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)*/
      //: GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(runtimeContext, classMetadataCollection)
      where TITEM : unmanaged
     {
 
-        public static ListGeneric<TITEM> Load(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
-            => LoadMetadata(ptr, static (p) => new(p));
+        //public static ListGeneric<TITEM> Load(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
+        //    => LoadMetadata(ptr, static (p) => new(p));
 
 
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
@@ -69,7 +70,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
             public partial nint _ITEMS { get; set; }
 
-
+           
             /// <summary>
             /// 0x18 System.Int32 _size
             /// struct ["mscorlib"."System"."Int32"]
@@ -177,11 +178,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// </summary>
             /// <param name = "collection">interface System.Collections.Generic.IEnumerable<T></param>
             /// <returns>struct System.Void</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("AddRange", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.IEnumerable<T>", 0)]
+           
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("AddRange", "System.Void",  CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+         //  [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.IEnumerable<T>", 0)]
            public partial void ADD_RANGE(nint collection); 
-*/
+ 
             /// <summary>
             ///   System.Void AddWithResize(T item)
             /// </summary>
