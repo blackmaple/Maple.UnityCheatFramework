@@ -20,12 +20,12 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             this.PtrMain = MetadataModel.Main.Ptr_Main.C_INST;
             this.PtrGame = PtrMain.GAME;
 
-            ListGeneric<Game.Ptr_Game> list = new(default!,default!);
-            ListGeneric<Game.Ptr_Game>.Ptr_ListGeneric ptr_List = nint.Zero;
-            foreach (var t in ptr_List.PtrListAsEnumerable())
-            { 
+            //ListGeneric<Game.Ptr_Game> list = new(default!,default!);
+            //ListGeneric<Game.Ptr_Game>.Ptr_ListGeneric ptr_List = nint.Zero;
+            //foreach (var t in ptr_List.PtrListAsEnumerable())
+            //{ 
             
-            }
+            //}
         }
 
 
