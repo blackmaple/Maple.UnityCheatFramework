@@ -22,7 +22,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string GetDelegatePointerStructCaller() => nameof(Delegate);
 
         public string GetDelegatePointerStructName() => $"{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
-        public string GetDelegatePointerStaticFieldName(bool generic = false) => generic ? $"m_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}" : $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
+        public string GetDelegatePointerStaticFieldName() => $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
 
         public string GetDelegatePointerDescName() => $"s_{nameof(SymbolKind.Parameter)}_{MethodSymbol.Name}_{Code:X8}";
 

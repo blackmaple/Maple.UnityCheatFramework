@@ -201,6 +201,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             return BuildDerivedCtorMethodExpression(symbol, parameterSyntaxes, args, statementSyntaxes);
         }
 
+        [Obsolete("remove...")]
         public static MemberDeclarationSyntax BuildDerivedLoadMetadata(ClassMemberMetadataData classMember)
         {
 
@@ -297,7 +298,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             GenericClassMemberMetadataData metadataData,
             SyntaxList<MemberDeclarationSyntax> memberDeclarations)
         {
-            var derivedClassFullName = metadataData.ContextSymbol.ToDisplayString();
+            //        var derivedClassFullName = metadataData.ContextSymbol.ToDisplayString();
             var derivedClassName = SyntaxFactory.GenericName(SyntaxFactory.Identifier(metadataData.ContextSymbol.Name),
                 SyntaxFactory.TypeArgumentList([.. EnumTypeSyntax()]));
 
@@ -310,7 +311,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var derivedClass = SyntaxFactory.ClassDeclaration(derivedClassName.ToFullString());
             var baseClass = SyntaxFactory.GenericName(SyntaxFactory.Identifier(genericName.ToFullString()), SyntaxFactory.TypeArgumentList(
                 [
-                    SyntaxFactory.ParseTypeName(derivedClassFullName),
+       //             SyntaxFactory.ParseTypeName(derivedClassFullName),
                     SyntaxFactory.ParseTypeName(metadataData.PtrSymbol.ToDisplayString())
                 ]));
             var classDeclaration = derivedClass
@@ -1106,18 +1107,21 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
+
+        [Obsolete("remove...")]
         public static FieldDeclarationSyntax GenericBuildOffsetMemberExpression(ClassPropertyMetadataData classProperty)
         {
             VariableDeclarationSyntax variableDeclaration =
                 classProperty.PropertySymbol.IsStatic ?
                 SyntaxFactory.VariableDeclaration(
                    SyntaxFactory.IdentifierName(typeof(MonoStaticFieldSource).FullName),
-                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName(true))])
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())])
                 : SyntaxFactory.VariableDeclaration(
                        SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName(true))]);
+                   [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())]);
             return SyntaxFactory.FieldDeclaration(variableDeclaration);
         }
+
         public static ExpressionStatementSyntax GenericAssignmentOffsetMemberExpression(ISymbol contextSymbol, ClassPropertyMetadataData classProperty)
         {
             var callMethod = classProperty.PropertySymbol.IsStatic
@@ -1128,7 +1132,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         SyntaxFactory.AssignmentExpression
                         (
                              SyntaxKind.SimpleAssignmentExpression,
-                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))),
+                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())),
                                 SyntaxFactory.InvocationExpression
                                 (
                                     SyntaxFactory.MemberAccessExpression
@@ -1139,7 +1143,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                     )
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
                                 [
-                                       SyntaxFactory.Argument( SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classProperty.GetDescVariableName())))
+                                     // SyntaxFactory.Argument(SyntaxFactory.IdentifierName(classProperty.GetDescVariableName()))
+                                     SyntaxFactory.Argument( SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classProperty.GetDescVariableName())))
                                 ]
                                 ))
                         )
@@ -1148,7 +1153,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
         }
-        public static PropertyDeclarationSyntax GenericBuildPartialPropertyMemberExpression(ClassMemberMetadataData  classMember, ClassPropertyMetadataData classProperty)
+        [Obsolete("remove...")]
+        public static PropertyDeclarationSyntax GenericBuildPartialPropertyMemberExpression(ClassMemberMetadataData classMember, ClassPropertyMetadataData classProperty)
         {
             var baseType = SyntaxFactory.ParseTypeName(classProperty.PropertySymbol.Type.ToDisplayString());
             var propType = baseType;
@@ -1169,7 +1175,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             ISymbol contextSymbol = classMember.ContextSymbol;
             var classfullName = SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString());
 
-          
+
             var callLoadMetadata = SyntaxFactory.InvocationExpression(
                            SyntaxFactory.MemberAccessExpression(
                               SyntaxKind.SimpleMemberAccessExpression,
@@ -1184,7 +1190,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var propertyDeclaration = SyntaxFactory.PropertyDeclaration(propType, classProperty.PropertySymbol.Name)
                 .WithModifiers([.. EnumModifiers(classProperty)])
                 .WithAccessorList(
-                    SyntaxFactory.AccessorList([.. EnumAccessorDeclarationSyntax(classfullName,callLoadMetadata, baseType, classProperty, refKind)])
+                    SyntaxFactory.AccessorList([.. EnumAccessorDeclarationSyntax(classfullName, callLoadMetadata, baseType, classProperty, refKind)])
                  );
 
             //      var content = propertyDeclaration.NormalizeWhitespace().ToFullString();
@@ -1252,7 +1258,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                         SyntaxFactory.MemberAccessExpression(
                                              SyntaxKind.SimpleMemberAccessExpression,
                                              callLoadMetadata,
-                                             SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))
+                                             SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                         )
                                     )
                                ])
@@ -1273,7 +1279,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             callLoadMetadata,
-                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                         )),
                                     SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword( SyntaxFactory.Token(SyntaxKind.InKeyword))
                                 ])
@@ -1300,7 +1306,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             callLoadMetadata,
-                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))
+                                            SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                         )
                                     )
                                 ])
@@ -1321,7 +1327,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                           SyntaxFactory.MemberAccessExpression(
                                               SyntaxKind.SimpleMemberAccessExpression,
                                               callLoadMetadata,
-                                              SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName(true))
+                                              SyntaxFactory.IdentifierName(classProperty.GetOffsetVariableName())
                                           )
                                       ),
                                       SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value")).WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.InKeyword))
@@ -1362,6 +1368,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
             }
         }
+
         public static void BuildGenericClassPartialPropertyExpression(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> fields, List<ExpressionStatementSyntax> expressions, List<StructDeclarationSyntax> structs)
         {
             if (classMember.PropertyMetadataDatas.Length == 0)
@@ -1371,13 +1378,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var propertyDeclarations = new List<PropertyDeclarationSyntax>();
             foreach (var member in classMember.PropertyMetadataDatas)
             {
-                var f = GenericBuildOffsetMemberExpression(member);
+                var f = BuildOffsetMemberExpression(member);
                 fields.Add(f);
 
                 var s = GenericAssignmentOffsetMemberExpression(classMember.ContextSymbol, member);
                 expressions.Add(s);
 
-                var p = GenericBuildPartialPropertyMemberExpression(classMember, member);
+                var p = BuildPartialPropertyMemberExpression(classMember.ContextSymbol, member);
                 propertyDeclarations.Add(p);
             }
             var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. propertyDeclarations]);
@@ -1951,6 +1958,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
+        [Obsolete("remove...")]
         public static FieldDeclarationSyntax GenericBuildMethodMemberFieldExpression(ClassMethodMetadataData classMethod, StructDeclarationSyntax functionPointer)
         {
 
@@ -1959,14 +1967,15 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
                         .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
-                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName(true))])
+                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())])
                 : SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text),
-                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName(true))]);
+                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())]);
 
             return SyntaxFactory.FieldDeclaration(variableDeclaration);
 
         }
+
         public static ExpressionStatementSyntax GenericAssignmentMethodMemberExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod, StructDeclarationSyntax functionPointer)
         {
             var callMethod = SyntaxFactory.MemberAccessExpression(
@@ -1979,30 +1988,30 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         : SyntaxFactory.IdentifierName(nameof(IGenericClassMetadataCollector.GetMethodPointer))
                     )
                 );
+
             return SyntaxFactory.ExpressionStatement
                     (
                         SyntaxFactory.AssignmentExpression
                         (
                              SyntaxKind.SimpleAssignmentExpression,
-                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())),
+                             SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())),
                                 SyntaxFactory.InvocationExpression
                                 (
                                     callMethod
                                 ).WithArgumentList(SyntaxFactory.ArgumentList(
                                 [
                                     SyntaxFactory.Argument( SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()), SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerDescName())))
-
-                                   // SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, ConvertToHexLiteral(classMethod.Code)))
                                 ]
                                 ))
                         )
                     );
 
-        }
 
+        }
+        [Obsolete("remove...")]
         public static MemberDeclarationSyntax GenericBuildMethodMemberCallExpression(ClassMemberMetadataData classMember, ClassMethodMetadataData classMethod)
         {
-        //    var contextSymbol = classMember.ContextSymbol;
+            //    var contextSymbol = classMember.ContextSymbol;
             return
                 SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.MethodSymbol.Name)
                 .WithModifiers([.. EnumModifiers(classMethod)])
@@ -2159,7 +2168,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             callLoadMetadata,
-                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName(true))
+                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
                         ),
                         SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
                     )
@@ -2204,7 +2213,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             }
         }
 
-
         public static void BuildGenericClassPartialMethodExpression(this ClassMemberMetadataData classMember,
             List<StructDeclarationSyntax> structs,
             List<MemberDeclarationSyntax> fields,
@@ -2221,13 +2229,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var s = BuildMethodMemberPointerExpression(member);
                 structs.Add(s);
 
-                var f = GenericBuildMethodMemberFieldExpression(member, s);
+                var f = BuildMethodMemberFieldExpression(member, s);
                 fields.Add(f);
 
                 var e = GenericAssignmentMethodMemberExpression(classMember.ContextSymbol, member, s);
                 expressions.Add(e);
 
-                var m = GenericBuildMethodMemberCallExpression(classMember, member);
+                var m = BuildMethodMemberCallExpression(classMember.ContextSymbol, member);
                 members.Add(m);
             }
             var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. members]);
