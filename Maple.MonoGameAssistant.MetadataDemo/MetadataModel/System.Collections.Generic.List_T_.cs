@@ -1,6 +1,7 @@
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
 
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
@@ -14,7 +15,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         , typeof(ListGeneric<>.Ptr_ListGeneric)
         )]
     [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
-    public partial class ListGeneric<TITEM>
+    public partial class ListGeneric<TITEM> where TITEM:unmanaged
     {
 
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
@@ -58,8 +59,8 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// </summary>
             /// <returns>class T[]</returns>
 
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", "T[]")]
-            public partial nint _ITEMS { get; set; }
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_items", default)]
+            public partial PMonoArray<TITEM> _ITEMS { get; set; }
 
 
             /// <summary>
@@ -69,7 +70,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// <returns>struct System.Int32</returns>
 
             //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
-            //public partial System.Int32 _SIZE { get; set; }
+            public partial System.Int32 _SIZE { get; set; }
 
 
             /// <summary>
@@ -864,6 +865,14 @@ namespace Maple.MonoGameAssistant.MetadataDemo
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Predicate<T>", 0)]
            public partial System.Boolean TRUE_FOR_ALL(nint match); 
 */
+        }
+
+
+        partial struct Ptr_ListGeneric : ISysPtrList<TITEM>
+        {
+            public PMonoArray<TITEM> Items => _ITEMS;
+
+            public int Size => _SIZE;
         }
     }
 }

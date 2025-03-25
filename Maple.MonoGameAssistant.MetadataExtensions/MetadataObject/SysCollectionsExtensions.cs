@@ -53,6 +53,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             where T : unmanaged, ISysPtrList<TVALUE>
             where TVALUE : unmanaged
         {
+            
             var items = @this.Items;
             var count = items.Size;
             return @this.Items.AsReadOnlySpan(count);
@@ -73,6 +74,30 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
         {
             return ref @this.Items.RefElementAt(index);
         }
+
+        public static IEnumerable<TVALUE> PtrListAsEnumerable<T, TVALUE>(this T @this)
+            where T : unmanaged, ISysPtrList<TVALUE>
+            where TVALUE : unmanaged
+        {
+            var count = @this.Size;
+            var items = @this.Items;
+            for (int i = 0; i < count; ++i)
+            {
+                yield return items.RefElementAt(i);
+            }
+        }
+        //public static IEnumerable<TVALUE> PtrListAsEnumerable< TVALUE>(this ISysPtrList<TVALUE> @this)
+        //    where TVALUE : unmanaged
+        //{
+        //    var count = @this.Size;
+        //    var items = @this.Items;
+        //    for (int i = 0; i < count; ++i)
+        //    {
+        //        yield return items.RefElementAt(i);
+        //    }
+        //}
+
+
 
         public static PMonoEntry<Ref_MonoEntry<TKEY, TVALUE>, TKEY, TVALUE>[] PtrDictionaryAsRefArray<T, TKEY, TVALUE>(this T @this)
             where T : unmanaged, ISysPtrDictionary<TKEY, TVALUE>
@@ -177,4 +202,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
         }
 
     }
+
+
+
 }

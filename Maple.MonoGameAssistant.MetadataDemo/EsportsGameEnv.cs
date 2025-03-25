@@ -1,4 +1,8 @@
-﻿namespace Maple.MonoGameAssistant.MetadataDemo
+﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataDemo.MetadataModel;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
+
+namespace Maple.MonoGameAssistant.MetadataDemo
 {
     public partial class EsportsGameEnv
     {
@@ -15,6 +19,13 @@
 
             this.PtrMain = MetadataModel.Main.Ptr_Main.C_INST;
             this.PtrGame = PtrMain.GAME;
+
+            ListGeneric<Game.Ptr_Game> list = new(default!,default!);
+            ListGeneric<Game.Ptr_Game>.Ptr_ListGeneric ptr_List = nint.Zero;
+            foreach (var t in ptr_List.PtrListAsEnumerable())
+            { 
+            
+            }
         }
 
 
