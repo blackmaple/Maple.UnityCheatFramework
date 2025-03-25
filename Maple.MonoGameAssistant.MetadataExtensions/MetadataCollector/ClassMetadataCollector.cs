@@ -61,7 +61,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return CustomTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO) || DefaultTryGetFieldMetadata(descriptionFieldDTO, out fieldInfoDTO);
         }
 
-        public MonoMethodDelegate GetMethodDelegate(MonoJsonMethodDTO descriptionMethodDTO)
+ 
+        public MonoMethodDelegate GetMethodDelegate(MonoDescriptionMethodDTO descriptionMethodDTO)
         {
             if (false == TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
@@ -73,7 +74,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             return new(methodInfoDTO.Pointer, pointer);
         }
-        public MonoFieldInfoDTO GetFieldMetadata(MonoJsonFieldDTO descriptionFieldDTO)
+
+        public MonoFieldInfoDTO GetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO)
         {
             if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
