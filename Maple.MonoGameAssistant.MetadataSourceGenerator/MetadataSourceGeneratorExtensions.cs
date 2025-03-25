@@ -2023,6 +2023,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 )
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+            [Obsolete("remove...")]
             static IEnumerable<SyntaxToken> EnumModifiers(ClassMethodMetadataData classMethod)
             {
                 if (classMethod.MethodSymbol.DeclaredAccessibility == Accessibility.Public)
@@ -2038,6 +2039,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
                 }
             }
+            [Obsolete("remove...")]
             static IEnumerable<ParameterSyntax> EnumParameterSyntax(ClassMethodMetadataData classMethod)
             {
 
@@ -2075,6 +2077,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
+            [Obsolete("remove...")]
             static IEnumerable<ArgumentSyntax> EnumArgumentSyntax(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
             {
 
@@ -2121,6 +2124,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
+            [Obsolete("remove...")]
             static InvocationExpressionSyntax GetInvocationExpression(ClassMemberMetadataData classMember, ClassMethodMetadataData classMethod)
             {
                 ISymbol contextSymbol = classMember.ContextSymbol;
@@ -2142,23 +2146,23 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     return MetadataSourceGeneratorException.Throw<InvocationExpressionSyntax>($"RuntimeMethod 暂未实现");
 
-                    //DemoGameSystem.s_Delegate_GetGlod_0.f.GetDelegatePointerStructCaller
-                    return
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    callLoadMetadata,
-                                    SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
-                                ),
-                                SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.MethodPointer))
-                            ),
-                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
-                        )
-                    );
+                    ////DemoGameSystem.s_Delegate_GetGlod_0.f.GetDelegatePointerStructCaller
+                    //return
+                    //SyntaxFactory.InvocationExpression(
+                    //    SyntaxFactory.MemberAccessExpression(
+                    //        SyntaxKind.SimpleMemberAccessExpression,
+                    //        SyntaxFactory.MemberAccessExpression(
+                    //            SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.MemberAccessExpression(
+                    //                SyntaxKind.SimpleMemberAccessExpression,
+                    //                callLoadMetadata,
+                    //                SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
+                    //            ),
+                    //            SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.MethodPointer))
+                    //        ),
+                    //        SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
+                    //    )
+                    //);
                 }
 
                 return
@@ -2175,6 +2179,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 );
 
             }
+            [Obsolete("remove...")]
             static TypeSyntax GetReturnSyntax(ClassMethodMetadataData classMethod)
             {
 
@@ -2193,6 +2198,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 return typeSyntax;
             }
 
+            [Obsolete("remove...")]
             static ExpressionSyntax GetBodyExpression(ClassMemberMetadataData classMember, ClassMethodMetadataData classMethod)
             {
                 var contextSymbol = classMember.ContextSymbol;

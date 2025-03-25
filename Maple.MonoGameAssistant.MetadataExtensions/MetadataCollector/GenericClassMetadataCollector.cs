@@ -48,10 +48,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
     }
 
     public abstract partial class GenericClassMetadataCollector<T_PtrMetadata>(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
-        : GenericClassMetadataCollector(runtimeContext, classMetadataCollection), IPtrMetadataCollector<T_PtrMetadata>
+        : GenericClassMetadataCollector(runtimeContext, classMetadataCollection)
+        , IPtrMetadataCollector<T_PtrMetadata>
         , IGenericClassMetadataCollector
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {
 
+ 
     }
 }
