@@ -71,8 +71,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 List<StructDeclarationSyntax> structs = [];
 
                 metadata.BuildGenericClassMetadataJson(fields);
-                metadata.BuildGenericClassPartialPropertyExpression(fields, expressions, structs);
-                metadata.BuildGenericClassPartialMethodExpression(structs, fields, expressions);
+                metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
+                metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
 
 
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();

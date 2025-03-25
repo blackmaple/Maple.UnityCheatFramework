@@ -3,6 +3,7 @@
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
+
     [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 #if MetadataSourceGenerator

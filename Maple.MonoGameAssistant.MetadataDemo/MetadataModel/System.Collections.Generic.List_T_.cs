@@ -10,20 +10,12 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     /// [System.Collections.Generic.IList<T>]=>[System.Collections.Generic.ICollection<T>]=>[System.Collections.Generic.IEnumerable<T>]=>[System.Collections.IEnumerable]=>[System.Collections.IList]=>[System.Collections.ICollection]=>[System.Collections.Generic.IReadOnlyList<T>]=>[System.Collections.Generic.IReadOnlyCollection<T>]
     /// </summary>
     [MetadataExtensions.MetadataGenerator.GenericClassParentMetadataAttribute(
-        typeof(GenericClassMetadataCollector<,>)
+        typeof(GenericClassMetadataCollector<>)
         , typeof(ListGeneric<>.Ptr_ListGeneric)
         )]
     [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
-    public partial class ListGeneric<TITEM>(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
-        : GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(ptr)
-     /*(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)*/
-     //: GenericClassMetadataCollector<ListGeneric<TITEM>, ListGeneric<TITEM>.Ptr_ListGeneric>(runtimeContext, classMetadataCollection)
-     where TITEM : unmanaged
+    public partial class ListGeneric<TITEM>
     {
-
-        public static ListGeneric<TITEM> Load(ListGeneric<TITEM>.Ptr_ListGeneric ptr)
-            => LoadMetadata(ptr, static (p) => new(p));
-
 
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_ListGeneric(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
