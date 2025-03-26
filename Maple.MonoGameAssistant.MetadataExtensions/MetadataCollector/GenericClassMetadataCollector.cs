@@ -41,10 +41,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return fieldSource.Offset;
         }
 
-        public static bool TryGetMonoClassMetadataCollection(MonoRuntimeContext runtimeContext, PMonoObject pMonoObject, [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
-        {
-            return runtimeContext.TryGetClassMetadata(pMonoObject, out classMetadataCollection);
-        }
+
     }
 
     public abstract partial class GenericClassMetadataCollector<T_PtrMetadata>(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
@@ -54,6 +51,23 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {
 
- 
+        public static TSelf LoadMetadata<TSelf>(MonoRuntimeContext runtimeContext, T_PtrMetadata ptrMetadata, Func<MonoRuntimeContext, MonoClassMetadataCollection, TSelf> func)
+           where TSelf : GenericClassMetadataCollector<T_PtrMetadata>
+        {
+            if (!runtimeContext.TryGetOrAddClassMetadata(ptrMetadata.Ptr, out var classMetadataCollection))
+            {
+                return MetadataCollectorException.Throw<TSelf>($"{typeof(TSelf).FullName}.{nameof(LoadMetadata)}:ERROR");
+            }
+            return func(runtimeContext, classMetadataCollection);
+        }
+
+
+    }
+
+
+
+    public static class GenericClassMetadataCollectorExtensions
+    {
+
     }
 }

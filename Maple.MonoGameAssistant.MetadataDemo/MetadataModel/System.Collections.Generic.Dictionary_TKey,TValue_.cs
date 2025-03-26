@@ -1,3 +1,5 @@
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     /// <summary>
@@ -5,9 +7,14 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     /// [System.Object]
     /// [System.Collections.Generic.IDictionary<TKey , TValue>]=>[System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey , TValue>>]=>[System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey , TValue>>]=>[System.Collections.IEnumerable]=>[System.Collections.IDictionary]=>[System.Collections.ICollection]=>[System.Collections.Generic.IReadOnlyDictionary<TKey , TValue>]=>[System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<TKey , TValue>>]=>[System.Runtime.Serialization.ISerializable]=>[System.Runtime.Serialization.IDeserializationCallback]
     /// </summary>
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassParentMetadataAttribute<Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector.ClassMetadataCollector<Ptr_DictionaryGeneric>, Ptr_DictionaryGeneric>]
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassModelMetadataAttribute("mscorlib", "System.Collections.Generic", "Dictionary`2", "System.Collections.Generic.Dictionary<TKey,TValue>")]
-    public partial class DictionaryGeneric
+    [MetadataExtensions.MetadataGenerator.GenericClassParentMetadataAttribute(
+        typeof(GenericClassMetadataCollector<>)
+        , typeof(DictionaryGeneric<,>.Ptr_DictionaryGeneric)
+        )]
+    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
+    public partial class DictionaryGeneric<TKEY, TVALUE>
+       where TKEY : unmanaged
+        where TVALUE : unmanaged
     {
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_DictionaryGeneric(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
@@ -18,7 +25,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
             public static implicit operator Ptr_DictionaryGeneric(System.IntPtr ptr) => new Ptr_DictionaryGeneric(ptr);
             public static implicit operator System.IntPtr(Ptr_DictionaryGeneric ptr) => ptr.m_Pointer;
-            public static implicit operator bool (Ptr_DictionaryGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
+            public static implicit operator bool(Ptr_DictionaryGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
         }
 
         /// <summary>
@@ -31,41 +38,41 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib"."System"."String"]
             /// </summary>
             /// <returns>class System.String</returns>
-             /*
-            public const nint VERSION_NAME = ; 
+            /*
+           public const nint VERSION_NAME = ; 
 */
             /// <summary>
             /// 0x0 System.String HashSizeName
             /// class ["mscorlib"."System"."String"]
             /// </summary>
             /// <returns>class System.String</returns>
-             /*
-            public const nint HASH_SIZE_NAME = ; 
+            /*
+           public const nint HASH_SIZE_NAME = ; 
 */
             /// <summary>
             /// 0x0 System.String KeyValuePairsName
             /// class ["mscorlib"."System"."String"]
             /// </summary>
             /// <returns>class System.String</returns>
-             /*
-            public const nint KEY_VALUE_PAIRS_NAME = ; 
+            /*
+           public const nint KEY_VALUE_PAIRS_NAME = ; 
 */
             /// <summary>
             /// 0x0 System.String ComparerName
             /// class ["mscorlib"."System"."String"]
             /// </summary>
             /// <returns>class System.String</returns>
-             /*
-            public const nint COMPARER_NAME = ; 
+            /*
+           public const nint COMPARER_NAME = ; 
 */
             /// <summary>
             /// 0x10 System.Int32[] _buckets
             /// class ["mscorlib"."System"."Int32[]"]
             /// </summary>
             /// <returns>class System.Int32[]</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_buckets", "System.Int32[]")]
-            public partial nint _BUCKETS { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_buckets", "System.Int32[]")]
+           public partial nint _BUCKETS { get; set; } 
 */
 
             /// <summary>
@@ -73,19 +80,19 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib".""."Entry[]"]
             /// </summary>
             /// <returns>class System.Collections.Generic.Dictionary.Entry<TKey , TValue>[]</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_entries", "System.Collections.Generic.Dictionary.Entry<TKey,TValue>[]")]
-            public partial nint _ENTRIES { get; set; } 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_entries", default)]
+            public partial nint _ENTRIES { get; set; }
+
 
             /// <summary>
             /// 0x20 System.Collections.Generic.IEqualityComparer<TKey> _comparer
             /// interface ["mscorlib"."System.Collections.Generic"."IEqualityComparer`1"]
             /// </summary>
             /// <returns>interface System.Collections.Generic.IEqualityComparer<TKey></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_comparer", "System.Collections.Generic.IEqualityComparer<TKey>")]
-            public partial nint _COMPARER { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_comparer", "System.Collections.Generic.IEqualityComparer<TKey>")]
+           public partial nint _COMPARER { get; set; } 
 */
 
             /// <summary>
@@ -93,9 +100,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib".""."KeyCollection"]
             /// </summary>
             /// <returns>class System.Collections.Generic.Dictionary.KeyCollection<TKey , TValue></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_keys", "System.Collections.Generic.Dictionary.KeyCollection<TKey,TValue>")]
-            public partial nint _KEYS { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_keys", "System.Collections.Generic.Dictionary.KeyCollection<TKey,TValue>")]
+           public partial nint _KEYS { get; set; } 
 */
 
             /// <summary>
@@ -103,9 +110,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib".""."ValueCollection"]
             /// </summary>
             /// <returns>class System.Collections.Generic.Dictionary.ValueCollection<TKey , TValue></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_values", "System.Collections.Generic.Dictionary.ValueCollection<TKey,TValue>")]
-            public partial nint _VALUES { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_values", "System.Collections.Generic.Dictionary.ValueCollection<TKey,TValue>")]
+           public partial nint _VALUES { get; set; } 
 */
 
             /// <summary>
@@ -113,9 +120,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// class ["mscorlib"."System"."Object"]
             /// </summary>
             /// <returns>class System.Object</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
-            public partial nint _SYNC_ROOT { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
+           public partial nint _SYNC_ROOT { get; set; } 
 */
 
             /// <summary>
@@ -123,9 +130,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_count", "System.Int32")]
-            public partial System.Int32 _COUNT { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_count", "System.Int32")]
+           public partial System.Int32 _COUNT { get; set; } 
 */
 
             /// <summary>
@@ -133,9 +140,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_freeList", "System.Int32")]
-            public partial System.Int32 _FREE_LIST { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_freeList", "System.Int32")]
+           public partial System.Int32 _FREE_LIST { get; set; } 
 */
 
             /// <summary>
@@ -143,9 +150,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_freeCount", "System.Int32")]
-            public partial System.Int32 _FREE_COUNT { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_freeCount", "System.Int32")]
+           public partial System.Int32 _FREE_COUNT { get; set; } 
 */
 
             /// <summary>
@@ -153,9 +160,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
-            public partial System.Int32 _VERSION { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
+           public partial System.Int32 _VERSION { get; set; } 
 */
         }
 

@@ -15,7 +15,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
         , typeof(ListGeneric<>.Ptr_ListGeneric)
         )]
     [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
-    public partial class ListGeneric<TITEM> where TITEM:unmanaged
+    public partial class ListGeneric<TITEM> where TITEM : unmanaged
     {
 
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
@@ -69,7 +69,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// </summary>
             /// <returns>struct System.Int32</returns>
 
-            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
             public partial System.Int32 _SIZE { get; set; }
 
 
@@ -873,6 +873,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             public PMonoArray<TITEM> Items => _ITEMS;
 
             public int Size => _SIZE;
+
+            public IEnumerable<TITEM> AsEnumerable()
+            {
+                return this.PtrListAsEnumerable<Ptr_ListGeneric, TITEM>();
+            }
         }
     }
 }

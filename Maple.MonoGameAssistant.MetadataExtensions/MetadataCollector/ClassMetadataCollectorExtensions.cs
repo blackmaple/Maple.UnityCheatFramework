@@ -84,15 +84,15 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
 
 
-        public static bool TryLoadMetadata<T_PtrMetadata>(this T_PtrMetadata @this,
-            [MaybeNullWhen(false)] out MonoRuntimeContext runtimeContext,
-            [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
-            where T_PtrMetadata : unmanaged, IPtrMetadata
-        {
-            Unsafe.SkipInit(out classMetadataCollection);
-            runtimeContext = MonoRuntimeContext.GlobalInstance;
-            return runtimeContext is not null && runtimeContext.TryGetClassMetadata(@this.Ptr, out classMetadataCollection);
-        }
+        //public static bool TryLoadMetadata<T_PtrMetadata>(this T_PtrMetadata @this,
+        //    [MaybeNullWhen(false)] out MonoRuntimeContext runtimeContext,
+        //    [MaybeNullWhen(false)] out MonoClassMetadataCollection classMetadataCollection)
+        //    where T_PtrMetadata : unmanaged, IPtrMetadata
+        //{
+        //    Unsafe.SkipInit(out classMetadataCollection);
+        //    runtimeContext = MonoRuntimeContext.GlobalInstance;
+        //    return runtimeContext is not null && runtimeContext.TryGetClassMetadata(@this.Ptr, out classMetadataCollection);
+        //}
 
 
 

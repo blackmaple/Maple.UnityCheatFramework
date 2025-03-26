@@ -201,8 +201,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             return BuildDerivedCtorMethodExpression(symbol, parameterSyntaxes, args, statementSyntaxes);
         }
 
-        [Obsolete("remove...")]
-        public static MemberDeclarationSyntax BuildDerivedLoadMetadata(ClassMemberMetadataData classMember)
+        //[Obsolete("remove...")]
+        public static MemberDeclarationSyntax BuildDerivedLoadMetadata(ClassMemberMetadataData classMember, ParameterSyntax[] parameterSyntaxes)
         {
 
             var typeSyntax = SyntaxFactory.ParseTypeName(classMember.ContextSymbol.ToDisplayString());

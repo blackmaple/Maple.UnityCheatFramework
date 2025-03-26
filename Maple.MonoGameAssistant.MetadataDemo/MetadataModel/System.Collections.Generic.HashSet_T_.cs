@@ -1,3 +1,5 @@
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     /// <summary>
@@ -5,9 +7,12 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     /// [System.Object]
     /// [System.Collections.Generic.ICollection<T>]=>[System.Collections.Generic.IEnumerable<T>]=>[System.Collections.IEnumerable]=>[System.Collections.Generic.ISet<T>]=>[System.Collections.Generic.IReadOnlyCollection<T>]=>[System.Runtime.Serialization.ISerializable]=>[System.Runtime.Serialization.IDeserializationCallback]
     /// </summary>
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassParentMetadataAttribute<Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector.ClassMetadataCollector<Ptr_HashSetGeneric>, Ptr_HashSetGeneric>]
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassModelMetadataAttribute("System.Core", "System.Collections.Generic", "HashSet`1", "System.Collections.Generic.HashSet<T>")]
-    public partial class HashSetGeneric
+    [MetadataExtensions.MetadataGenerator.GenericClassParentMetadataAttribute(
+        typeof(GenericClassMetadataCollector<>)
+        , typeof(HashSetGeneric<>.Ptr_HashSetGeneric)
+        )]
+    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
+    public partial class HashSetGeneric<TITEM> where TITEM : unmanaged
     {
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_HashSetGeneric(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
@@ -18,7 +23,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
             public static implicit operator Ptr_HashSetGeneric(System.IntPtr ptr) => new Ptr_HashSetGeneric(ptr);
             public static implicit operator System.IntPtr(Ptr_HashSetGeneric ptr) => ptr.m_Pointer;
-            public static implicit operator bool (Ptr_HashSetGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
+            public static implicit operator bool(Ptr_HashSetGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
         }
 
         /// <summary>

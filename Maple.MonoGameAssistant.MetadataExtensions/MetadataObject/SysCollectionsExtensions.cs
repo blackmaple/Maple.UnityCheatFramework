@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 {
 
-
     public interface ISysPtrList<TVALUE>
         where TVALUE : unmanaged
     {
@@ -53,28 +52,25 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             where T : unmanaged, ISysPtrList<TVALUE>
             where TVALUE : unmanaged
         {
-            
-            var items = @this.Items;
-            var count = items.Size;
-            return @this.Items.AsReadOnlySpan(count);
-        }
 
+            var items = @this.Items;
+            var count = @this.Size;
+            return items.AsReadOnlySpan(count);
+        }
         public static Span<TVALUE> PtrListAsSpan<T, TVALUE>(this T @this)
             where T : unmanaged, ISysPtrList<TVALUE>
             where TVALUE : unmanaged
         {
             var items = @this.Items;
-            var count = items.Size;
-            return @this.Items.AsSpan(count);
+            var count = @this.Size;
+            return items.AsSpan(count);
         }
-
         public static ref TVALUE PtrListRefElementAt<T, TVALUE>(this T @this, int index)
             where T : unmanaged, ISysPtrList<TVALUE>
             where TVALUE : unmanaged
         {
             return ref @this.Items.RefElementAt(index);
         }
-
         public static IEnumerable<TVALUE> PtrListAsEnumerable<T, TVALUE>(this T @this)
             where T : unmanaged, ISysPtrList<TVALUE>
             where TVALUE : unmanaged
@@ -86,16 +82,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
                 yield return items.RefElementAt(i);
             }
         }
-        //public static IEnumerable<TVALUE> PtrListAsEnumerable< TVALUE>(this ISysPtrList<TVALUE> @this)
-        //    where TVALUE : unmanaged
-        //{
-        //    var count = @this.Size;
-        //    var items = @this.Items;
-        //    for (int i = 0; i < count; ++i)
-        //    {
-        //        yield return items.RefElementAt(i);
-        //    }
-        //}
+        public static TVALUE[] PtrListToArray<T, TVALUE>(this T @this)
+            where T : unmanaged, ISysPtrList<TVALUE>
+            where TVALUE : unmanaged
+        {
+            return @this.PtrListAsReadOnlySpan<T, TVALUE>().ToArray();
+        }
 
 
 
@@ -151,7 +143,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
 
         }
 
-        public static Ptr_MonoItem<TVALUE>[] PtrQueueToArray<T, TVALUE>(this T @this)
+        public static Ptr_MonoItem<TVALUE>[] PtrQueueAsRefArray<T, TVALUE>(this T @this)
             where T : unmanaged, ISysPtrQueue<TVALUE>
              where TVALUE : unmanaged
         {
@@ -179,8 +171,34 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             }
             return ret_value;
         }
+        public static IEnumerable<Ptr_MonoItem<TVALUE>> PtrQueueAsEnumerable<T, TVALUE>(this T @this)
+            where T : unmanaged, ISysPtrQueue<TVALUE>
+             where TVALUE : unmanaged
+        {
+            var realSize = @this.Size;
+            if (realSize == 0)
+            {
+                yield break;
+            }
+            // ref var ref_array = ref @this.Array.AsRef();
+            var array = @this.Array;
+            var capacity = @this.Size;
+            var head = @this.Head;
+            for (int i = 0; i < realSize; ++i)
+            {
+                var arrayIndex = (head + i);
+                if (arrayIndex >= capacity)
+                {
+                    arrayIndex -= capacity;
+                }
+                ref var val = ref array.AsRef().RefElementAt<Ref_MonoArray, TVALUE>(arrayIndex);
+                var ptr_val = val.AsPointer();
+                yield return ptr_val;
+            }
 
-        public static Ptr_MonoItem<TVALUE>[] PtrStackToArray<T, TVALUE>(this T @this)
+        }
+
+        public static Ptr_MonoItem<TVALUE>[] PtrStackAsRefArray<T, TVALUE>(this T @this)
             where T : unmanaged, ISysPtrStack<TVALUE>
             where TVALUE : unmanaged
         {
@@ -200,7 +218,35 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             return ret_value;
 
         }
+        public static IEnumerable<Ptr_MonoItem<TVALUE>> PtrStackAsEnumerable<T, TVALUE>(this T @this)
+            where T : unmanaged, ISysPtrStack<TVALUE>
+            where TVALUE : unmanaged
+        {
+            var realSize = @this.Size;
+            if (realSize == 0)
+            {
+                yield break;
+            }
+            //     var ret_value = new Ptr_MonoItem<TVALUE>[realSize];
+            //ref var ref_array = ref @this.Array.AsRef();
+            var array = @this.Array;
+            for (int i = 0; i < realSize; i++)
+            {
+                ref var val = ref array.AsRef().RefElementAt<Ref_MonoArray, TVALUE>(realSize - i - 1);
+                var ptr_val = val.AsPointer();
+                yield return ptr_val;
+            }
 
+
+        }
+        public static Span<TVALUE> PtrStackAsSpan<T, TVALUE>(this T @this)
+            where T : unmanaged, ISysPtrStack<TVALUE>
+            where TVALUE : unmanaged
+        {
+            var size = @this.Size;
+            var items = @this.Array;
+            return items.AsSpan(size);
+        }
     }
 
 

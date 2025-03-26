@@ -1,3 +1,7 @@
+using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
+using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
+
 namespace Maple.MonoGameAssistant.MetadataDemo
 {
     /// <summary>
@@ -5,9 +9,13 @@ namespace Maple.MonoGameAssistant.MetadataDemo
     /// [System.Object]
     /// [System.Collections.Generic.IEnumerable<T>]=>[System.Collections.IEnumerable]=>[System.Collections.ICollection]=>[System.Collections.Generic.IReadOnlyCollection<T>]
     /// </summary>
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassParentMetadataAttribute<Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector.ClassMetadataCollector<Ptr_StackGeneric>, Ptr_StackGeneric>]
-    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassModelMetadataAttribute("mscorlib", "System.Collections.Generic", "Stack`1", "System.Collections.Generic.Stack<T>")]
-    public partial class StackGeneric
+    [MetadataExtensions.MetadataGenerator.GenericClassParentMetadataAttribute(
+        typeof(GenericClassMetadataCollector<>)
+        , typeof(StackGeneric<>.Ptr_StackGeneric)
+        )]
+    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.GenericClassModelMetadataAttribute()]
+    public partial class StackGeneric<TITEM> where TITEM : unmanaged
+
     {
         [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_StackGeneric(System.IntPtr ptr) : Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.IPtrMetadata
@@ -18,7 +26,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
             public static implicit operator Ptr_StackGeneric(System.IntPtr ptr) => new Ptr_StackGeneric(ptr);
             public static implicit operator System.IntPtr(Ptr_StackGeneric ptr) => ptr.m_Pointer;
-            public static implicit operator bool (Ptr_StackGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
+            public static implicit operator bool(Ptr_StackGeneric ptr) => ptr.m_Pointer != System.IntPtr.Zero;
         }
 
         /// <summary>
@@ -31,27 +39,27 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            public const System.Int32 DEFAULT_CAPACITY = 0; 
+            /*
+           public const System.Int32 DEFAULT_CAPACITY = 0; 
 */
             /// <summary>
             /// 0x10 T[] _array
             /// class ["mscorlib"."System.Collections.Generic"."T[]"]
             /// </summary>
             /// <returns>class T[]</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_array", "T[]")]
-            public partial nint _ARRAY { get; set; } 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_array", default)]
+            public partial PMonoArray<TITEM> _ARRAY { get; set; }
+
 
             /// <summary>
             /// 0x18 System.Object _syncRoot
             /// class ["mscorlib"."System"."Object"]
             /// </summary>
             /// <returns>class System.Object</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
-            public partial nint _SYNC_ROOT { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_syncRoot", "System.Object")]
+           public partial nint _SYNC_ROOT { get; set; } 
 */
 
             /// <summary>
@@ -59,19 +67,19 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
+
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_size", "System.Int32")]
-            public partial System.Int32 _SIZE { get; set; } 
-*/
+            public partial System.Int32 _SIZE { get; set; }
+
 
             /// <summary>
             /// 0x24 System.Int32 _version
             /// struct ["mscorlib"."System"."Int32"]
             /// </summary>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
-            public partial System.Int32 _VERSION { get; set; } 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("_version", "System.Int32")]
+           public partial System.Int32 _VERSION { get; set; } 
 */
         }
 
@@ -278,6 +286,19 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("T&", 0)]
             public partial System.Boolean TRY_POP(nint result); 
 */
+        }
+
+
+        partial struct Ptr_StackGeneric : ISysPtrStack<TITEM>
+        {
+            public int Size => _SIZE;
+
+            public PMonoArray<TITEM> Array => _ARRAY;
+
+            public Ptr_MonoItem<TITEM>[] PtrStackToArray() => this.PtrStackAsRefArray<Ptr_StackGeneric, TITEM>();
+            public IEnumerable<Ptr_MonoItem<TITEM>> PtrStackAsEnumerable() => this.PtrStackAsEnumerable<Ptr_StackGeneric, TITEM>();
+
+
         }
     }
 }
