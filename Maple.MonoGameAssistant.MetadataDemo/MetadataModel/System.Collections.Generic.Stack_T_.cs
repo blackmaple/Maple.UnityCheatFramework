@@ -1,4 +1,5 @@
 using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataCollections;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
 
@@ -296,7 +297,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo
             public PMonoArray<TITEM> Array => _ARRAY;
 
             public Ptr_MonoItem<TITEM>[] PtrStackToArray() => this.PtrStackAsRefArray<Ptr_StackGeneric, TITEM>();
-            public IEnumerable<Ptr_MonoItem<TITEM>> PtrStackAsEnumerable() => this.PtrStackAsEnumerable<Ptr_StackGeneric, TITEM>();
+         //   public IEnumerable<Ptr_MonoItem<TITEM>> PtrStackAsEnumerable() => this.PtrStackAsEnumerable<Ptr_StackGeneric, TITEM>();
 
 
         }

@@ -66,11 +66,12 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodMetadata)} ERROR");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code}");
+ 
             }
             if (false == TryGetMethodPointer(methodInfoDTO, out var pointer))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodPointer)} ERROR");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(TryGetMethodPointer)}:{descriptionMethodDTO.Code}");
             }
             return new(methodInfoDTO.Pointer, pointer);
         }
@@ -79,7 +80,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(TryGetFieldMetadata)} ERROR");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(GetFieldMetadata)}:{descriptionFieldDTO.Code}");
             }
             return fieldInfoDTO;
         }

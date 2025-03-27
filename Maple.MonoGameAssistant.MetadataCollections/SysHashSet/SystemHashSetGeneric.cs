@@ -19,6 +19,10 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             public PMonoArray<Ref_MonoSlot<T>> Slots => _SLOTS;
 
             public PMonoSlot<Ref_MonoSlot<T>, T>[] AsRefArray() => this.PtrHashSetAsRefArray<Ptr_SystemHashSetGeneric, T>();
+
+            public IEnumerable<PMonoSlot<Ref_MonoSlot<T>, T>> AsRefEnumerable() => this.PtrHashSetAsRefEnumerable<Ptr_SystemHashSetGeneric, T>();
+
         }
     }
+
 }

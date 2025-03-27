@@ -20,7 +20,9 @@ namespace Maple.MonoGameAssistant.MetadataCollections
 
             public Ptr_MonoItem<T>[] AsRefArray() => this.PtrStackAsRefArray<Ptr_SystemStackGeneric, T>();
 
-            public IEnumerable<Ptr_MonoItem<T>> AsEnumerable() => this.PtrStackAsEnumerable<Ptr_SystemStackGeneric, T>();
+            public IEnumerable<Ptr_MonoItem<T>> AsRefEnumerable() => this.PtrStackAsRefEnumerable<Ptr_SystemStackGeneric, T>();
         }
     }
+
+
 }

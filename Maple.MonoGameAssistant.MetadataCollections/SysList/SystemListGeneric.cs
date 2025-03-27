@@ -1,6 +1,5 @@
 ﻿using Maple.MonoGameAssistant.Core;
-using Maple.MonoGameAssistant.MetadataExtensions.MetadataObject;
-
+ 
 namespace Maple.MonoGameAssistant.MetadataCollections
 {
     partial class SystemListGeneric<T>
@@ -9,7 +8,11 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         {
             return LoadMetadata<SystemListGeneric<T>>(runtimeContext, ptr, static (r, c) => new(r, c));
         }
-
+        public static Ptr_SystemListGeneric LoadSelf(MonoRuntimeContext runtimeContext, Ptr_SystemListGeneric ptr)
+        {
+            _ = LoadMetadata<SystemListGeneric<T>>(runtimeContext, ptr, static (r, c) => new(r, c));
+            return ptr;
+        }
         partial struct Ptr_SystemListGeneric : ISysPtrList<T>
         {
             public PMonoArray<T> Items => _ITEMS;
@@ -26,6 +29,9 @@ namespace Maple.MonoGameAssistant.MetadataCollections
 
             public ref T this[int index] => ref this.PtrListRefElementAt<Ptr_SystemListGeneric, T>(index);
 
+            public IEnumerable<Ptr_MonoItem<T>> AsRefEnumerable() => this.PtrListAsRefEnumerable<Ptr_SystemListGeneric, T>();
+
+ 
         }
     }
 }

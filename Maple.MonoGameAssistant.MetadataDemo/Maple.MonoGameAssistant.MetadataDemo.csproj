@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Maple.MonoGameAssistant.MetadataExtensions\Maple.MonoGameAssistant.MetadataExtensions.csproj" />
+		<ProjectReference Include="..\Maple.MonoGameAssistant.MetadataCollections\Maple.MonoGameAssistant.MetadataCollections.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.MetadataSourceGenerator\Maple.MonoGameAssistant.MetadataSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
 	</ItemGroup>
 

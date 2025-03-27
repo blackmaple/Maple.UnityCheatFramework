@@ -299,21 +299,21 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             /// </summary>
             /// <param name = "key">class TKey</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ContainsKey", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition),typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
-           public partial System.Boolean CONTAINS_KEY(nint key); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ContainsKey", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+            //   [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
+            public partial System.Boolean CONTAINS_KEY(TKey key);
+
             /// <summary>
             ///   System.Boolean ContainsValue(TValue value)
             /// </summary>
             /// <param name = "value">class TValue</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ContainsValue", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition),typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TValue", 0)]
-           public partial System.Boolean CONTAINS_VALUE(nint value); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ContainsValue", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+            //         [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TValue", 0)]
+            public partial System.Boolean CONTAINS_VALUE(TValue value);
+
             /// <summary>
             ///   System.Void CopyTo(System.Collections.Generic.KeyValuePair<TKey , TValue>[] array, System.Int32 index)
             /// </summary>
@@ -435,7 +435,7 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             /// <returns>struct System.Boolean</returns>
 
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Remove", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
+        //    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
             public partial System.Boolean REMOVE(TKey key);
 
             /// <summary>
