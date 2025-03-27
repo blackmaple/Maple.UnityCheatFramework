@@ -1,5 +1,5 @@
 ﻿using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 

@@ -1,18 +1,15 @@
 ﻿using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
-using Maple.MonoGameAssistant.MonoCollectorDataV2;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollector;
+using Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace Maple.MonoGameAssistant.UILogic
 {
@@ -773,7 +770,30 @@ namespace Maple.MonoGameAssistant.UILogic
 
         static AttributeListSyntax NewClassParentMetadataAttribute(MonoClassInfoDTO classInfoDTO)
         {
+
+            
+
+            if (classInfoDTO.IsGeneric)
+            {
+                return
+                 SyntaxFactory.AttributeList([
+                     SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(typeof(GenericClassModelMetadataAttribute).FullName!)
+                                )
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList([
+                                        SyntaxFactory.AttributeArgument(NewTypeOfExpressionSyntax(classInfoDTO.FullName!)),
+                                       SyntaxFactory.AttributeArgument(NewTypeOfExpressionSyntax(classInfoDTO.CreatePtrStructName())),
+                                    ])
+                                )
+                 ]);
+
+
+
+
+            }
             var ptrType = SyntaxFactory.ParseTypeName(classInfoDTO.CreatePtrStructName());
+
             return
             SyntaxFactory.AttributeList([
                 SyntaxFactory.Attribute(
@@ -794,6 +814,16 @@ namespace Maple.MonoGameAssistant.UILogic
         }
         static AttributeListSyntax NewClassModelMetadataAttribute(MonoClassInfoDTO classInfoDTO)
         {
+            if (classInfoDTO.IsGeneric)
+            {
+                return
+                SyntaxFactory.AttributeList([
+                    SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(typeof(GenericClassModelMetadataAttribute).FullName!)
+                                )
+                                
+                ]);
+            }
             return
                 SyntaxFactory.AttributeList([
                     SyntaxFactory.Attribute(
@@ -892,6 +922,13 @@ namespace Maple.MonoGameAssistant.UILogic
             }
             return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(txt));
 
+        }
+
+        static TypeOfExpressionSyntax NewTypeOfExpressionSyntax(string fullName)
+        {
+               return     SyntaxFactory.TypeOfExpression(
+                 SyntaxFactory.ParseTypeName(fullName)
+            );
         }
 
 

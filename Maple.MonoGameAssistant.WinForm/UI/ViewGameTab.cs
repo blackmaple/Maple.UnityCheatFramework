@@ -1,22 +1,11 @@
-﻿using DevExpress.Utils.Design;
-using DevExpress.Utils.FormShadow;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Base;
-using DevExpress.XtraEditors.Repository;
+﻿using DevExpress.XtraEditors;
 using DevExpress.XtraGrid.Views.Grid;
 using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.MonoCollector;
 using Maple.MonoGameAssistant.UILogic;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
