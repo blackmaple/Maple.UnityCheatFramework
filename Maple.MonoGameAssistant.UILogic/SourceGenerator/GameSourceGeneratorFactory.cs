@@ -223,23 +223,70 @@ namespace Maple.MonoGameAssistant.UILogic
         }
 
 
+        static string[] ExtractGenericTypeNames(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return [];
+            }
+            int start = input.IndexOf('<');
+            int end = input.LastIndexOf('>');
 
+            if (start == -1 || end == -1 || start >= end)
+                return [];
+
+            string innerContent = input.Substring(start + 1, end - start - 1);
+            return [.. innerContent.Split(',').Select(s => s.Trim())];
+        }
         public static ClassDeclarationSyntax CreateClassDeclarationSyntax(
             MonoClassInfoDTO monoClassInfoDTO,
             MonoClassInfoDTO[] parentClasses,
             MonoInterfaceInfoDTO[] interfaceInfoDTOs,
             MemberDeclarationSyntax[] members)
         {
-            var name = monoClassInfoDTO.GetFixedClassName()!;
+            if (monoClassInfoDTO.IsGeneric)
+            {
 
-            return SyntaxFactory.ClassDeclaration(name)
-                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
-                .WithMembers([.. members])
-                .WithAttributeLists([
-                    NewClassParentMetadataAttribute(monoClassInfoDTO),
-                    NewClassModelMetadataAttribute(monoClassInfoDTO),
-                ])
-                .WithLeadingTrivia(GetClassDescription(monoClassInfoDTO, parentClasses, interfaceInfoDTOs));
+                var name = monoClassInfoDTO.GetFixedClassName()!;
+                var typeParameters = ExtractGenericTypeNames(monoClassInfoDTO.FullName!);
+                return SyntaxFactory.ClassDeclaration(name)
+                      .WithTypeParameterList(SyntaxFactory.TypeParameterList(
+                           [..
+                            typeParameters.Select(p => SyntaxFactory.TypeParameter(p))
+                            ]
+                           ))
+                      .WithConstraintClauses([
+                          ..
+                              typeParameters.Select(p => SyntaxFactory.TypeParameterConstraintClause(p )
+                                .WithConstraints([SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName("unmanaged"))])
+                              )
+
+
+
+
+                          ])
+                    .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+                    .WithMembers([.. members])
+                    .WithAttributeLists([
+                        NewGenericClassParentMetadataAttribute(monoClassInfoDTO,typeParameters),
+                        NewGenericClassModelMetadataAttribute(monoClassInfoDTO),
+                    ])
+                    .WithLeadingTrivia(GetClassDescription(monoClassInfoDTO, parentClasses, interfaceInfoDTOs));
+            }
+            else
+            {
+                var name = monoClassInfoDTO.GetFixedClassName()!;
+
+                return SyntaxFactory.ClassDeclaration(name)
+                    .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)])
+                    .WithMembers([.. members])
+                    .WithAttributeLists([
+                        NewClassParentMetadataAttribute(monoClassInfoDTO),
+                        NewClassModelMetadataAttribute(monoClassInfoDTO),
+                    ])
+                    .WithLeadingTrivia(GetClassDescription(monoClassInfoDTO, parentClasses, interfaceInfoDTOs));
+            }
+
 
 
         }
@@ -575,16 +622,17 @@ namespace Maple.MonoGameAssistant.UILogic
             {
                 return className;
             }
+            var sys = classInfoDTO.FullName?.StartsWith(nameof(System)) == true ? nameof(System) : string.Empty;
             var index = className.IndexOf('`');
             if (index != -1)
             {
-                return $"{className[..index]}{nameof(System.Collections.Generic)}";
+                return $"{sys}{className[..index]}{nameof(System.Collections.Generic)}";
             }
             if (className.StartsWith('.') && className.Length > 1)
             {
-                return $"{className[1..]}";
+                return $"{sys}{className[1..]}";
             }
-            return className;
+            return $"{sys}{className}";
         }
         static string GetClassFullName(this MonoClassInfoDTO classInfoDTO)
             => @$"[""{classInfoDTO.ImageName}"".""{classInfoDTO.Namespace}"".""{classInfoDTO.Name}""]";
@@ -767,31 +815,60 @@ namespace Maple.MonoGameAssistant.UILogic
             }
 
         }
+        static AttributeListSyntax NewGenericClassParentMetadataAttribute(MonoClassInfoDTO classInfoDTO, string[] typeParameters)
+        {
+            var arg_p = SyntaxFactory.GenericName(typeof(GenericClassMetadataCollector<>).FullName!.Replace("`1", ""))
+            .WithTypeArgumentList(SyntaxFactory.TypeArgumentList(
+
+                   [SyntaxFactory.OmittedTypeArgument()]
+                 ));
+            var type_arg0 = SyntaxFactory.TypeOfExpression(arg_p);
+
+            // GenericClassParentMetadataAttribute(classname<>,classname<>.ptrclassname)
+            var arg_0 = SyntaxFactory.GenericName(classInfoDTO.GetFixedClassName()!)
+                 .WithTypeArgumentList(SyntaxFactory.TypeArgumentList(
+
+                         [.. typeParameters.Select(p => SyntaxFactory.OmittedTypeArgument())]
+                      ));
+            var arg_1 = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, arg_0, SyntaxFactory.IdentifierName(classInfoDTO.CreatePtrStructName()));
+
+            var type_arg1 = SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(arg_1.ToString()));
+
+
+            //var arg1 = $@"{classInfoDTO.GetFixedClassName()}<{string.Join(",", typeParameters.Select(p => ""))}>";
+            //var arg2 = $@"{classInfoDTO.GetFixedClassName()}<{string.Join(",", typeParameters.Select(p => ""))}>.{classInfoDTO.CreatePtrStructName()}";
+            return
+              SyntaxFactory.AttributeList([
+                  SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(typeof(GenericClassParentMetadataAttribute).FullName!)
+                                )
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList([
+                                        SyntaxFactory.AttributeArgument(type_arg0),
+                                       SyntaxFactory.AttributeArgument(type_arg1),
+                                    ])
+                                )
+  ]);
+
+        }
+        static AttributeListSyntax NewGenericClassModelMetadataAttribute(MonoClassInfoDTO classInfoDTO)
+        {
+            return
+            SyntaxFactory.AttributeList([
+                SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(typeof(GenericClassModelMetadataAttribute).FullName!)
+                                )
+
+            ]);
+
+
+        }
 
         static AttributeListSyntax NewClassParentMetadataAttribute(MonoClassInfoDTO classInfoDTO)
         {
 
-            
-
-            if (classInfoDTO.IsGeneric)
-            {
-                return
-                 SyntaxFactory.AttributeList([
-                     SyntaxFactory.Attribute(
-                                    SyntaxFactory.IdentifierName(typeof(GenericClassModelMetadataAttribute).FullName!)
-                                )
-                                .WithArgumentList(
-                                    SyntaxFactory.AttributeArgumentList([
-                                        SyntaxFactory.AttributeArgument(NewTypeOfExpressionSyntax(classInfoDTO.FullName!)),
-                                       SyntaxFactory.AttributeArgument(NewTypeOfExpressionSyntax(classInfoDTO.CreatePtrStructName())),
-                                    ])
-                                )
-                 ]);
 
 
-
-
-            }
             var ptrType = SyntaxFactory.ParseTypeName(classInfoDTO.CreatePtrStructName());
 
             return
@@ -814,19 +891,9 @@ namespace Maple.MonoGameAssistant.UILogic
         }
         static AttributeListSyntax NewClassModelMetadataAttribute(MonoClassInfoDTO classInfoDTO)
         {
-            if (classInfoDTO.IsGeneric)
-            {
-                return
-                SyntaxFactory.AttributeList([
-                    SyntaxFactory.Attribute(
-                                    SyntaxFactory.IdentifierName(typeof(GenericClassModelMetadataAttribute).FullName!)
-                                )
-                                
-                ]);
-            }
             return
-                SyntaxFactory.AttributeList([
-                    SyntaxFactory.Attribute(
+               SyntaxFactory.AttributeList([
+                   SyntaxFactory.Attribute(
                         SyntaxFactory.IdentifierName(typeof(ClassModelMetadataAttribute).FullName!)
                     )
                     .WithArgumentList(
@@ -837,7 +904,7 @@ namespace Maple.MonoGameAssistant.UILogic
                             SyntaxFactory.AttributeArgument(ConstStringExpressionSyntax(classInfoDTO.TypeName)),
                         ])
                     )
-                ]);
+               ]);
 
         }
 
@@ -926,9 +993,9 @@ namespace Maple.MonoGameAssistant.UILogic
 
         static TypeOfExpressionSyntax NewTypeOfExpressionSyntax(string fullName)
         {
-               return     SyntaxFactory.TypeOfExpression(
-                 SyntaxFactory.ParseTypeName(fullName)
-            );
+            return SyntaxFactory.TypeOfExpression(
+              SyntaxFactory.ParseTypeName(fullName)
+         );
         }
 
 

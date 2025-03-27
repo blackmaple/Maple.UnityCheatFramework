@@ -32,10 +32,10 @@ namespace Maple.MonoGameAssistant.WinForm
 
         private void CodeEditor_Properties_CustomHighlightText(object sender, TextEditCustomHighlightTextEventArgs e)
         {
-            HighlightKeyword(e);
-            HighlightNumbers(e);
-            HighlightStrings(e);
-            HighlightComment(e);
+            //HighlightKeyword(e);
+            //HighlightNumbers(e);
+            //HighlightStrings(e);
+            //HighlightComment(e);
 
         }
 

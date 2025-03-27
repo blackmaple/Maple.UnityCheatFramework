@@ -7,18 +7,20 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
     public interface ISysPtrList<TVALUE>
         where TVALUE : unmanaged
     {
-        public PMonoArray<TVALUE> Items { get; }
-        public int Size { get; }
+        PMonoArray<TVALUE> Items { get; }
+        int Size { get; }
     }
 
     public interface ISysPtrDictionary<TKEY, TVALUE>
         where TKEY : unmanaged
         where TVALUE : unmanaged
     {
-        public int Count { get; }
-        public int FreeCount { get; }
-        public int Size => Count - FreeCount;
-        public PMonoArray<Ref_MonoEntry<TKEY, TVALUE>> Entries { get; }
+        int Count { get; }
+        int FreeCount { get; }
+        int Size => Count - FreeCount;
+        PMonoArray<Ref_MonoEntry<TKEY, TVALUE>> Entries { get; }
+
+
     }
 
     public interface ISysPtrHashSet<TVALUE>
@@ -26,7 +28,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
     {
         int Count { get; }
         int LastIndex { get; }
-        public PMonoArray<Ref_MonoSlot<TVALUE>> Slots { get; }
+        PMonoArray<Ref_MonoSlot<TVALUE>> Slots { get; }
 
     }
 
