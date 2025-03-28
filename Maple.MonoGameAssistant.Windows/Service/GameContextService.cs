@@ -10,6 +10,7 @@ using Maple.MonoGameAssistant.Windows.Service.HostedService;
 using Maple.MonoGameAssistant.Windows.UITask;
 using Maple.MonoGameAssistant.Windows.WinRT;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Maple.MonoGameAssistant.Windows.Service
 {
@@ -40,6 +41,7 @@ namespace Maple.MonoGameAssistant.Windows.Service
         public required UnityEngineContext? UnityEngineContext { get; set; }
         public required GameSwitchDisplayDTO[] ListGameSwitch { get; set; }
 
+        public Exception? ServiceException { get; set; }
         #endregion
 
         #region Host Service
@@ -57,10 +59,17 @@ namespace Maple.MonoGameAssistant.Windows.Service
                 try
                 {
                     await LoadGameServiceAsync().ConfigureAwait(false);
+                    await LoadGameDataAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("LoadService Error:{ex}", ex);
+                    this.ServiceException = ex;
+                }
+                try
+                {
 
                     HookWindowMessage();
-
-                    await LoadGameDataAsync().ConfigureAwait(false);
 
                     LoadListGameSwitch();
 
@@ -70,7 +79,6 @@ namespace Maple.MonoGameAssistant.Windows.Service
                 {
                     Logger.LogError("LoadService Error:{ex}", ex);
                 }
-
             }
 
 
@@ -577,7 +585,10 @@ namespace Maple.MonoGameAssistant.Windows.Service
 
         public virtual ValueTask<GameSessionInfoDTO> GetSessionInfoAsync()
         {
-
+            if (this.ServiceException is not null)
+            {
+                return ValueTask.FromResult(GameException.Throw<GameSessionInfoDTO>($"Load Session Error {this.ServiceException.GetType().Name}:{this.ServiceException.Message}"));
+            }
             var api = Context is not null ? Context.ApiVersion : "???";
             var data = GameSettings.GetGameSessionInfo(api);
             return ValueTask.FromResult(data);

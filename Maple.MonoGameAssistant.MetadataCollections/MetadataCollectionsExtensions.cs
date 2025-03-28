@@ -109,7 +109,7 @@ namespace Maple.MonoGameAssistant.MetadataCollections
                 ref var ref_entry = ref entries.RefElementAt(i);
                 if (ref_entry.HashCode >= 0)
                 {
-                    var ptr = Unsafe.AsRef(in ref_entry).AsPointer();
+                    var ptr = ref_entry.AsPointer();
                     yield return ptr;
                 }
             }
@@ -156,7 +156,7 @@ namespace Maple.MonoGameAssistant.MetadataCollections
                 ref var ref_Slot = ref slots.RefElementAt(arrCount);
                 if (ref_Slot.HashCode >= 0)
                 {
-                    var ptr = Unsafe.AsRef(in ref_Slot).AsPointer();
+                    var ptr = ref_Slot.AsPointer();
                     yield return ptr;
                 }
             }
@@ -362,16 +362,16 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         public static Span<T> AsSpan<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsSpan();
 
-        public static IEnumerable<T> AsEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default)where T : unmanaged
+        public static IEnumerable<T> AsEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsEnumerable();
-        public static IEnumerable<Ptr_MonoItem<T>> AsRefEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default)where T : unmanaged
+        public static IEnumerable<Ptr_MonoItem<T>> AsRefEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsRefEnumerable();
 
         public static int Count<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).GET_COUNT();
         public static void Clear<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).CLEAR();
-        public static void Add<T>(this SysPtrList<T> ptr,in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
+        public static void Add<T>(this SysPtrList<T> ptr, in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).ADD(val);
         public static bool Remove<T>(this SysPtrList<T> ptr, in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).REMOVE(val);
