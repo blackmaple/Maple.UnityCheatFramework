@@ -8,7 +8,7 @@
 		<LangVersion>preview</LangVersion>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>Maple.MonoGameAssistant.MonoCollectorExtensionsV2</Title>
+		<Title>Maple.MonoGameAssistant.MonoCollectorExtensions</Title>
 		<RepositoryUrl>https://github.com/blackmaple/Maple.MonoGameAssistant</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -16,7 +16,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
 		<Version>1.2.1-rc</Version>
-
+		<AssemblyName>Maple.MonoGameAssistant.MonoCollectorExtensions</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>

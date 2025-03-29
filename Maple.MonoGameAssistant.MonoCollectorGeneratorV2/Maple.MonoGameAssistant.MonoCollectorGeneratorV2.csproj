@@ -21,6 +21,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
 		<Version>1.2.0-rc</Version>
+		<AssemblyName>Maple.MonoGameAssistant.MonoCollectorGenerator</AssemblyName>
 	</PropertyGroup>
 
 
