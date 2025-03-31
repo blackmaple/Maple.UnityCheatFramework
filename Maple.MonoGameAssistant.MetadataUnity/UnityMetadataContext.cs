@@ -21,7 +21,6 @@ namespace Maple.MonoGameAssistant.MetadataUnity
     [ContextMemberMetadata<Texture2D>]
     public partial class UnityMetadataContext : IUnityPlayerNativeMethods
     {
-        static MonoClassMetadataCollection ErrorMonoClassMetadataCollection { get; } = default!;
 
         private static void CopyToTexture2D_TYPE1(Texture2D.Ptr_Texture2D pSrc, Texture2D.Ptr_Texture2D pDest)
         {
@@ -48,25 +47,25 @@ namespace Maple.MonoGameAssistant.MetadataUnity
         {
             var texture2D_width = pSrc.GET_WIDTH();
             var texture2D_height = pSrc.GET_HEIGHT();
-
+ 
             var pRenderTexture = RenderTexture.Ptr_RenderTexture.GET_TEMPORARY(texture2D_width, texture2D_height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
             Graphics.Ptr_Graphics.BLIT2(pSrc, pRenderTexture);
-
+ 
             var previous = RenderTexture.Ptr_RenderTexture.GET_ACTIVE();
             RenderTexture.Ptr_RenderTexture.SET_ACTIVE(pRenderTexture);
-
+ 
             var w = (int)ref_Rect.m_Width;
             var h = (int)ref_Rect.m_Height;
             float textureY = texture2D_height - (ref_Rect.m_YMin + ref_Rect.m_Height);
-
             pDest.CTOR(w, h);
+ 
             var rect = new Rect.Ref_Rect() { m_XMin = ref_Rect.m_XMin, m_YMin = textureY, m_Width = ref_Rect.m_Width, m_Height = ref_Rect.m_Height };
             pDest.READ_PIXELS_IMPL_INJECTED(MapleRef<Rect.Ref_Rect>.FromRef(ref rect), 0, 0, true);
             pDest.APPLY();
-
+ 
             RenderTexture.Ptr_RenderTexture.SET_ACTIVE(previous);
             RenderTexture.Ptr_RenderTexture.RELEASE_TEMPORARY(pRenderTexture);
-
+ 
         }
 
         private static void CopyToTexture2D_TYPE3(Texture2D.Ptr_Texture2D pSrc, Texture2D.Ptr_Texture2D pDest, in Rect.Ref_Rect ref_Rect)
@@ -92,20 +91,6 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
         }
 
-        public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
-        {
-            if (SearchService.TrySearchClass(code, out var descriptionClassDTO))
-            {
-                if (TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
-                {
-                    if (TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
-                    {
-                        return classMetadataCollection;
-                    }
-                }
-            }
-            return ErrorMonoClassMetadataCollection;
-        }
 
         public PMonoArray<byte> ReadSprite2Png(nint ptr_Sprite, IUnityPlayerNativeMethods.ReadSpriteType type = IUnityPlayerNativeMethods.ReadSpriteType.TYPE2)
         {
@@ -115,18 +100,22 @@ namespace Maple.MonoGameAssistant.MetadataUnity
                 return default;
             }
             var pSrcTexture2D = pSprite.GET_TEXTURE();
+         
             if (false == pSrcTexture2D.IsNotNull())
             {
                 return default;
             }
             var pDestTexture2D = this.Texture2D.New();
+         
             switch (type)
             {
                 case IUnityPlayerNativeMethods.ReadSpriteType.TYPE2:
                     {
+                       
                         pSprite.GET_TEXTURE_RECT_INJECTED(MapleOut<Rect.Ref_Rect>.FromOut(out var ref_Rect));
+                       
                         CopyToTexture2D_TYPE2(pSrcTexture2D, pDestTexture2D, ref_Rect);
-
+                       
                         break;
                     }
                 case IUnityPlayerNativeMethods.ReadSpriteType.TYPE3:
@@ -169,20 +158,28 @@ namespace Maple.MonoGameAssistant.MetadataUnity
     {
         public static Dictionary<ulong, int> MethodOffsetCache { get; } = [];
         public static nint UnityPlayerBaseAddress { get; } = GetModuleBaseAddress("UnityPlayer.dll");
+        public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
+        {
+            if (SearchService.TrySearchClass(code, out var descriptionClassDTO))
+            {
+                if (TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
+                {
+                    if (TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
+                    {
+                        return classMetadataCollection;
+                    }
+                }
+            }
+            return default!;
+        }
+
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            var method = Get();
-            this.Logger.LogInformation("{code}:{method}", code.ToString("X8"), method.MethodPointer.ToString("X8"));
-            return method;
-
-            MonoMethodDelegate Get()
+            if (MethodOffsetCache.TryGetValue(code, out var offset))
             {
-                if (MethodOffsetCache.TryGetValue(code, out var offset))
-                {
-                    return new MonoMethodDelegate(nint.Zero, offset + UnityPlayerBaseAddress);
-                }
-                return base.GetMethodDelegate(code, classMetadataCollection);
+                return new MonoMethodDelegate(nint.Zero, offset + UnityPlayerBaseAddress);
             }
+            return base.GetMethodDelegate(code, classMetadataCollection);
 
         }
 
@@ -288,6 +285,22 @@ namespace Maple.MonoGameAssistant.MetadataUnity
                 = UnityEngine_ImageConversion_EncodeToPNG,
         };
 
+        public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
+        {
+            if (SearchService.TrySearchClass(code, out var descriptionClassDTO))
+            {
+                if (TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
+                {
+                    if (TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
+                    {
+                        return classMetadataCollection;
+                    }
+                }
+            }
+            return default!;
+        }
+
+
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
             if (MethodSignatureCache.TryGetValue(code, out var signature))
@@ -297,4 +310,11 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             return base.GetMethodDelegate(code, classMetadataCollection);
         }
     }
+
+    //partial class Sprite
+    //{
+    //    public static nint Get1() => Unsafe.As<FunctionPointerType_GET_TEXTURE_9E369564B1447B9B, nint>(ref s_FunctionPointerType_GET_TEXTURE_9E369564B1447B9B);
+    //    public static nint Get2() => Unsafe.As<FunctionPointerType_GET_TEXTURE_RECT_INJECTED_991A7878D43EDC7F, nint>(ref s_FunctionPointerType_GET_TEXTURE_RECT_INJECTED_991A7878D43EDC7F);
+
+    //}
 }
