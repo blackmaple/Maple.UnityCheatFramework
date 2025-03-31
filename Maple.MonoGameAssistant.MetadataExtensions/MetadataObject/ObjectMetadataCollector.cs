@@ -100,7 +100,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             {
                 return false;
             }
-            if (!ClassMetadataCollector.TryGetMethodPointer<T_FUNC>(search, out var method))
+            if (!TryGetMethodPointer<T_FUNC>(search, out var method))
             {
                 return false;
             }
@@ -116,7 +116,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             {
                 return false;
             }
-            if (!ClassMetadataCollector.TryGetMethodPointer<T_FUNC>(search, out var method))
+            if (!TryGetMethodPointer<T_FUNC>(search, out var method))
             {
                 return false;
             }
@@ -134,7 +134,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             {
                 return false;
             }
-            if (!ClassMetadataCollector.TryGetMethodPointer<T_FUNC>(search, out var method))
+            if (!TryGetMethodPointer<T_FUNC>(search, out var method))
             {
                 return false;
             }
@@ -151,12 +151,30 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataObject
             {
                 return false;
             }
-            if (!ClassMetadataCollector.TryGetMethodPointer<T_FUNC>(search, out var method))
+            if (!TryGetMethodPointer<T_FUNC>(search, out var method))
             {
                 return false;
             }
             ret = func.Invoke(method, args);
             return true;
+        }
+
+
+        public static bool TryGetMethodPointer<T_Method>(MonoMethodInfoDTO methodInfoDTO, out T_Method method) where T_Method : unmanaged
+        {
+            Unsafe.SkipInit(out method);
+            var context = MonoRuntimeContext.GlobalInstance;
+            if (context is null)
+            {
+                return false;
+            }
+            var pointer = context.RuntiemProvider.GetMonoMethodAddress(methodInfoDTO.Pointer);
+            var ok = pointer != nint.Zero;
+            if (ok)
+            {
+                method = Unsafe.As<MonoMethodPointer, T_Method>(ref pointer);
+            }
+            return ok;
         }
 
     }

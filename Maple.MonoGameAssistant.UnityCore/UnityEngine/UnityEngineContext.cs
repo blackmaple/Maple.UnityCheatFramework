@@ -23,7 +23,7 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
     //    [MonoCollectorType(typeof(ImageConversion))]
     //    public partial class UnityEngineContextGen { }
 
-    public partial class UnityEngineContext : MonoCollectorContext
+    public partial class UnityEngineContext : MonoCollectorContext, IUnityPlayerNativeMethods
     {
 
         MonoCollecotrClassSettings Settings_Sprite { get; } = new MonoCollecotrClassSettings
@@ -302,6 +302,11 @@ namespace Maple.MonoGameAssistant.UnityCore.UnityEngine
 
         }
 
+        public PMonoArray<byte> ReadSprite2Png(nint ptr_Sprite, IUnityPlayerNativeMethods.ReadSpriteType type = IUnityPlayerNativeMethods.ReadSpriteType.TYPE2)
+        {
+            Sprite.Ptr_Sprite sprite = ptr_Sprite;
+            return this.ReadSprite2Png(sprite, (int)type);
+        }
     }
 
     public sealed partial class UnityEngineContext_MONO(MonoRuntimeContext runtimeContext, ILogger logger) : UnityEngineContext(runtimeContext, logger)

@@ -13,9 +13,9 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 #endif 
          class ClassMethodParameterMetadataAttribute : Attribute
     {
-        public ClassMethodParameterMetadataAttribute(byte[] utf8ParameterType, int order = 0) { }
+        public ClassMethodParameterMetadataAttribute(byte[]? utf8ParameterType, int order = 0) { }
 
-        public ClassMethodParameterMetadataAttribute(string parameterType, int order = 0) { }
+        public ClassMethodParameterMetadataAttribute(string? parameterType, int order = 0) { }
 
     }
 }

@@ -579,6 +579,50 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         #endregion
 
         #region ClassMemberMetadataData
+        public static MemberDeclarationSyntax CreateConstCode(string name, ulong code)
+        {
+
+            var modifiers = SyntaxFactory.TokenList(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.ConstKeyword));
+
+
+            var type = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ULongKeyword));
+
+
+            var variableName = SyntaxFactory.Identifier(name);
+
+
+            var initializer = SyntaxFactory.EqualsValueClause(
+                SyntaxFactory.LiteralExpression(
+                    SyntaxKind.NumericLiteralExpression,
+                    ConvertToHexLiteral(code)));
+
+
+            var variableDeclaration = SyntaxFactory.VariableDeclarator(variableName)
+                .WithInitializer(initializer);
+
+
+            var codeField = SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(type)
+                    .WithVariables(SyntaxFactory.SingletonSeparatedList(variableDeclaration)))
+                .WithModifiers(modifiers);
+            return codeField;
+        }
+
+        public static void BuildClassCodeField(this ClassMemberMetadataData classMember, List<MemberDeclarationSyntax> members)
+        {
+            members.Add(CreateConstCode(classMember.GetConstCodeName(), classMember.Code));
+            foreach (var f in classMember.PropertyMetadataDatas)
+            {
+                members.Add(CreateConstCode(f.GetConstCodeName(), f.Code));
+            }
+            foreach (var m in classMember.MethodMetadataDatas)
+            {
+                members.Add(CreateConstCode(m.GetConstCodeName(), m.Code));
+            }
+        }
+
         private static ulong GetClassCode(string classDisplayString)
         {
             if (false == MetadataSourceGeneratorHashAlgorithm.TryGetClassHash(classDisplayString, out var classHash, out var oldclassDisplayName))
@@ -799,6 +843,12 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     {
                         metadata.Utf8MethodParameterTypes = parameterTypes;
                     }
+                    else if (att.GetAttributeValue_NamedArgs(nameof(ClassMethodMetadataAttribute.VoidArgument), false))
+                    {
+                        metadata.Utf8MethodParameterTypes = [];
+                    }
+
+
 
                     metadata.Code = GetMethodCode(methodSymbol.ToDisplayString());
 

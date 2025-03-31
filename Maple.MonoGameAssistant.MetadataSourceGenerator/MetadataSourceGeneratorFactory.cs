@@ -40,6 +40,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 List<ExpressionStatementSyntax> expressions = [];
                 List<StructDeclarationSyntax> structs = [];
 
+                metadata.BuildClassCodeField(fields);
                 metadata.BuildClassMetadataJson(fields);
                 metadata.BuildClassPartialPropertyExpression(fields, expressions, structs);
                 metadata.BuildClassPartialMethodExpression(structs, fields, expressions);
@@ -70,6 +71,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 List<ExpressionStatementSyntax> expressions = [];
                 List<StructDeclarationSyntax> structs = [];
 
+                metadata.BuildClassCodeField(fields);
                 metadata.BuildGenericClassMetadataJson(fields);
                 metadata.BuildGenericClassPartialPropertyExpression(fields, expressions, structs);
                 metadata.BuildGenericClassPartialMethodExpression(structs, fields, expressions);
@@ -78,7 +80,6 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var parameterSymbols = MetadataSourceGeneratorExtensions.GetCtorParameterSymbolExpression(metadata.ParentSymbol).ToArray();
                 var parentCtorArgs = MetadataSourceGeneratorExtensions.BuildGenericClassParentCtorParameterExpression(parameterSymbols).ToArray();
                 var mainCtor = MetadataSourceGeneratorExtensions.BuildDerivedCtorMethodExpression(metadata.ContextSymbol, parentCtorArgs, expressions);
-
                 // var loadmetadata = MetadataSourceGeneratorExtensions.BuildDerivedLoadMetadata(metadata );
 
 
@@ -104,6 +105,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             context.RegisterSourceOutput(contextMetadatas, (context, metadata) =>
             {
                 List<MemberDeclarationSyntax> fields = [];
+
                 metadata.BuildContextJson(fields);
 
 

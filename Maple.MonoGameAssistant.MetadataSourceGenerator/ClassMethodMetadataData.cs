@@ -26,6 +26,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         public string GetDelegatePointerDescName() => $"s_{nameof(SymbolKind.Parameter)}_{MethodSymbol.Name}_{Code:X8}";
 
+        public string GetConstCodeName() => $"{nameof(Code)}_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
+
         //internal MonoJsonMethodDTO GetMonoJsonMethodDTO() => new(this.Code, this.Utf8MethodName, this.Utf8MethodParameterTypes, this.Utf8MethodReturnType);
     }
 

@@ -57,12 +57,17 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 
             for (int i = 0; i < rawCount; ++i)
             {
-                var fullName = parameterTypes[i % rawCount].Utf8FullName;
                 var searchName = searchArray[i % rawCount];
-                if (false == MemoryExtensions.SequenceEqual(fullName, searchName))
+                if (searchName is not null)
                 {
-                    return false;
+                    var fullName = parameterTypes[i % rawCount].Utf8FullName;
+
+                    if (false == MemoryExtensions.SequenceEqual(fullName, searchName))
+                    {
+                        return false;
+                    }
                 }
+
             }
             return true;
         }

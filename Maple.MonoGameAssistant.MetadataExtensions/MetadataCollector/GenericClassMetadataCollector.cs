@@ -12,19 +12,28 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
 
     public abstract partial class GenericClassMetadataCollector(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
-        : AbstractClassMetadataCollector(runtimeContext, classMetadataCollection)
+        : AbstractClassMetadataCollector(runtimeContext, classMetadataCollection), IGenericClassMetadataCollector
     {
         protected static ConcurrentDictionary<string, GenericClassMetadataCollector> CacheClassMetadataCollector { get; } = [];
 
+
+        public MonoMethodDelegate GetMethodDelegate(MonoDescriptionMethodDTO descriptionMethodDTO)
+        {
+            return ContextMetadataCollector.GetMethodDelegate(this.RuntimeContext, this.ClassMetadata, descriptionMethodDTO);
+
+        }
         public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(MonoJsonMethodDTO descriptionMethodDTO) where TFUNC : unmanaged
             => GetMethodDelegate(descriptionMethodDTO);
         public nint GetMethodPointer(MonoJsonMethodDTO descriptionMethodDTO)
         {
             MonoMethodDelegate methodDelegate = GetMethodDelegate(descriptionMethodDTO);
             return methodDelegate.MethodPointer;
-
         }
 
+        public MonoFieldInfoDTO GetFieldMetadata(MonoDescriptionFieldDTO descriptionFieldDTO)
+        {
+            return ContextMetadataCollector.GetFieldMetadata(this.ClassMetadata, descriptionFieldDTO);
+        }
         public MonoMemberFieldSource GetMemberFieldMetadata(MonoJsonFieldDTO descriptionFieldDTO)
         {
             var fieldInfoDTO = GetFieldMetadata(descriptionFieldDTO);
@@ -49,7 +58,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
     public abstract partial class GenericClassMetadataCollector<T_PtrMetadata>(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
         : GenericClassMetadataCollector(runtimeContext, classMetadataCollection)
         , IPtrMetadataCollector<T_PtrMetadata>
-        , IGenericClassMetadataCollector
+
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {
 
@@ -64,7 +73,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return func(runtimeContext, classMetadataCollection);
         }
 
-       // [MethodImpl(MethodImplOptions.Synchronized)]
+        // [MethodImpl(MethodImplOptions.Synchronized)]
         public static TSelf LoadMetadata<TSelf>(MonoRuntimeContext runtimeContext, T_PtrMetadata ptrMetadata, Func<MonoRuntimeContext, MonoClassMetadataCollection, TSelf> func)
             where TSelf : GenericClassMetadataCollector<T_PtrMetadata>
         {

@@ -2,7 +2,6 @@
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
-using Maple.MonoGameAssistant.UnityCore.UnityEngine;
 using Maple.MonoGameAssistant.Windows.HookTask;
 using Maple.MonoGameAssistant.Windows.HotKey;
 using Maple.MonoGameAssistant.Windows.HotKey.HookWindowMessage;
@@ -10,7 +9,6 @@ using Maple.MonoGameAssistant.Windows.Service.HostedService;
 using Maple.MonoGameAssistant.Windows.UITask;
 using Maple.MonoGameAssistant.Windows.WinRT;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Maple.MonoGameAssistant.Windows.Service
 {
@@ -38,7 +36,7 @@ namespace Maple.MonoGameAssistant.Windows.Service
         public HookWinMsgService Hook { get; } = hookWinMsgFactory.Create();
 
         public required T_CONTEXT Context { get; set; }
-        public required UnityEngineContext? UnityEngineContext { get; set; }
+        public required IUnityPlayerNativeMethods? UnityEngineContext { get; set; }
         public required GameSwitchDisplayDTO[] ListGameSwitch { get; set; }
 
         public Exception? ServiceException { get; set; }
@@ -103,8 +101,8 @@ namespace Maple.MonoGameAssistant.Windows.Service
             }
         }
         protected abstract T_CONTEXT LoadGameContext();
-        protected virtual UnityEngineContext? LoadUnityEngineContext() => UnityEngineContext.LoadUnityContext(RuntimeContext, Logger);
-        protected UnityEngineContext? TryLoadUnityEngineContext()
+        protected abstract IUnityPlayerNativeMethods? LoadUnityEngineContext();
+        protected IUnityPlayerNativeMethods? TryLoadUnityEngineContext()
         {
             try
             {
