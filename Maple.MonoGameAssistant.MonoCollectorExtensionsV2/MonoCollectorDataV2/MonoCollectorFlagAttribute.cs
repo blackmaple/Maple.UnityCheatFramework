@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Maple.MonoGameAssistant.MonoCollectorExtensionsV2.MonoCollectorDataV2
 {
-    [Conditional("DEBUG")]
+   // [Conditional("DEBUG")]
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 #if SOURCE_GEN
     internal
