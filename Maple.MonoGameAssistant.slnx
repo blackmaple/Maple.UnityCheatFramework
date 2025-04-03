@@ -47,6 +47,7 @@
     <Project Path="Maple.MonoGameAssistant.AndroidCore\Maple.MonoGameAssistant.AndroidCore.csproj" />
     <Project Path="Maple.MonoGameAssistant.AndroidJNI\Maple.MonoGameAssistant.AndroidJNI.csproj" />
     <Project Path="Maple.MonoGameAssistant.AndroidModel\Maple.MonoGameAssistant.AndroidModel.csproj" />
+    <Project Path="Maple.MonoGameAssistant.AndroidWebApi/Maple.MonoGameAssistant.AndroidWebApi.csproj" Id="c595c7ec-da0a-4535-b7e7-96b5408d03c0" />
   </Folder>
   <Folder Name="/Windows/GameWebAPI/" Id="8550ca64-01d8-75ff-3a89-151525c7b3e4">
     <Project Path="Maple.MonoGameAssistant.WebApi\Maple.MonoGameAssistant.WebApi.csproj" />
