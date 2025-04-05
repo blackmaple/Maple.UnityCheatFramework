@@ -1,8 +1,10 @@
 ﻿using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,23 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 {
     public static class AndroidWebApiServiceExtensions
     {
+        static TService FromServices<TService>(this HttpContext httpContext) where TService : class
+        {
+            return httpContext.RequestServices.GetRequiredService<TService>();
+        }
+        static async Task<T> FromBodyAsync<T>(this HttpContext httpContext) where T : class
+        {
+            var obj = await httpContext.Request.ReadAsJsonAsync<T>().ConfigureAwait(false);
+            if (obj is not null)
+            {
+                return obj;
+            }
+            throw new InvalidOperationException("Unable to read the request as JSON.");
+        }
+        static Task ToBodyAsync<T>(this HttpContext httpContext, T value) where T : class
+        {
+            return httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetOk(value));
+        }
 
         static void ConfigureServices(this WebHostBuilder web, MonoGameSettings settings, Action<IServiceCollection> actionAddServices)
         {
@@ -108,12 +127,43 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 return;
             }
 
-            routeBuilder.MapGet("/mono/getinfo", async (http) =>
+            routeBuilder.MapGet("/mono/EnumImages", async (http) =>
             {
-                await AndroidWebApiJsonExtensions.WriteAsJsonAsync(http.Response, MonoResultDTO.GetOk(DateTime.Now.ToString("yyyyMMdd"))).ConfigureAwait(false);
+                MonoCollectorApiService apiService = http.FromServices<MonoCollectorApiService>();
+                var result = await apiService.EnumMonoImagesAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
+            routeBuilder.MapGet("/mono/EnumClasses", async (http) =>
+            {
+                var postDTO = await http.FromBodyAsync<MonoPointerRequestDTO>().ConfigureAwait(false);
 
+                MonoCollectorApiService apiService = http.FromServices<MonoCollectorApiService>();
+                var result = await apiService.EnumMonoClassesAsync(postDTO.Pointer).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            routeBuilder.MapGet("/mono/EnumObjects", async (http) =>
+            {
+                var postDTO = await http.FromBodyAsync<MonoPointerRequestDTO>().ConfigureAwait(false);
+
+                MonoCollectorApiService apiService = http.FromServices<MonoCollectorApiService>();
+                var result = await apiService.EnumMonoObjectsAsync(postDTO.Pointer).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            routeBuilder.MapGet("/mono/EnumClassDetail", async (http) =>
+            {
+                var postDTO = await http.FromBodyAsync<MonoClassDetailRequestDTO>().ConfigureAwait(false);
+
+                MonoCollectorApiService apiService = http.FromServices<MonoCollectorApiService>();
+                var result = await apiService.EnumMonoClassDetailAsync(postDTO.Pointer, postDTO.FieldOptions).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
 
         }
 
@@ -123,6 +173,239 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 return;
             }
+
+            routeBuilder.MapGet("/game/info", async (http) =>
+            {
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetSessionInfoAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            routeBuilder.MapGet("/game/LoadResource", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.LoadResourceAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            #region Currency
+
+            routeBuilder.MapGet("/game/GetListCurrencyDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListCurrencyDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/GetCurrencyInfo", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCurrencyObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetCurrencyInfoAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateCurrencyInfo", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCurrencyModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateCurrencyInfoAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            #endregion
+
+            #region Inventory
+            routeBuilder.MapGet("/game/GetListInventoryDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListInventoryDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/GetInventoryInfo", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameInventoryObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetInventoryInfoAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateInventoryInfo", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameInventoryModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateInventoryInfoAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            #endregion
+
+            #region Character
+            routeBuilder.MapGet("/game/GetListCharacterDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListCharacterDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/GetCharacterStatus", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetCharacterStatusAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateCharacterStatus", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateCharacterStatusAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            routeBuilder.MapGet("/game/GetCharacterEquipment", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetCharacterEquipmentAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateCharacterEquipment", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateCharacterEquipmentAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            routeBuilder.MapGet("/game/GetCharacterSkill", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetCharacterSkillAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateCharacterSkill", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateCharacterSkillAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            #endregion
+
+            #region Monster
+            routeBuilder.MapGet("/game/GetListMonsterDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListMonsterDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/AddMonsterMember", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameMonsterObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.AddMonsterMemberAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            #endregion
+
+            #region Skill
+            routeBuilder.MapGet("/game/GetListSkillDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListSkillDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/AddSkillDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSkillObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.AddSkillDisplayAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            #endregion
+
+            #region Switch
+            routeBuilder.MapGet("/game/GetListSwitchDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.GetListSwitchDisplayAsync().ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+            routeBuilder.MapGet("/game/UpdateSwitchDisplay", async (http) =>
+            {
+                var requestDTO = await http.FromBodyAsync<GameSwitchModifyDTO>().ConfigureAwait(false);
+                requestDTO.ThrowIfGameSessionDiff();
+
+                IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
+                var result = await apiService.UpdateSwitchDisplayAsync(requestDTO).ConfigureAwait(false);
+
+                await http.ToBodyAsync(result).ConfigureAwait(false);
+            });
+
+            #endregion
         }
 
         public static IWebHost AsRunWebApiService(
@@ -144,7 +427,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 
-            web.Configure(p => 
+            web.Configure(p =>
             {
                 p.BuildWebApplication();
 
