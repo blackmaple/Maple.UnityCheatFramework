@@ -24,7 +24,7 @@
 		<!--<TrimmerSingleWarn>false</TrimmerSingleWarn>-->
 		<!--
 
-		-->
+	
 		<DebuggerSupport>false</DebuggerSupport>
 		<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
 		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
@@ -42,7 +42,9 @@
 		<EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
 		<EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
 		<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Microsoft.AspNetCore.Http.Generated</InterceptorsPreviewNamespaces>
-		<!--<OutputType>Exe</OutputType>-->
+	
+		<IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>-->
+		<IlcDisableReflection>false</IlcDisableReflection>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -61,8 +63,6 @@
 	<ItemGroup>
 		    <RdXmlFile Include="rd.xml" />
 	</ItemGroup>
-
-
 
 
 

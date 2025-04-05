@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
+
+
+
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class BrotliCompressionProvider : ICompressionProvider
     {
         /// <summary>

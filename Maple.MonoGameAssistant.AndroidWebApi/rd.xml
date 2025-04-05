@@ -2,8 +2,15 @@
 	<Application>
 		<Assembly Name="Microsoft.AspNetCore.Hosting" Dynamic="Required All" />
 		<Assembly Name="Microsoft.AspNetCore.StaticFiles" Dynamic="Required All" />
+		<Assembly Name="Microsoft.AspNetCore.Routing" Dynamic="Required All" />
+		<Assembly Name="Microsoft.AspNetCore.Diagnostics" Dynamic="Required All" />
+		<Assembly Name="Microsoft.AspNetCore.ResponseCompression" Dynamic="Required All" />
+
+		<Assembly Name="libmaple">
+			<Type Name="Maple.MonoGameAssistant.AndroidWebApi.BrotliCompressionProvider" Dynamic="Required All" />
+		</Assembly>
 
 
-		
+
 	</Application>
 </Directives>
