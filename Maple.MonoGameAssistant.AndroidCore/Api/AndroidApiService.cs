@@ -11,6 +11,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+
+    [Obsolete("use web api")]
     public class AndroidApiService(
         ILogger<AndroidApiService> logger,
         AndroidApiContext apiContext,

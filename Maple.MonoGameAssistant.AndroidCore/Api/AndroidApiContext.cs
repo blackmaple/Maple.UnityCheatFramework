@@ -4,6 +4,8 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
 using System.Threading.Channels;
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+
+    [Obsolete("use web api")]
     public class AndroidApiContext(JavaVirtualMachineContext virtualMachineContext)
     {
         public JavaVirtualMachineContext VirtualMachineContext { get; } = virtualMachineContext;
