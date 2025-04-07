@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders.Composite;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Net.Mime;
@@ -118,6 +121,15 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             });
             app.UseDefaultFiles();
 
+        }
+
+        static void UseActionApi(this IApplicationBuilder app, MonoGameSettings settings)
+        {
+            var routeBuilder = new RouteBuilder(app);
+            routeBuilder.UseEnumMonoApi(settings);
+            routeBuilder.UseGameApi(settings);
+            var routes = routeBuilder.Build();
+            app.UseRouter(routes);
         }
 
         static void UseEnumMonoApi(this RouteBuilder routeBuilder, MonoGameSettings settings)
@@ -424,18 +436,18 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             };
             actionGameSettings(settings);
 
+            if (string.IsNullOrEmpty(settings.WebRootPath) == false)
+            {
+                web.UseContentRoot(settings.WebRootPath);
+            }
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 
             web.Configure(p =>
             {
                 p.BuildWebApplication();
+                p.UseActionApi(settings);
 
-                var routeBuilder = new RouteBuilder(p);
-                routeBuilder.UseEnumMonoApi(settings);
-                routeBuilder.UseGameApi(settings);
-                var routes = routeBuilder.Build();
-                p.UseRouter(routes);
             });
 
 
@@ -443,4 +455,25 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
 
     }
+
+
+    public class DynamicFileProvider : IFileProvider
+    {
+        private List<IFileProvider> Providers { get; } = [];
+
+        public void AddProvider(IFileProvider provider) => Providers.Add(provider);
+
+        public IDirectoryContents GetDirectoryContents(string subpath)
+        {
+            var composite = new CompositeDirectoryContents(Providers, subpath);
+            return composite.Exists ? composite : NotFoundDirectoryContents.Singleton;
+        }
+
+        public IFileInfo GetFileInfo(string subpath) =>
+            Providers.Select(p => p.GetFileInfo(subpath)).FirstOrDefault(f => f.Exists)!;
+
+        public IChangeToken Watch(string filter) =>
+            new CompositeChangeToken([.. Providers.Select(p => p.Watch(filter))]);
+    }
+
 }

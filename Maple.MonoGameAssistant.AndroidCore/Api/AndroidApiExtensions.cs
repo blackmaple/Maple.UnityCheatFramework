@@ -10,6 +10,7 @@ using unsafe TestActionDelegate = delegate* unmanaged<Maple.MonoGameAssistant.An
 
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+    [Obsolete("use web api")]
     public unsafe static partial class AndroidApiExtensions
     {
         const string JavaClassFullName = "com/android/maple/service/MapleService";
