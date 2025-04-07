@@ -8,11 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Composite;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Net.Mime;
@@ -46,6 +44,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 p.AddSingleton(settings);
                 p.AddSingleton<AndroidWebApiExceptionHandler>();
+                p.AddSingleton<IDynamicStaticFileProvider>(new DynamicStaticFileProvider());
                 p.AddResponseCompression(options =>
                 {
                     options.Providers.Add<BrotliCompressionProvider>();
@@ -63,6 +62,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             if (settings.Http && settings.TryGetRandomPort(out var port))
             {
                 settings.BaseAddress = $"http://localhost:{port}";
+                settings.Port = port;
                 web.UseKestrel(p => p.ListenAnyIP(port));
             }
         }
@@ -102,6 +102,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
+                FileProvider = app.ApplicationServices.GetRequiredService<IDynamicStaticFileProvider>(),
                 ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
                 {
                     [".blat"] = "application/octet-stream",
@@ -117,7 +118,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     [".woff2"] = "application/font-woff",
 
                 }),
-
+               
+                
             });
             app.UseDefaultFiles();
 
@@ -190,7 +192,6 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 IGameWebApiControllers apiService = http.FromServices<IGameWebApiControllers>();
                 var result = await apiService.GetSessionInfoAsync().ConfigureAwait(false);
-
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
@@ -428,7 +429,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             var settings = new MonoGameSettings()
             {
                 MonoDataCollector = true,
-                NamedPipe = true,
+               // NamedPipe = true,
                 Http = true,
                 //IndexPage = "/index.html",
                 //GamePath = slimBuilder.Environment.ContentRootPath,
@@ -436,10 +437,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             };
             actionGameSettings(settings);
 
-            if (string.IsNullOrEmpty(settings.WebRootPath) == false)
-            {
-                web.UseContentRoot(settings.WebRootPath);
-            }
+            
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 
@@ -455,25 +453,4 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
 
     }
-
-
-    public class DynamicFileProvider : IFileProvider
-    {
-        private List<IFileProvider> Providers { get; } = [];
-
-        public void AddProvider(IFileProvider provider) => Providers.Add(provider);
-
-        public IDirectoryContents GetDirectoryContents(string subpath)
-        {
-            var composite = new CompositeDirectoryContents(Providers, subpath);
-            return composite.Exists ? composite : NotFoundDirectoryContents.Singleton;
-        }
-
-        public IFileInfo GetFileInfo(string subpath) =>
-            Providers.Select(p => p.GetFileInfo(subpath)).FirstOrDefault(f => f.Exists)!;
-
-        public IChangeToken Watch(string filter) =>
-            new CompositeChangeToken([.. Providers.Select(p => p.Watch(filter))]);
-    }
-
 }

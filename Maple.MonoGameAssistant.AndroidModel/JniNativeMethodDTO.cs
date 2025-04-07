@@ -13,6 +13,4 @@ namespace Maple.MonoGameAssistant.AndroidModel
         public nint Pointer { set; get; }
     }
 
-
-
 }

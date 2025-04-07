@@ -70,7 +70,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.Api
             return false;
         }
 
-        readonly struct Ptr_Func_ApiAction(ApiActionDelegate ptr)
+         readonly struct Ptr_Func_ApiAction(ApiActionDelegate ptr)
         {
             readonly ApiActionDelegate _ptr = ptr;
             public static implicit operator nint(Ptr_Func_ApiAction func) => (nint)func._ptr;
