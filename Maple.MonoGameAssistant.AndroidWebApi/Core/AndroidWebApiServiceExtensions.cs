@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders.Composite;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
@@ -44,7 +46,6 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 p.AddSingleton(settings);
                 p.AddSingleton<AndroidWebApiExceptionHandler>();
-                p.AddSingleton<IDynamicStaticFileProvider>(new DynamicStaticFileProvider());
                 p.AddResponseCompression(options =>
                 {
                     options.Providers.Add<BrotliCompressionProvider>();
@@ -100,9 +101,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             app.UseDefaultExceptionHandler();
 
             app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions()
+            var staticFileOptions = new StaticFileOptions()
             {
-                FileProvider = app.ApplicationServices.GetRequiredService<IDynamicStaticFileProvider>(),
                 ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
                 {
                     [".blat"] = "application/octet-stream",
@@ -118,9 +118,14 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     [".woff2"] = "application/font-woff",
 
                 }),
-               
-                
-            });
+            };
+            var dynamicStaticFileProvider = app.ApplicationServices.GetService<DynamicStaticFileProvider>();
+            if (dynamicStaticFileProvider is not null)
+            {
+                staticFileOptions.FileProvider = dynamicStaticFileProvider;
+            }
+
+            app.UseStaticFiles(staticFileOptions);
             app.UseDefaultFiles();
 
         }
@@ -421,23 +426,20 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
         }
 
+        static void RegisterApplicationStarted(this IApplicationBuilder app, Action<IServiceProvider> action)
+        {
+            var serviceProvider = app.ApplicationServices;
+            var lifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+            lifetime.ApplicationStarted.Register(() => action(serviceProvider));
+        }
+
+
         public static IWebHost AsRunWebApiService(
-            Action<MonoGameSettings> actionGameSettings,
+            MonoGameSettings settings,
             Action<IServiceCollection> actionAddServices)
         {
             var web = new WebHostBuilder();
-            var settings = new MonoGameSettings()
-            {
-                MonoDataCollector = true,
-               // NamedPipe = true,
-                Http = true,
-                //IndexPage = "/index.html",
-                //GamePath = slimBuilder.Environment.ContentRootPath,
-                //WebRootPath = slimBuilder.Environment.WebRootPath
-            };
-            actionGameSettings(settings);
 
-            
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 

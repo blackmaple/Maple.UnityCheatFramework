@@ -10,21 +10,16 @@
 		<LangVersion>preview</LangVersion>
 
 
-
 		<!--<RuntimeIdentifier>linux-bionic-x64</RuntimeIdentifier>-->
-
 		<DisableUnsupportedError>true</DisableUnsupportedError>
 		<PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
-		<PublishAot>true</PublishAot>
+		<!--<PublishAot>true</PublishAot>
 		<IsAotCompatible>true</IsAotCompatible>
-		<OutputType>Exe</OutputType>
 
-		<AssemblyName>libmaple</AssemblyName>
+		<OutputType>Library</OutputType>
+		<AssemblyName>libmaple</AssemblyName>-->
 
-		<!--<TrimmerSingleWarn>false</TrimmerSingleWarn>-->
-		<!--
 
-	
 		<DebuggerSupport>false</DebuggerSupport>
 		<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
 		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
@@ -32,21 +27,35 @@
 		<EventSourceSupport>false</EventSourceSupport>
 		<InvariantGlobalization>true</InvariantGlobalization>
 		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
-
-		<StackTraceSupport>false</StackTraceSupport>
-
+		<!--<StackTraceSupport>false</StackTraceSupport>-->
 		<UseSystemResourceKeys>true</UseSystemResourceKeys>
-
 
 
 		<EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
 		<EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
 		<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Microsoft.AspNetCore.Http.Generated</InterceptorsPreviewNamespaces>
-	
-		<IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>-->
-		<IlcDisableReflection>false</IlcDisableReflection>
-	</PropertyGroup>
 
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Maple.MonoGameAssistant.AndroidWebApi</Title>
+		<RepositoryUrl>https://github.com/blackmaple/Maple.MonoGameAssistant</RepositoryUrl>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+		<Description>enable interoperability between C# AOT and unity game.</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
+		<Version>1.3.0-rc</Version>
+
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\LICENSE" Link="LICENSE">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Include="..\README.md" Link="README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
@@ -55,6 +64,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Maple.MonoGameAssistant.AndroidCore\Maple.MonoGameAssistant.AndroidCore.csproj" />
+		<ProjectReference Include="..\Maple.MonoGameAssistant.AndroidJNI\Maple.MonoGameAssistant.AndroidJNI.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.AndroidModel\Maple.MonoGameAssistant.AndroidModel.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />
 		<ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />

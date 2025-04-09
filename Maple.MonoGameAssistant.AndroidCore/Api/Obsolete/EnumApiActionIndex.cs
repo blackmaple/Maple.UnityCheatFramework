@@ -1,5 +1,6 @@
 ﻿namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+    [Obsolete("use web api")]
     public enum EnumApiActionIndex
     {
         None = 0,

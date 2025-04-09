@@ -8,8 +8,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.AndroidTask
     public sealed class AndroidTaskScheduler : TaskScheduler, IDisposable
     {
         BlockingCollection<Task> TaskCollection { get; }
-        AndroidApiContext ApiContext { get; }
-        JavaVirtualMachineContext VirtualMachineContext => ApiContext.VirtualMachineContext;
+        JavaVirtualMachineContext VirtualMachineContext { get; }
 
         ThreadLocal<JniEnvironmentContext> TheadJniEnv { get; } = new ThreadLocal<JniEnvironmentContext>();
         public JniEnvironmentContext CurrJniEnv
@@ -18,14 +17,14 @@ namespace Maple.MonoGameAssistant.AndroidCore.AndroidTask
             private set => TheadJniEnv.Value = value;
         }
 
-        AndroidTaskScheduler(AndroidApiContext apiContext, int concurrencyLevel)
+        AndroidTaskScheduler(JavaVirtualMachineContext javaVirtualMachineContext, int concurrencyLevel)
         {
-            this.ApiContext = apiContext;
+            this.VirtualMachineContext = javaVirtualMachineContext;
             this.TaskCollection = new BlockingCollection<Task>(concurrencyLevel);
             this.CreateTasks_Default(concurrencyLevel);
 
         }
-        public AndroidTaskScheduler(AndroidApiContext apiContext) : this(apiContext, Environment.ProcessorCount)
+        public AndroidTaskScheduler(JavaVirtualMachineContext javaVirtualMachineContext) : this(javaVirtualMachineContext, Environment.ProcessorCount)
         { }
 
 
@@ -50,7 +49,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.AndroidTask
                     {
                         while (!androidTaskScheduler.TaskCollection.IsCompleted)
                         {
-                            foreach(var task in androidTaskScheduler.TaskCollection.GetConsumingEnumerable())
+                            foreach (var task in androidTaskScheduler.TaskCollection.GetConsumingEnumerable())
                             {
                                 androidTaskScheduler.TryExecuteTask(task);
                             }

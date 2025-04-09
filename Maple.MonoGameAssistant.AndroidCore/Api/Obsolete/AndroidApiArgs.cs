@@ -8,13 +8,15 @@ using System;
 
 namespace Maple.MonoGameAssistant.AndroidCore
 {
+
+    [Obsolete("use web api")]
     public class AndroidApiArgs
     {
 
         public JINT Action { get; init; }
         public JGLOBAL<JSTRING> Json { get; init; }
         public JWEAK<JOBJECT> Instance { get; init; }
-       // public JMETHODID MethodId { get; init; }
+        // public JMETHODID MethodId { get; init; }
 
         public static AndroidApiArgs Create(PTR_JNI_ENV jniEnv, JOBJECT instance, JINT actionIndex, JSTRING json)
         {

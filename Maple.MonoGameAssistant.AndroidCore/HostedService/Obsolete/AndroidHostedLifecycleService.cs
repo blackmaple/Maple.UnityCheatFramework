@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 namespace Maple.MonoGameAssistant.AndroidCore.HostedService
 {
-
+    [Obsolete("use AndroidHostedService")]
     public class AndroidHostedLifecycleService(ILogger<AndroidHostedLifecycleService> logger, IServiceProvider serviceProvider) : IHostedLifecycleService
     {
         public Task StartingAsync(CancellationToken cancellationToken)
@@ -17,7 +17,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
                 try
                 {
                     var monoRuntimeFactory = serviceProvider.GetService<MonoRuntimeFactory>();
-                    if(monoRuntimeFactory is not null )
+                    if (monoRuntimeFactory is not null)
                     {
                         var init = monoRuntimeFactory.CreateMonoRuntime(out var runtimeType);
                         logger.LogInformation("{serviceName}=>{status}=>{runtimeType}", nameof(MonoRuntimeFactory), init, runtimeType);
@@ -43,7 +43,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
                 try
                 {
                     var gameContextService = serviceProvider.GetService<IGameContextService>();
-                    if(gameContextService is not null)
+                    if (gameContextService is not null)
                     {
                         await gameContextService.StartAsync().ConfigureAwait(false);
                     }
@@ -117,4 +117,5 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
         }
 
     }
+
 }

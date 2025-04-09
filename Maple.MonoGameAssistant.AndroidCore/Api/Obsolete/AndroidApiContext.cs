@@ -6,7 +6,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
 
     [Obsolete("use web api")]
-    public class AndroidApiContext(JavaVirtualMachineContext virtualMachineContext)
+    public class AndroidApiContext(JavaVirtualMachineContext virtualMachineContext) : IAndroidContext
     {
         public JavaVirtualMachineContext VirtualMachineContext { get; } = virtualMachineContext;
         public Channel<AndroidApiArgs> TaskChannel { get; } = Channel.CreateBounded<AndroidApiArgs>(new BoundedChannelOptions(Environment.ProcessorCount)

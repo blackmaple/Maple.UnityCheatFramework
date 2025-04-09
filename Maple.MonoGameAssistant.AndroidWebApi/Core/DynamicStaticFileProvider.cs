@@ -3,27 +3,32 @@ using Microsoft.Extensions.Primitives;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
-    public class DynamicStaticFileProvider :  IDynamicStaticFileProvider
+    public class DynamicStaticFileProvider : IFileProvider
     {
         private List<PhysicalFileProvider> FileProviders { get; } = [];
 
         public IReadOnlyList<PhysicalFileProvider> ReadOnlyFileProviders => FileProviders;
 
-        public void AddDirectory(string path)
+        public bool AddDirectory(string? path)
         {
             if (Directory.Exists(path))
             {
                 FileProviders.Add(new PhysicalFileProvider(path));
+                return true;
             }
+            return false;
         }
 
-        public void RemoveDirectory(string path)
+        public bool RemoveDirectory(string? path)
         {
             var fileProvider = FileProviders.Find(fp => fp.Root.Equals(path, System.StringComparison.OrdinalIgnoreCase));
             if (fileProvider != null)
             {
                 FileProviders.Remove(fileProvider);
+                return true;
             }
+            return false;
+
         }
 
         public IDirectoryContents GetDirectoryContents(string subpath)

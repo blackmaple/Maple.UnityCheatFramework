@@ -12,11 +12,11 @@
 		<!--<RuntimeIdentifier>linux-bionic-x64</RuntimeIdentifier>-->
 		<DisableUnsupportedError>true</DisableUnsupportedError>
 		<PublishAotUsingRuntimePack>true</PublishAotUsingRuntimePack>
-		<!--<PublishAot>true</PublishAot>
+		<PublishAot>true</PublishAot>
 		<IsAotCompatible>true</IsAotCompatible>
 
-		<OutputType>Library</OutputType>
-		<AssemblyName>libmaple</AssemblyName>-->
+		<OutputType>EXE</OutputType>
+		<AssemblyName>libmaple</AssemblyName>
 
 
 		<DebuggerSupport>false</DebuggerSupport>
@@ -30,7 +30,7 @@
 		<UseSystemResourceKeys>true</UseSystemResourceKeys>
 
 
-
+		<IlcDisableReflection>false</IlcDisableReflection>
 	</PropertyGroup>
 
 
@@ -43,6 +43,9 @@
 	</ItemGroup>
 
 
+	<ItemGroup>
+		    <RdXmlFile Include="rd.xml" />
+	</ItemGroup>
 
 
 

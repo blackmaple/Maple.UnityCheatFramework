@@ -1,7 +1,6 @@
 ﻿using Maple.MonoGameAssistant.AndroidCore.AndroidTask;
 using Maple.MonoGameAssistant.AndroidCore.Api;
 using Maple.MonoGameAssistant.AndroidCore.GameContext;
-using Maple.MonoGameAssistant.AndroidCore.WebApi;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Logger;
@@ -12,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Maple.MonoGameAssistant.AndroidCore.HostedService
 {
 
+    [Obsolete("use web api")]
     public static class AndroidHostServiceExtensions
     {
 
@@ -26,10 +26,9 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
             return serviceDescriptors;
         }
 
- 
 
 
-        [Obsolete("use web api")]
+
         public static IHost CreateAndroidService(this AndroidApiContext androidApiContext, Action<MonoGameSettings>? settings, Action<IServiceCollection>? addService)
         {
             var app = Host.CreateEmptyApplicationBuilder(default);
@@ -43,13 +42,12 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
             app.Services.AddSingleton(androidApiContext);
             app.Services.AddHostedService<AndroidHostedLifecycleService>();
             app.Services.AddSingleton<AndroidTaskScheduler>();
-            app.Services.AddSingleton<AndroidApiService>();
+            //        app.Services.AddSingleton<AndroidApiService>();
             addService?.Invoke(app.Services);
             var host = app.Build();
             return host;
         }
 
-        [Obsolete("use web api")]
         public static AndroidApiContext CreateDefaultAndroidService(this AndroidApiContext androidApiContext)
         {
             _ = Task.Factory.StartNew(AndroidServiceTask, androidApiContext, TaskCreationOptions.LongRunning);
@@ -67,7 +65,6 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
         }
 
 
-        [Obsolete("use web api")]
         public static AndroidApiContext CreateGameAndroidService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T_GAMECONTEXTSERVICE>
             (this AndroidApiContext androidApiContext)
            where T_GAMECONTEXTSERVICE : class, IGameContextService
@@ -113,7 +110,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
         //            p.QQ = context.GameDesc;
 
         //        }, p => p.AddGameContextService<T_GAMECONTEXTSERVICE>());
-           
+
         //        host.Run();
         //    }
 
@@ -121,7 +118,7 @@ namespace Maple.MonoGameAssistant.AndroidCore.HostedService
 
         //public static IHost CreateAndroidService(this AndroidApiContext androidApiContext, Action<MonoGameSettings>? settings, Action<IServiceCollection>? addService)
         //{
-        
+
 
 
         //    app.Services.AddLogging(p => p.AddOnlyMonoGameLogger());

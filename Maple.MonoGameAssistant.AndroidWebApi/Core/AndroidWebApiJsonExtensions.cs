@@ -102,7 +102,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
             try
             {
-                var jsonObj = await JsonSerializer.DeserializeAsync(inputStream, jsonTypeInfo, cancellationToken).ConfigureAwait(false); 
+                var jsonObj = await JsonSerializer.DeserializeAsync(inputStream, jsonTypeInfo, cancellationToken).ConfigureAwait(false);
                 return jsonObj as TValue;
             }
             finally
