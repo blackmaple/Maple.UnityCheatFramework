@@ -6,6 +6,7 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
 using System.Diagnostics.CodeAnalysis;
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+    [Obsolete("use web api")]
     public readonly struct VirtualActionApiCallbackReference : IJavaClassReference<VirtualActionApiCallbackReference, VirtualActionApiCallbackMetadata>
     {
 

@@ -426,11 +426,19 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
         }
 
-        static void RegisterApplicationStarted(this IApplicationBuilder app, Action<IServiceProvider> action)
+        static void RegisterApplicationStarted(this IApplicationBuilder app)
         {
             var serviceProvider = app.ApplicationServices;
             var lifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
-            lifetime.ApplicationStarted.Register(() => action(serviceProvider));
+            lifetime.ApplicationStarted.Register(async (objState) =>
+            {
+                if (objState is not IServiceProvider service)
+                {
+                    return;
+                }
+                await service.GetRequiredService<AndroidWebApiNotifyService>().StartAsync().ConfigureAwait(false);
+
+            }, serviceProvider);
         }
 
 
@@ -447,7 +455,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 p.BuildWebApplication();
                 p.UseActionApi(settings);
-
+                p.RegisterApplicationStarted();
             });
 
 

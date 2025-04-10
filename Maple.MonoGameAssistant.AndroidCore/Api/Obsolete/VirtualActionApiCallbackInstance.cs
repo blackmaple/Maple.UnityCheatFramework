@@ -4,6 +4,8 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Reference;
 using System.Runtime.CompilerServices;
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+
+    [Obsolete("use web api")]
     public readonly struct VirtualActionApiCallbackInstance(JLOCAL<JOBJECT> instance, VirtualActionApiCallbackReference reference)
         : IJavaClassLocalInstance<VirtualActionApiCallbackReference>
     {

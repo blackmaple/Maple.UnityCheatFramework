@@ -1,11 +1,10 @@
-﻿using Maple.MonoGameAssistant.AndroidCore.GameContext;
-using Maple.MonoGameAssistant.Common;
+﻿using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
 
-namespace Maple.MonoGameAssistant.AndroidCore
+namespace Maple.MonoGameAssistant.AndroidCore.GameContext
 {
     public abstract class GameContextAndroidService<T_CONTEXT>(ILogger logger, MonoRuntimeContext runtimeContext, MonoTaskScheduler monoTaskScheduler, MonoGameSettings gameSettings)
     : IGameContextService,
@@ -49,7 +48,7 @@ namespace Maple.MonoGameAssistant.AndroidCore
         {
             using (Logger.Running())
             {
-                Context = await this.MonoTaskAsync((T_CONTEXT p, GameContextAndroidService<T_CONTEXT> host) => host.LoadGameContext(), this).ConfigureAwait(continueOnCapturedContext: false);
+                Context = await this.MonoTaskAsync((p, host) => host.LoadGameContext(), this).ConfigureAwait(continueOnCapturedContext: false);
                 Logger.LogInformation("LoadGameContext=>{ver}=>{api}", Context.TypeVersion, Context.ApiVersion);
             }
         }
@@ -69,7 +68,7 @@ namespace Maple.MonoGameAssistant.AndroidCore
         protected GameSwitchDisplayDTO? FindGameSwitch(string objectId)
         {
             string objectId2 = objectId;
-            return ListGameSwitch.Where((GameSwitchDisplayDTO p) => p.ObjectId == objectId2).FirstOrDefault();
+            return ListGameSwitch.Where((p) => p.ObjectId == objectId2).FirstOrDefault();
         }
 
 
@@ -83,7 +82,7 @@ namespace Maple.MonoGameAssistant.AndroidCore
 
         public virtual ValueTask<GameSessionInfoDTO> GetSessionInfoAsync()
         {
-            string ver = ((Context != null) ? Context.ApiVersion : "???");
+            string ver = Context != null ? Context.ApiVersion : "???";
             return ValueTask.FromResult(GameSettings.GetGameSessionInfo(ver));
         }
 

@@ -7,6 +7,7 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
 using Maple.MonoGameAssistant.Common;
 namespace Maple.MonoGameAssistant.AndroidCore.Api
 {
+    [Obsolete("use web api")]
     public sealed class VirtualActionApiCallbackMetadata : JavaClassMetadata<VirtualActionApiCallbackMetadata>
     {
 

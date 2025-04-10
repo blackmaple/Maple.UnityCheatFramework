@@ -11,7 +11,7 @@ namespace Maple.MonoGameAssistant.AndroidDemo
         [UnmanagedCallersOnly(EntryPoint = nameof(JNI_OnLoad))]
         public static JINT JNI_OnLoad(PTR_JAVA_VM javaVM, JOBJECT reserved)
         {
-            return AndroidWebApiExtensions.JNI_OnLoadImp(javaVM, reserved, p => p.CreateDefaultAndroidService(p => { }, p => { }));
+            return AndroidExtensions.JNI_OnLoadImp(javaVM, reserved, p => p.CreateDefaultAndroidService(p => { }, p => { }));
         }
     }
 }

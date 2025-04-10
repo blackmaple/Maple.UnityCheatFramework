@@ -17,7 +17,4 @@ namespace Maple.MonoGameAssistant.AndroidModel
             return OK;
         }
     }
-
-
-
 }

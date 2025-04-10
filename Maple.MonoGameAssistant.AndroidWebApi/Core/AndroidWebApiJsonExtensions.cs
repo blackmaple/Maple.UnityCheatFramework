@@ -21,7 +21,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
             Options.AddMonoJsonContext();
-            Options.TypeInfoResolverChain.Insert(0, GameJsonContext.Default);
+            Options.TypeInfoResolverChain.Add(GameJsonContext.Default);
+            Options.TypeInfoResolverChain.Add(AndroidJsonContext.Default);
         }
         static JsonTypeInfo GetJsonTypeInfoThrowIfNotFound<T>() where T : class
         {
