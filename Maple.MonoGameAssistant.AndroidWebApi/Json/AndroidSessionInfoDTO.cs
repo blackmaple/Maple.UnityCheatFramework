@@ -4,7 +4,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 {
     public class AndroidSessionInfoDTO : GameSessionInfoDTO
     {
-        public bool Add { set; get; }
+        public bool Status { set; get; }
         public string? Address { get; set; }
     }
 }

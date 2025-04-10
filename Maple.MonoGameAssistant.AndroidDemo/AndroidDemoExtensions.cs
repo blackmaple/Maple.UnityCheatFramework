@@ -1,17 +1,30 @@
-﻿using Maple.MonoGameAssistant.AndroidJNI.JNI.Primitive;
-using Maple.MonoGameAssistant.AndroidJNI.JNI.Reference;
-using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
-using Maple.MonoGameAssistant.AndroidWebApi;
-using System.Runtime.InteropServices;
+﻿
 
-namespace Maple.MonoGameAssistant.AndroidDemo
+
+using Maple.MonoGameAssistant.AndroidModel.ExceptionData;
+using Maple.MonoGameAssistant.AndroidWebApi;
+
+var json1 = AndroidWebApiJsonExtensions.Json4Object<AndroidSessionInfoDTO>(new AndroidSessionInfoDTO()
+{ 
+    
+    ObjectId = "ObjectId",
+    Status = true,
+    ApiVer = "app",
+    DisplayDesc = "desc",
+    DisplayImage = "image",
+    DisplayName = "name",
+    QQ = "qq",
+    Address = "Address",
+
+});
+
+Console.WriteLine(json1);
+var json2 = AndroidWebApiJsonExtensions.Json4Object<AndroidWebApiNotifyDTO>(new AndroidWebApiNotifyDTO()
 {
-    public static class AndroidDemoExtensions
-    {
-        [UnmanagedCallersOnly(EntryPoint = nameof(JNI_OnLoad))]
-        public static JINT JNI_OnLoad(PTR_JAVA_VM javaVM, JOBJECT reserved)
-        {
-            return AndroidExtensions.JNI_OnLoadImp(javaVM, reserved, p => p.CreateDefaultAndroidService(p => { }, p => { }));
-        }
-    }
-}
+
+    Path = "123"
+
+});
+Console.WriteLine(json2);
+
+Console.ReadLine();

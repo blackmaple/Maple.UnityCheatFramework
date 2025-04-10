@@ -46,7 +46,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(TestAction), "(Ljava/lang/String;)Z", new Ptr_Func_TestAction(&TestAction));
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(ApiAction), "(ILjava/lang/String;)Z", new Ptr_Func_ApiAction(&ApiAction));
-                jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(WebApiAction), "(Ljava/lang/String;)Z", new Ptr_Func_WebApiAction(&WebApiAction));
+                //jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(WebApiAction), "(Ljava/lang/String;)Z", new Ptr_Func_WebApiAction(&WebApiAction));
 
             }
             return JavaVirtualMachineContext.JNI_VERSION_1_6;
@@ -69,9 +69,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
         public static JBOOLEAN ApiActionImp(PTR_JNI_ENV jniEnv, JOBJECT instance, JINT actionIndex, JSTRING json)
         {
-
-            return default;
-            //  return ApiContext?.TryWrite(AndroidApiArgs.Create(jniEnv, instance, actionIndex, json)) ?? false;
+            return ApiContext?.TrySetNotifyMsg(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(TestAction))]
@@ -91,15 +89,15 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
 
 
-        [UnmanagedCallersOnly(EntryPoint = nameof(WebApiAction))]
-        internal static JBOOLEAN WebApiAction(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING text)
-        {
-            return WebApiActionImp(jniEnv, instance, text);
-        }
-        public static JBOOLEAN WebApiActionImp(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING json)
-        {
-            return ApiContext?.TrySetNotifyMsg(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
-        }
+        //[UnmanagedCallersOnly(EntryPoint = nameof(WebApiAction))]
+        //internal static JBOOLEAN WebApiAction(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING text)
+        //{
+        //    return WebApiActionImp(jniEnv, instance, text);
+        //}
+        //public static JBOOLEAN WebApiActionImp(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING json)
+        //{
+        //    return ApiContext?.TrySetNotifyMsg(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
+        //}
 
 
 

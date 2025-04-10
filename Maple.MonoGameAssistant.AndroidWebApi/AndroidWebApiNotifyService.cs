@@ -3,9 +3,11 @@ using Maple.MonoGameAssistant.AndroidModel.ExceptionData;
 using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class AndroidWebApiNotifyService(ILogger<AndroidWebApiNotifyService> logger, AndroidWebApiContext webApiContext, AndroidTaskScheduler taskScheduler)
          : IAndroidTaskScheduler<AndroidWebApiNotifyService>
     {
@@ -37,7 +39,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     var requestData = await GetRequiredData4ApiJsonAsync<AndroidWebApiNotifyDTO>(arg).ConfigureAwait(false);
                     var add = this.WebApiContext.AddStaticFile(requestData.Path);
                     var resData = this.WebApiContext.GetAndroidSessionInfo();
-                    resData.Add = add;
+                    resData.Status = add;
                     return await TryCallback2ApiJsonAsync(arg, resData.GetOk()).ConfigureAwait(false);
                 }
                 catch (MonoCommonException ex)
