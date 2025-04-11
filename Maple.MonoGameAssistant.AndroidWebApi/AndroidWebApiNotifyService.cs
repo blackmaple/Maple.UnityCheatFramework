@@ -1,4 +1,5 @@
-﻿using Maple.MonoGameAssistant.AndroidCore.AndroidTask;
+﻿using Maple.MonoGameAssistant.AndroidCore;
+using Maple.MonoGameAssistant.AndroidCore.AndroidTask;
 using Maple.MonoGameAssistant.AndroidModel.ExceptionData;
 using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Model;
@@ -25,36 +26,13 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
         public async Task<bool> ExecuteAsync()
         {
-            //using (this.Logger.Running())
-            //{
-            //    return await Task.FromResult(true);
-            //}
             using (this.Logger.Running())
             {
-
-                var arg = await this.WebApiContext.CallbackNotifyArgsAsync().ConfigureAwait(false);
-                if (arg is null)
-                {
-                    this.Logger.LogInformation("ExecuteAsync:TIMEOUT");
-                    return false;
-                }
-
-
+                var arg = await this.WebApiContext.WaitAndGetNotifyArgsAsync().ConfigureAwait(false);
                 try
                 {
-                    this.Logger.LogInformation("base:{a}", Environment.CurrentDirectory);
-                    var requestData = await GetRequiredData4ApiJsonAsync<AndroidWebApiNotifyDTO>(arg).ConfigureAwait(false);
-                    var add = this.WebApiContext.AddStaticFile(requestData.Path);
                     var resData = this.WebApiContext.GetAndroidSessionInfo();
-                    resData.Status = add;
-                    this.Logger.LogInformation("add static file:{file}:{ok}", requestData.Path, add);
-                    if (add == false)
-                    {
-                        this.WebApiContext.AddStaticFile(Path.Combine("/sdcard/Download", "wwwroot"));
-                    }
                     return await TryCallback2ApiJsonAsync(arg, resData.GetOk()).ConfigureAwait(false);
-
-
                 }
                 catch (MonoCommonException ex)
                 {
@@ -70,6 +48,10 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 {
                     Logger.LogError("SYSTEMERROR:{ex}", ex);
                     return await TryCallback2ApiJsonAsync(arg, MonoResultDTO.GetSystemError(ex.Message)).ConfigureAwait(false);
+                }
+                finally
+                {
+                    await ReleaseAsync(arg).ConfigureAwait(false);
                 }
             }
         }
@@ -133,6 +115,17 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 this.Logger.Error(ex);
             }
             return false;
+        }
+
+
+        void AndroidTask_Release(AndroidWebApiNotifyArgs arg)
+        {
+            var jniEnvironmentContext = this.Scheduler.CurrJniEnv;
+            arg.Release(jniEnvironmentContext);
+        }
+        Task<bool> ReleaseAsync(AndroidWebApiNotifyArgs arg)
+        {
+            return this.AndroidTaskAsync(static (p, args) => p.AndroidTask_Release(args), arg);
         }
     }
 }

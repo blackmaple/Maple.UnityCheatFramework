@@ -96,9 +96,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             app.UseDefaultExceptionHandler();
 
             app.UseDefaultFiles();
-
             app.UseStaticFiles();
-            var staticFileOptions = new StaticFileOptions()
+            app.UseStaticFiles(new StaticFileOptions()
             {
                 ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
                 {
@@ -115,18 +114,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     [".woff2"] = "application/font-woff",
 
                 }),
-                //FileProvider = new PhysicalFileProvider("/storage/emulated/0/Android/data/com.guzz.lsby/files/wwwroot"),
-                //RequestPath = string.Empty,
-            };
-            // /storage/emulated/0/Android/data/com.guzz.lsby/files/wwwroot
-            //var dynamicStaticFileProvider = app.ApplicationServices.GetService<DynamicStaticFileProvider>();
-            //if (dynamicStaticFileProvider is not null)
-            //{
-            //    staticFileOptions.FileProvider = new PhysicalFileProvider("/data/user/0/com.guzz.lsby/files/wwwroot");
-            //    staticFileOptions.RequestPath = string.Empty;
-            //}
-
-            app.UseStaticFiles(staticFileOptions);
+            });
 
         }
 
@@ -443,11 +431,12 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
 
         public static IWebHost AsRunWebApiService(
-            MonoGameSettings settings,
+            AndroidWebApiContext webApiContext,
             Action<IServiceCollection> actionAddServices)
         {
+            var settings = webApiContext.Settings;
             var web = new WebHostBuilder();
-            web.UseContentRoot("/storage/emulated/0/Android/data/com.guzz.lsby/files");
+            web.UseContentRoot(webApiContext.ContentRoot);
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 

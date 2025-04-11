@@ -257,6 +257,11 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
                 Functions.Func_CallStaticVoidMethodA.Invoke(this, classObj, methodId, pArgs);
             }
         }
+
+        public JOBJECT CallStaticObjectMethod(JCLASS classObj, JMETHODID methodId)
+        {
+            return Functions.Func_CallStaticObjectMethodA.Invoke(this, classObj, methodId, nint.Zero);
+        }
         public JOBJECT CallStaticObjectMethod(JCLASS classObj, JMETHODID methodId, params ReadOnlySpan<JVALUE> args)
         {
             ref var ref_args = ref MemoryMarshal.GetReference(args);
@@ -266,6 +271,21 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
 
             }
         }
+
+        public T CallStaticObjectMethod<T>(JCLASS classObj, JMETHODID methodId)where T:unmanaged
+        {
+            return Functions.Func_CallStaticObjectMethodA.Invoke<T>(this, classObj, methodId, nint.Zero);
+        }
+        public T CallStaticObjectMethod<T>(JCLASS classObj, JMETHODID methodId, params ReadOnlySpan<JVALUE> args) where T : unmanaged
+        {
+            ref var ref_args = ref MemoryMarshal.GetReference(args);
+            fixed (void* pArgs = &ref_args)
+            {
+                return Functions.Func_CallStaticObjectMethodA.Invoke<T>(this, classObj, methodId, pArgs);
+            }
+        }
+
+
         public JBOOLEAN CallStaticBooleanMethod(JCLASS classObj, JMETHODID methodId, params ReadOnlySpan<JVALUE> args)
         {
             ref var ref_args = ref MemoryMarshal.GetReference(args);

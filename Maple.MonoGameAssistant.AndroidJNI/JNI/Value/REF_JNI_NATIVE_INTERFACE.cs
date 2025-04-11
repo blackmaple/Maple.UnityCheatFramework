@@ -193,16 +193,16 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
     }
 
 
-    
+
     [StructLayout(LayoutKind.Sequential)]
     internal readonly unsafe struct Ptr_Func_GetObjectClass(nint ptr)
     {
         /// <summary>
         /// //jclass(*GetObjectClass)(JNIEnv*, jobject);
         /// </summary>
-        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PTR_JNI_ENV, JOBJECT,JCLASS>
+        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PTR_JNI_ENV, JOBJECT, JCLASS>
             _ptr = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PTR_JNI_ENV, JOBJECT, JCLASS>)ptr;
-        public JCLASS Invoke(PTR_JNI_ENV @this,JOBJECT instance)
+        public JCLASS Invoke(PTR_JNI_ENV @this, JOBJECT instance)
             => _ptr(@this, instance);
     }
 
@@ -513,6 +513,14 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
 
         public JOBJECT Invoke(PTR_JNI_ENV @this, JCLASS classObj, JMETHODID method, JVALUE_ARRAY args)
             => _ptr(@this, classObj, method, args);
+        public T Invoke<T>(PTR_JNI_ENV @this, JCLASS classObj, JMETHODID method, JVALUE_ARRAY args)
+            where T : unmanaged
+        {
+            var obj = _ptr(@this, classObj, method, args);
+            return Unsafe.As<JOBJECT, T>(ref obj);
+        }
+
+
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -692,7 +700,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
         readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PTR_JNI_ENV, JSTRING, JREF<JOBJECT>, JCHAR_ARRAY> _ptr
             = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PTR_JNI_ENV, JSTRING, JREF<JOBJECT>, JCHAR_ARRAY>)ptr;
 
-        public JCHAR_ARRAY Invoke(PTR_JNI_ENV @this, JSTRING str )
+        public JCHAR_ARRAY Invoke(PTR_JNI_ENV @this, JSTRING str)
             => _ptr(@this, str, JREF<JOBJECT>.NullRef());
     }
 
@@ -1198,7 +1206,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
 
 
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct PTR_JNI_NATIVE_INTERFACE(nint ptr): IJNIReferenceInterface
+    public readonly struct PTR_JNI_NATIVE_INTERFACE(nint ptr) : IJNIReferenceInterface
     {
         [MarshalAs(UnmanagedType.SysInt)]
         readonly nint _ptr = ptr;
@@ -1208,7 +1216,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
         public static implicit operator PTR_JNI_NATIVE_INTERFACE(nint val) => new(val);
         public static implicit operator nint(PTR_JNI_NATIVE_INTERFACE val) => val._ptr;
         public static implicit operator bool(PTR_JNI_NATIVE_INTERFACE val) => val.IsNotNullPtr();
- 
+
 
         public ref REF_JNI_NATIVE_INTERFACE AsRef() => ref _ptr.RefStruct<REF_JNI_NATIVE_INTERFACE>();
 

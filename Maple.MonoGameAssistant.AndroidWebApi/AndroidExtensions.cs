@@ -26,7 +26,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 {
     public static unsafe class AndroidExtensions
     {
-        const string JavaClassFullName = "com/android/maple/service/MapleService";
+        public const string JavaClassFullName = "com/android/maple/service/MapleService";
 
 
 
@@ -142,7 +142,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 {
                     services.AddLogging(p => p.AddOnlyMonoGameLogger());
                     services.AddSingleton(androidApiContext);
-                    services.AddSingleton(androidApiContext.StaticFileProvider);
+                  
                     services.AddHostedService<AndroidHostedService>();
                     services.AddSingleton<AndroidTaskScheduler>();
                     services.AddSingleton(androidApiContext.VirtualMachineContext);

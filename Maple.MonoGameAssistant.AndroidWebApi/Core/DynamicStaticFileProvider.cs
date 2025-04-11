@@ -5,6 +5,9 @@ using Microsoft.Extensions.Primitives;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
+
+
+    [Obsolete("remove")]
     public class DynamicStaticFileProvider() : IFileProvider
     {
         private List<PhysicalFileProvider> FileProviders { get; } = [];

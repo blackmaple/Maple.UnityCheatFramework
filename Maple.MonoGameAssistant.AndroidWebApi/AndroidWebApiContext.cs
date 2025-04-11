@@ -13,9 +13,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
     public class AndroidWebApiContext(JavaVirtualMachineContext virtualMachineContext)
     {
         public JavaVirtualMachineContext VirtualMachineContext { get; } = virtualMachineContext;
-        public DynamicStaticFileProvider StaticFileProvider { get; } = new DynamicStaticFileProvider();
         public MonoGameSettings Settings { get; } = new MonoGameSettings() { Http = true, MonoDataCollector = true };
-
+        public string? ContentRoot { get; set; }
 
         public TaskCompletionSource<AndroidWebApiNotifyArgs> CompletionSource { get; } = new TaskCompletionSource<AndroidWebApiNotifyArgs>();
 
@@ -33,17 +32,15 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return new AndroidWebApiContext(new JavaVirtualMachineContext(javaVM));
         }
 
-        public bool TrySetNotifyMsg(AndroidWebApiNotifyArgs notifyMsg)
+        public bool TrySetNotify(AndroidWebApiNotifyArgs args)
         {
-            return this.CompletionSource.TrySetResult(notifyMsg);
+            return this.CompletionSource.TrySetResult(args);
         }
 
-        public Task<AndroidWebApiNotifyArgs> CallbackNotifyArgsAsync()
+        public Task<AndroidWebApiNotifyArgs> WaitAndGetNotifyArgsAsync()
         {
             return CompletionSource.Task;
         }
-
-        public bool AddStaticFile(string? path) => this.StaticFileProvider.AddDirectory(path);
 
         public AndroidSessionInfoDTO GetAndroidSessionInfo()
         {

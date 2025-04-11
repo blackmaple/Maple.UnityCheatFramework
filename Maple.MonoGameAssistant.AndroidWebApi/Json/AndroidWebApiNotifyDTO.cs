@@ -3,6 +3,9 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Primitive;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
+
+
+    [Obsolete("remove...")]
     public class AndroidWebApiNotifyDTO
     {
         public string? Path { get; set; }
