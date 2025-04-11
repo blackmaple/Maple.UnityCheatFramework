@@ -3,28 +3,7 @@
 
 using Maple.MonoGameAssistant.AndroidModel.ExceptionData;
 using Maple.MonoGameAssistant.AndroidWebApi;
+using Microsoft.AspNetCore.Hosting;
 
-var json1 = AndroidWebApiJsonExtensions.Json4Object<AndroidSessionInfoDTO>(new AndroidSessionInfoDTO()
-{ 
-    
-    ObjectId = "ObjectId",
-    Status = true,
-    ApiVer = "app",
-    DisplayDesc = "desc",
-    DisplayImage = "image",
-    DisplayName = "name",
-    QQ = "qq",
-    Address = "Address",
-
-});
-
-Console.WriteLine(json1);
-var json2 = AndroidWebApiJsonExtensions.Json4Object<AndroidWebApiNotifyDTO>(new AndroidWebApiNotifyDTO()
-{
-
-    Path = "123"
-
-});
-Console.WriteLine(json2);
-
-Console.ReadLine();
+var webhost = AndroidWebApiServiceExtensions.AsRunWebApiService(new Maple.MonoGameAssistant.Model.MonoGameSettings() { Http = true }, services => { });
+webhost.Run();

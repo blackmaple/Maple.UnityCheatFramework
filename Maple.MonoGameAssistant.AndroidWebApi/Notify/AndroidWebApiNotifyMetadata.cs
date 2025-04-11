@@ -13,10 +13,11 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         protected sealed override void FindMethods(in JniEnvironmentContext context)
         {
             var methodDesc = "(Ljava/lang/String;)Z\0"u8;
-            context.JNI_ENV.TryGetMethodId(this.GlobalClass, "NotifyStatus\0"u8, methodDesc, out m_Method_Notify);
+            context.JNI_ENV.TryGetMethodId(this.GlobalClass, "Notify\0"u8, methodDesc, out m_Method_Notify);
+
         }
 
-        public JBOOLEAN Callback_NotifyStatus(PTR_JNI_ENV context, JOBJECT @this, JSTRING json) => context.CallBooleanMethod(@this, m_Method_Notify, json);
+        public JBOOLEAN Callback_Notify(PTR_JNI_ENV context, JOBJECT @this, JSTRING json) => context.CallBooleanMethod(@this, m_Method_Notify, json);
 
 
     }

@@ -25,8 +25,13 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
         public async Task<bool> ExecuteAsync()
         {
+            //using (this.Logger.Running())
+            //{
+            //    return await Task.FromResult(true);
+            //}
             using (this.Logger.Running())
             {
+
                 var arg = await this.WebApiContext.CallbackNotifyArgsAsync().ConfigureAwait(false);
                 if (arg is null)
                 {
@@ -34,13 +39,22 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     return false;
                 }
 
+
                 try
                 {
+                    this.Logger.LogInformation("base:{a}", Environment.CurrentDirectory);
                     var requestData = await GetRequiredData4ApiJsonAsync<AndroidWebApiNotifyDTO>(arg).ConfigureAwait(false);
                     var add = this.WebApiContext.AddStaticFile(requestData.Path);
                     var resData = this.WebApiContext.GetAndroidSessionInfo();
                     resData.Status = add;
+                    this.Logger.LogInformation("add static file:{file}:{ok}", requestData.Path, add);
+                    if (add == false)
+                    {
+                        this.WebApiContext.AddStaticFile(Path.Combine("/sdcard/Download", "wwwroot"));
+                    }
                     return await TryCallback2ApiJsonAsync(arg, resData.GetOk()).ConfigureAwait(false);
+
+
                 }
                 catch (MonoCommonException ex)
                 {
@@ -97,7 +111,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 var javaJson = jniEnvironmentContext.JNI_ENV.CreateStringUnicode(jsonData);
                 try
                 {
-                    return callback.Callback_NotifyStatus(javaJson);
+                    return callback.Callback_Notify(javaJson);
                 }
                 finally
                 {

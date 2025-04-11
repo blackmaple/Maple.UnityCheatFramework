@@ -33,6 +33,6 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return false;
         }
 
-        public JBOOLEAN Callback_NotifyStatus(JSTRING json) => this.Reference.Callback_NotifyStatus(this.Instance, json);
+        public JBOOLEAN Callback_Notify(JSTRING json) => this.Reference.Callback_Notify(this.Instance, json);
     }
 }

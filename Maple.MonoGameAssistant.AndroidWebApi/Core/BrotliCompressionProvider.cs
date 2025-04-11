@@ -15,6 +15,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         /// Creates a new instance of <see cref="BrotliCompressionProvider"/> with options.
         /// </summary>
         /// <param name="options">The options for this instance.</param>
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BrotliCompressionProvider))]
         public BrotliCompressionProvider(IOptions<BrotliCompressionProviderOptions> options)
         {
             ArgumentNullException.ThrowIfNull(options);

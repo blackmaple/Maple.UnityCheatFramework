@@ -8,15 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders.Composite;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
-using System.Net.Mime;
-using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
@@ -100,6 +95,8 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             app.UseResponseCompression();
             app.UseDefaultExceptionHandler();
 
+            app.UseDefaultFiles();
+
             app.UseStaticFiles();
             var staticFileOptions = new StaticFileOptions()
             {
@@ -118,15 +115,18 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     [".woff2"] = "application/font-woff",
 
                 }),
+                //FileProvider = new PhysicalFileProvider("/storage/emulated/0/Android/data/com.guzz.lsby/files/wwwroot"),
+                //RequestPath = string.Empty,
             };
-            var dynamicStaticFileProvider = app.ApplicationServices.GetService<DynamicStaticFileProvider>();
-            if (dynamicStaticFileProvider is not null)
-            {
-                staticFileOptions.FileProvider = dynamicStaticFileProvider;
-            }
+            // /storage/emulated/0/Android/data/com.guzz.lsby/files/wwwroot
+            //var dynamicStaticFileProvider = app.ApplicationServices.GetService<DynamicStaticFileProvider>();
+            //if (dynamicStaticFileProvider is not null)
+            //{
+            //    staticFileOptions.FileProvider = new PhysicalFileProvider("/data/user/0/com.guzz.lsby/files/wwwroot");
+            //    staticFileOptions.RequestPath = string.Empty;
+            //}
 
             app.UseStaticFiles(staticFileOptions);
-            app.UseDefaultFiles();
 
         }
 
@@ -154,7 +154,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/mono/EnumClasses", async (http) =>
+            routeBuilder.MapPost("/mono/EnumClasses", async (http) =>
             {
                 var postDTO = await http.FromBodyAsync<MonoPointerRequestDTO>().ConfigureAwait(false);
 
@@ -164,7 +164,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/mono/EnumObjects", async (http) =>
+            routeBuilder.MapPost("/mono/EnumObjects", async (http) =>
             {
                 var postDTO = await http.FromBodyAsync<MonoPointerRequestDTO>().ConfigureAwait(false);
 
@@ -174,7 +174,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/mono/EnumClassDetail", async (http) =>
+            routeBuilder.MapPost("/mono/EnumClassDetail", async (http) =>
             {
                 var postDTO = await http.FromBodyAsync<MonoClassDetailRequestDTO>().ConfigureAwait(false);
 
@@ -200,7 +200,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/game/LoadResource", async (http) =>
+            routeBuilder.MapPost("/game/LoadResource", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -213,7 +213,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
             #region Currency
 
-            routeBuilder.MapGet("/game/GetListCurrencyDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListCurrencyDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -223,7 +223,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/GetCurrencyInfo", async (http) =>
+            routeBuilder.MapPost("/game/GetCurrencyInfo", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCurrencyObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -233,7 +233,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateCurrencyInfo", async (http) =>
+            routeBuilder.MapPost("/game/UpdateCurrencyInfo", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCurrencyModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -246,7 +246,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
 
             #region Inventory
-            routeBuilder.MapGet("/game/GetListInventoryDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListInventoryDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -256,7 +256,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/GetInventoryInfo", async (http) =>
+            routeBuilder.MapPost("/game/GetInventoryInfo", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameInventoryObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -266,7 +266,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateInventoryInfo", async (http) =>
+            routeBuilder.MapPost("/game/UpdateInventoryInfo", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameInventoryModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -279,7 +279,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
 
             #region Character
-            routeBuilder.MapGet("/game/GetListCharacterDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListCharacterDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -289,7 +289,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/GetCharacterStatus", async (http) =>
+            routeBuilder.MapPost("/game/GetCharacterStatus", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -299,7 +299,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateCharacterStatus", async (http) =>
+            routeBuilder.MapPost("/game/UpdateCharacterStatus", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -310,7 +310,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/game/GetCharacterEquipment", async (http) =>
+            routeBuilder.MapPost("/game/GetCharacterEquipment", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -320,7 +320,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateCharacterEquipment", async (http) =>
+            routeBuilder.MapPost("/game/UpdateCharacterEquipment", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -331,7 +331,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
 
-            routeBuilder.MapGet("/game/GetCharacterSkill", async (http) =>
+            routeBuilder.MapPost("/game/GetCharacterSkill", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -341,7 +341,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateCharacterSkill", async (http) =>
+            routeBuilder.MapPost("/game/UpdateCharacterSkill", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameCharacterModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -354,7 +354,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
 
             #region Monster
-            routeBuilder.MapGet("/game/GetListMonsterDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListMonsterDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -364,7 +364,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/AddMonsterMember", async (http) =>
+            routeBuilder.MapPost("/game/AddMonsterMember", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameMonsterObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -378,7 +378,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
 
             #region Skill
-            routeBuilder.MapGet("/game/GetListSkillDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListSkillDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -388,7 +388,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/AddSkillDisplay", async (http) =>
+            routeBuilder.MapPost("/game/AddSkillDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSkillObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -402,7 +402,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             #endregion
 
             #region Switch
-            routeBuilder.MapGet("/game/GetListSwitchDisplay", async (http) =>
+            routeBuilder.MapPost("/game/GetListSwitchDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSessionObjectDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -412,7 +412,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
                 await http.ToBodyAsync(result).ConfigureAwait(false);
             });
-            routeBuilder.MapGet("/game/UpdateSwitchDisplay", async (http) =>
+            routeBuilder.MapPost("/game/UpdateSwitchDisplay", async (http) =>
             {
                 var requestDTO = await http.FromBodyAsync<GameSwitchModifyDTO>().ConfigureAwait(false);
                 requestDTO.ThrowIfGameSessionDiff();
@@ -429,7 +429,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         static void RegisterApplicationStarted(this IApplicationBuilder app)
         {
             var serviceProvider = app.ApplicationServices;
-            var lifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+            var lifetime = serviceProvider.GetRequiredService<Microsoft.AspNetCore.Hosting.IApplicationLifetime>();
             lifetime.ApplicationStarted.Register(async (objState) =>
             {
                 if (objState is not IServiceProvider service)
@@ -447,7 +447,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             Action<IServiceCollection> actionAddServices)
         {
             var web = new WebHostBuilder();
-
+            web.UseContentRoot("/storage/emulated/0/Android/data/com.guzz.lsby/files");
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 

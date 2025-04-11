@@ -1,13 +1,17 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using Maple.MonoGameAssistant.Common;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
-    public class DynamicStaticFileProvider : IFileProvider
+    public class DynamicStaticFileProvider() : IFileProvider
     {
         private List<PhysicalFileProvider> FileProviders { get; } = [];
 
         public IReadOnlyList<PhysicalFileProvider> ReadOnlyFileProviders => FileProviders;
+
+
 
         public bool AddDirectory(string? path)
         {
@@ -28,6 +32,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 return true;
             }
             return false;
+
 
         }
 
@@ -57,9 +62,11 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return new NotFoundFileInfo(subpath);
         }
 
+
         public IChangeToken Watch(string filter)
         {
             return new CompositeChangeToken([.. FileProviders.Select(p => p.Watch(filter))]);
+
         }
     }
 

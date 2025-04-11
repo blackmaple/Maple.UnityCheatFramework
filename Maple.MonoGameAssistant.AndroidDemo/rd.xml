@@ -5,9 +5,12 @@
 		<Assembly Name="Microsoft.AspNetCore.Routing" Dynamic="Required All" />
 		<Assembly Name="Microsoft.AspNetCore.Diagnostics" Dynamic="Required All" />
 		<Assembly Name="Microsoft.AspNetCore.ResponseCompression" Dynamic="Required All" />
-
-
-
+		
+		
+		<Assembly Name="Maple.MonoGameAssistant.AndroidWebApi"  >
+			<Type Name="Maple.MonoGameAssistant.AndroidWebApi.BrotliCompressionProvider" Dynamic="Required All" />
+		</Assembly>
 
 	</Application>
+
 </Directives>

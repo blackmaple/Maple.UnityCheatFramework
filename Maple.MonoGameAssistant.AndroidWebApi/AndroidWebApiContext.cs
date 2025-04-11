@@ -4,6 +4,7 @@ using Maple.MonoGameAssistant.AndroidJNI.Context;
 using Maple.MonoGameAssistant.AndroidJNI.JNI.Reference;
 using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
 using Maple.MonoGameAssistant.Model;
+using Microsoft.AspNetCore.Http;
 using System.Runtime.ConstrainedExecution;
 using System.Threading;
 
@@ -17,6 +18,16 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
 
         public TaskCompletionSource<AndroidWebApiNotifyArgs> CompletionSource { get; } = new TaskCompletionSource<AndroidWebApiNotifyArgs>();
+
+
+        public string ErrorPage { get; init; } = "/index.html";
+        public string[] ApiPaths { get; init; } = ["/mono", "/game"];
+        public bool ExistsWebApiPath(PathString pathString)
+        {
+            return this.ApiPaths.Any(p => pathString.StartsWithSegments(p));
+        }
+
+
         public static AndroidWebApiContext CreateContext(PTR_JAVA_VM javaVM)
         {
             return new AndroidWebApiContext(new JavaVirtualMachineContext(javaVM));
@@ -27,17 +38,9 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return this.CompletionSource.TrySetResult(notifyMsg);
         }
 
-        public async Task<AndroidWebApiNotifyArgs?> CallbackNotifyArgsAsync()
+        public Task<AndroidWebApiNotifyArgs> CallbackNotifyArgsAsync()
         {
-            var delayTask = Task.Delay(TimeSpan.FromSeconds(10L));
-            var resultTask = CompletionSource.Task;
-            var completedTask = await Task.WhenAny(resultTask, delayTask).ConfigureAwait(false);
-            if (completedTask == delayTask)
-            {
-                return default;
-            }
-            return await resultTask.ConfigureAwait(false);
-
+            return CompletionSource.Task;
         }
 
         public bool AddStaticFile(string? path) => this.StaticFileProvider.AddDirectory(path);

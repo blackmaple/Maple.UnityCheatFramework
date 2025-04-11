@@ -1,10 +1,11 @@
 ﻿using Maple.MonoGameAssistant.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
-    public class AndroidWebApiExceptionHandler(ILogger<AndroidWebApiExceptionHandler> logger) 
+    public class AndroidWebApiExceptionHandler(ILogger<AndroidWebApiExceptionHandler> logger)
     {
         ILogger Logger { get; } = logger;
 
@@ -45,16 +46,16 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                     }
                 case StatusCodes.Status404NotFound:
                     {
-                        //var services = httpContext.RequestServices;
-                        //var settings = services.GetService<IOptions<WebApiPathSettings>>()?.Value;
-                        //if (settings is not null && false == settings.ExistsWebApiPath(httpContext.Request.Path))
-                        //{
-                        //    httpContext.Response.Redirect(settings.ErrorPage);
-                        //}
-                        //else
-                        //{
-                             await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes.Status404NotFound)}:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO).ConfigureAwait(false);
-                        //}
+                        var services = httpContext.RequestServices;
+                        var settings = services.GetRequiredService<AndroidWebApiContext>();
+                        if (settings is not null && false == settings.ExistsWebApiPath(httpContext.Request.Path))
+                        {
+                            httpContext.Response.Redirect(settings.ErrorPage);
+                        }
+                        else
+                        {
+                            await httpContext.Response.WriteAsJsonAsync(MonoResultDTO.GetSystemError($"{nameof(StatusCodes.Status404NotFound)}:{DateTime.Now:yyyy-MM-dd HH:mm:ss}"), MonoJsonContext.Default.MonoResultDTO).ConfigureAwait(false);
+                        }
 
                         break;
                     }

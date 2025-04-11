@@ -15,7 +15,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return jniEnvironmentContext.GetReference<AndroidWebApiNotifyReference, AndroidWebApiNotifyMetadata>(metadata);
         }
 
-        public JBOOLEAN Callback_NotifyStatus(JOBJECT @this, JSTRING json) => this.Metadata.Callback_NotifyStatus(this.JNI_ENV, @this, json);
+        public JBOOLEAN Callback_Notify(JOBJECT @this, JSTRING json) => this.Metadata.Callback_Notify(this.JNI_ENV, @this, json);
 
     }
 }
