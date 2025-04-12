@@ -10,7 +10,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
     PropertyNameCaseInsensitive = true,
     Converters = [typeof(IntPtrJsonConverter), typeof(UIntPtrJsonConverter)])]
 
-    [JsonSerializable(typeof(AndroidWebApiNotifyDTO))]
+    //    [JsonSerializable(typeof(AndroidWebApiNotifyDTO))]
     [JsonSerializable(typeof(MonoResultDTO<AndroidSessionInfoDTO>))]
     public partial class AndroidJsonContext : JsonSerializerContext
     {

@@ -38,17 +38,20 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return JNI_OnLoadImp(javaVM, reserved, static api => api.CreateDefaultAndroidService(propa => { }, propa => { }));
         }
 
-        public static JINT JNI_OnLoadImp(PTR_JAVA_VM javaVM, JOBJECT _, Func<AndroidWebApiContext, AndroidWebApiContext> createHost)
+        public static JINT JNI_OnLoadImp(PTR_JAVA_VM javaVM, JOBJECT _, Func<AndroidWebApiContext, AndroidWebApiContext> runService)
         {
-            ApiContext = createHost(AndroidWebApiContext.CreateContext(javaVM));
-
+            ApiContext = AndroidWebApiContext.CreateContext(javaVM);
             if (ApiContext.VirtualMachineContext.TryGetEnv(out var jniEnvironmentContext))
             {
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(TestAction), "(Ljava/lang/String;)Z", new Ptr_Func_TestAction(&TestAction));
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(ApiAction), "(ILjava/lang/String;)Z", new Ptr_Func_ApiAction(&ApiAction));
                 //jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(WebApiAction), "(Ljava/lang/String;)Z", new Ptr_Func_WebApiAction(&WebApiAction));
 
+                var metadata = AndroidWebApiNotifyMetadata.CreateMetadata(jniEnvironmentContext);
+                var classRef = AndroidWebApiNotifyReference.CreateReference(jniEnvironmentContext, metadata);
+                ApiContext.ContentRoot = classRef.GetConentRoot();
             }
+            runService(ApiContext);
             return JavaVirtualMachineContext.JNI_VERSION_1_6;
         }
 
@@ -69,7 +72,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
         public static JBOOLEAN ApiActionImp(PTR_JNI_ENV jniEnv, JOBJECT instance, JINT actionIndex, JSTRING json)
         {
-            return ApiContext?.TrySetNotifyMsg(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
+            return ApiContext?.TrySetNotifyArgs(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(TestAction))]
@@ -137,12 +140,12 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             var settings = androidApiContext.Settings;
             actionGameSettings(settings);
             return AndroidWebApiServiceExtensions.AsRunWebApiService(
-                settings,
+                androidApiContext,
                 services =>
                 {
                     services.AddLogging(p => p.AddOnlyMonoGameLogger());
                     services.AddSingleton(androidApiContext);
-                  
+
                     services.AddHostedService<AndroidHostedService>();
                     services.AddSingleton<AndroidTaskScheduler>();
                     services.AddSingleton(androidApiContext.VirtualMachineContext);

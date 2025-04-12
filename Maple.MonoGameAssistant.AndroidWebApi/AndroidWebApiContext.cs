@@ -32,7 +32,7 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return new AndroidWebApiContext(new JavaVirtualMachineContext(javaVM));
         }
 
-        public bool TrySetNotify(AndroidWebApiNotifyArgs args)
+        public bool TrySetNotifyArgs(AndroidWebApiNotifyArgs args)
         {
             return this.CompletionSource.TrySetResult(args);
         }

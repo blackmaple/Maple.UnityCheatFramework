@@ -17,6 +17,6 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
 
         public JBOOLEAN Callback_Notify(JOBJECT @this, JSTRING json) => this.Metadata.Callback_INFO(this.JNI_ENV, @this, json);
 
-        public JSTRING GetConentRoot() => this.Metadata.GetContentRoot(this.JNI_ENV);
+        public string? GetConentRoot() => JNI_ENV.ConvertStringUnicode(this.Metadata.GetContentRoot(this.JNI_ENV));
     }
 }
