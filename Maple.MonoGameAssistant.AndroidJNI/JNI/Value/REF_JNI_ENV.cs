@@ -128,7 +128,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
             fixed (void* pContent = &ref_Content.GetPinnableReference())
             {
                 classObj = Functions.Func_FindClass.Invoke(this, pContent);
-                
+
                 return !this.ExceptionCheck();
             }
         }
@@ -260,7 +260,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
 
         public JOBJECT CallStaticObjectMethod(JCLASS classObj, JMETHODID methodId)
         {
-            return Functions.Func_CallStaticObjectMethodA.Invoke(this, classObj, methodId, nint.Zero);
+            return CallStaticObjectMethod(classObj, methodId, []);
         }
         public JOBJECT CallStaticObjectMethod(JCLASS classObj, JMETHODID methodId, params ReadOnlySpan<JVALUE> args)
         {
@@ -272,9 +272,9 @@ namespace Maple.MonoGameAssistant.AndroidJNI.JNI.Value
             }
         }
 
-        public T CallStaticObjectMethod<T>(JCLASS classObj, JMETHODID methodId)where T:unmanaged
+        public T CallStaticObjectMethod<T>(JCLASS classObj, JMETHODID methodId) where T : unmanaged
         {
-            return Functions.Func_CallStaticObjectMethodA.Invoke<T>(this, classObj, methodId, nint.Zero);
+            return CallStaticObjectMethod<T>(classObj, methodId, []);
         }
         public T CallStaticObjectMethod<T>(JCLASS classObj, JMETHODID methodId, params ReadOnlySpan<JVALUE> args) where T : unmanaged
         {

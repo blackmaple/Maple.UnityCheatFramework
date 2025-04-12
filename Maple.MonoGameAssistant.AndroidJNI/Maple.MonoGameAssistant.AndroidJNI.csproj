@@ -15,7 +15,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.3.2-rc</Version>
+		<Version>1.3.3-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -71,7 +71,7 @@ namespace Maple.MonoGameAssistant.AndroidJNI.Context
     public abstract class JavaClassMetadata<TMetadata> : JavaClassMetadata
         where TMetadata : JavaClassMetadata<TMetadata>, new()
     {
-        public static TMetadata CreateMetadata(in JniEnvironmentContext context,ReadOnlySpan<char> className)
+        public static TMetadata CreateMetadata(in JniEnvironmentContext context, ReadOnlySpan<char> className)
         {
             return context.GetOrAddMetadata<TMetadata>(className);
         }

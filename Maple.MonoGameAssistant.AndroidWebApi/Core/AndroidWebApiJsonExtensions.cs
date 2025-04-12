@@ -2,6 +2,7 @@
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.AspNetCore.Http;
+using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -117,17 +118,20 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
         private static bool HasJsonContentType(this HttpRequest request, out string? charset)
         {
-            charset = null;
-            if (request.ContentType == null)
+            Unsafe.SkipInit(out charset);
+            if (false == System.Net.Http.Headers.MediaTypeHeaderValue.TryParse(request.ContentType, out var contentType))
             {
                 return false;
             }
-
-            var contentType = new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(request.ContentType);
-            if (contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase) ||
-                contentType.MediaType.Equals("application/ld+json", StringComparison.OrdinalIgnoreCase))
+            var mediaType = contentType.MediaType;
+            if (string.IsNullOrEmpty(mediaType))
             {
-                charset = contentType.Charset.ToString();
+                return false;
+            }
+            if (mediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase) ||
+                            mediaType.Equals("application/ld+json", StringComparison.OrdinalIgnoreCase))
+            {
+                charset = contentType.CharSet;
                 return true;
             }
 

@@ -8,6 +8,7 @@ using Maple.MonoGameAssistant.AndroidJNI.Context;
 using Maple.MonoGameAssistant.AndroidJNI.JNI.Primitive;
 using Maple.MonoGameAssistant.AndroidJNI.JNI.Reference;
 using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
+using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.GameDTO;
 using Maple.MonoGameAssistant.Logger;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using unsafe ApiActionDelegate = delegate* unmanaged<Maple.MonoGameAssistant.AndroidJNI.JNI.Value.PTR_JNI_ENV, Maple.MonoGameAssistant.AndroidJNI.JNI.Reference.JOBJECT, Maple.MonoGameAssistant.AndroidJNI.JNI.Primitive.JINT, Maple.MonoGameAssistant.AndroidJNI.JNI.Reference.JSTRING, Maple.MonoGameAssistant.AndroidJNI.JNI.Primitive.JBOOLEAN>;
@@ -45,11 +47,13 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             {
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(TestAction), "(Ljava/lang/String;)Z", new Ptr_Func_TestAction(&TestAction));
                 jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(ApiAction), "(ILjava/lang/String;)Z", new Ptr_Func_ApiAction(&ApiAction));
-                //jniEnvironmentContext.RegisterNativeMethod(JavaClassFullName, nameof(WebApiAction), "(Ljava/lang/String;)Z", new Ptr_Func_WebApiAction(&WebApiAction));
 
                 var metadata = AndroidWebApiNotifyMetadata.CreateMetadata(jniEnvironmentContext);
                 var classRef = AndroidWebApiNotifyReference.CreateReference(jniEnvironmentContext, metadata);
-                ApiContext.ContentRoot = classRef.GetConentRoot();
+                var content = classRef.GetConentRoot();
+                MonoDefaultLogger.Default.LogInformation("GetConentRoot:{c}", content);
+
+                ApiContext.ContentRoot = content;  //"/storage/emulated/0/Android/data/com.guzz.lsby/files";
             }
             runService(ApiContext);
             return JavaVirtualMachineContext.JNI_VERSION_1_6;
@@ -90,19 +94,6 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             }
             return false;
         }
-
-
-        //[UnmanagedCallersOnly(EntryPoint = nameof(WebApiAction))]
-        //internal static JBOOLEAN WebApiAction(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING text)
-        //{
-        //    return WebApiActionImp(jniEnv, instance, text);
-        //}
-        //public static JBOOLEAN WebApiActionImp(PTR_JNI_ENV jniEnv, JOBJECT instance, JSTRING json)
-        //{
-        //    return ApiContext?.TrySetNotifyMsg(AndroidWebApiNotifyArgs.Create(jniEnv, instance, json)) ?? false;
-        //}
-
-
 
 
         readonly struct Ptr_Func_ApiAction(ApiActionDelegate ptr)

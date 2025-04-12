@@ -434,9 +434,16 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             AndroidWebApiContext webApiContext,
             Action<IServiceCollection> actionAddServices)
         {
-            var settings = webApiContext.Settings;
+
             var web = new WebHostBuilder();
-            web.UseContentRoot(webApiContext.ContentRoot);
+
+            var contentRoot = webApiContext.ContentRoot;
+            if (!string.IsNullOrEmpty(contentRoot))
+            {
+                web.UseContentRoot(contentRoot);
+            }
+
+            var settings = webApiContext.Settings;
             web.ConfigureServices(settings, actionAddServices);
             web.ConfigureListenIP(settings);
 
