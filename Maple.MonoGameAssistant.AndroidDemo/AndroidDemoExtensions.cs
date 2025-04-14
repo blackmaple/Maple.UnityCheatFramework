@@ -7,6 +7,7 @@ using Maple.MonoGameAssistant.AndroidJNI.JNI.Value;
 using Maple.MonoGameAssistant.AndroidModel.ExceptionData;
 using Maple.MonoGameAssistant.AndroidWebApi;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
 
 //var context = new AndroidWebApiContext(default!)
@@ -14,7 +15,10 @@ using System.Runtime.InteropServices;
 
 //};
 //context.Settings.Http = true;
-//var webhost = AndroidWebApiServiceExtensions.AsRunWebApiService(context, services => { });
+//var webhost = AndroidWebApiServiceExtensions.AsRunWebApiService(context, services =>
+//{
+//    // services.AddSingleton<AndroidWebApiNotifyService>();
+//});
 //webhost.Run();
 
 
@@ -26,6 +30,13 @@ public static class AndroidDemoExtensions
     [UnmanagedCallersOnly(EntryPoint = nameof(JNI_OnLoad))]
     internal static JINT JNI_OnLoad(PTR_JAVA_VM javaVM, JOBJECT reserved)
     {
-        return Maple.MonoGameAssistant.AndroidWebApi.AndroidExtensions.JNI_OnLoadImp(javaVM, reserved, static api => api);
+        return Maple.MonoGameAssistant.AndroidWebApi.AndroidExtensions.JNI_OnLoadImp(javaVM, reserved, static api =>
+       api.CreateDefaultAndroidService(p =>
+       {
+           p.Http = true;
+       }, p =>
+       {
+       }
+       ));
     }
 }

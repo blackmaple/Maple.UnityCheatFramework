@@ -154,8 +154,16 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
             return androidApiContext;
             void AndroidServiceTask()
             {
-                var webHost = androidApiContext.CreateWebApiService(actionGameSettings, actionAddServices);
-                webHost.Run();
+                try
+                {
+                    var webHost = androidApiContext.CreateWebApiService(actionGameSettings, actionAddServices);
+                    webHost.Run();
+                }
+                catch (Exception ex)
+                {
+                    MonoDefaultLogger.Default.Error(ex);
+                }
+
             }
         }
 

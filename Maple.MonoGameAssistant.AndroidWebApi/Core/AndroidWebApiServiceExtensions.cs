@@ -12,6 +12,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.IO.Compression;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.AndroidWebApi
 {
@@ -55,13 +58,33 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
         }
         static void ConfigureListenIP(this WebHostBuilder web, MonoGameSettings settings)
         {
-            if (settings.Http && settings.TryGetRandomPort(out var port))
+            if (settings.Http && GetAvailablePort(out var port))
             {
                 settings.BaseAddress = $"http://localhost:{port}";
                 settings.Port = port;
                 web.UseKestrel(p => p.ListenAnyIP(port));
             }
         }
+        static bool GetAvailablePort(out int port)
+        {
+            Unsafe.SkipInit(out port);
+            try
+            {
+                // 使用端口 0，系统会自动分配可用端口
+                using var listener = new TcpListener(IPAddress.Loopback, 0);
+                listener.Start();
+                port = ((IPEndPoint)listener.LocalEndpoint).Port;
+                listener.Stop(); // 释放端口
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+
         static void UseDefaultExceptionHandler(this IApplicationBuilder app)
         {
             app.UseExceptionHandler(TryExceptionHandler);
@@ -424,7 +447,12 @@ namespace Maple.MonoGameAssistant.AndroidWebApi
                 {
                     return;
                 }
-                await service.GetRequiredService<AndroidWebApiNotifyService>().StartAsync().ConfigureAwait(false);
+                var notifyService = service.GetService<AndroidWebApiNotifyService>();
+                if (notifyService is not null)
+                {
+                    await notifyService.StartAsync().ConfigureAwait(false);
+                }
+
 
             }, serviceProvider);
         }

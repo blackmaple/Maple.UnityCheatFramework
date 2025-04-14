@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 
 namespace Maple.MonoGameAssistant.Model
 {
@@ -60,6 +61,8 @@ namespace Maple.MonoGameAssistant.Model
 
 
         public string? QQ { set; get; }
+
+        [SupportedOSPlatform("windows")]
         public bool TryGetRandomPort(out int port)
         {
             port = this.Port;
