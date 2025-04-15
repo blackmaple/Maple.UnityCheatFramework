@@ -70,6 +70,21 @@ namespace Maple.MonoGameAssistant.WinForm
             await this.ViewMainForm.AddGameTab(processInfo.DisplayName);
         }
 
+        private async void BtnCreateHttp_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            await OpenViewGameTab2();
+        }
+        private async ValueTask OpenViewGameTab2()
+        {
+            var args = XtraInputBox.Show(this, "", "http url", string.Empty);
+            if (string.IsNullOrEmpty(args))
+            {
+                return;
+            }
+            await this.ViewMainForm.AddGameTab(args, nameof(NormalHttpClientFactory));
+        }
+
+
         private async void ViewHomeTab_Load(object sender, EventArgs e)
         {
             await Task.Delay(500);
@@ -102,7 +117,7 @@ namespace Maple.MonoGameAssistant.WinForm
                     InterfaceInfos = classdto.InterfaceInfos?.Select(p => new GameInterfaceInfo { RawInterfaceInfo = p }).ToArray() ?? [],
                     MethodInfos = classdto.MethodInfos?.Select(p => new GameMethodInfo { RawMethodInfo = p }).ToArray() ?? [],
                     FieldInfos = classdto.FieldInfos?.Select(p => new GameFieldInfo { RawFieldInfo = p }).ToArray() ?? [],
- 
+
                 };
                 await OpenPageCodeViewAsync(gameClassInfo);
             }
@@ -158,6 +173,7 @@ namespace Maple.MonoGameAssistant.WinForm
 
 
         }
+
 
     }
 }

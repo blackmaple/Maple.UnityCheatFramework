@@ -16,10 +16,10 @@ public class GameContextFactory
 {
     ILoggerFactory LoggerFactory { get; }
     //  IMemoryCache ContextCache { get; }
-    IHttpClientFactory HttpClientFactory { get; }
+    HttpClientFactoryProvider HttpClientFactory { get; }
     //  HttpClient Http { get; }
 
-    public GameContextFactory(ILoggerFactory loggerFactory, IHttpClientFactory httpClientFactory)
+    public GameContextFactory(ILoggerFactory loggerFactory, HttpClientFactoryProvider httpClientFactory)
     {
         this.LoggerFactory = loggerFactory;
         this.HttpClientFactory = httpClientFactory;
@@ -32,21 +32,29 @@ public class GameContextFactory
     //{
     //    return GameHttpClient.TryGetGameInfoAsync<MonoGameInfoDTO>(this.Http, gameUrl);
     //}
-    public async Task<MonoResultDTO<GameCodeContext>> TryCreateGameCodeContext(string pipeName)
+    public async Task<MonoResultDTO<GameCodeContext>> TryCreateGameCodeContext(string args, string key = nameof(NamedPipeHttpClientFactory))
     {
-        var gameUrl = new Uri("http://localhost");
-        var http = this.HttpClientFactory.CreateClient(pipeName);
-        http.BaseAddress = gameUrl;
-        var gameSessionDTO = await GameHttpClient.TryGetGameInfoAsync<GameSessionInfoDTO>(http);
-        if (false == gameSessionDTO.TryGet(out var gameSession))
+        try
         {
-            http.Dispose();
-            return new MonoResultDTO<GameCodeContext>() { CODE = gameSessionDTO.CODE, MSG = gameSessionDTO.MSG };
+            //      var gameUrl = new Uri("http://localhost");
+            var http = this.HttpClientFactory.CreateClient(key, args);
+            //         http.BaseAddress = gameUrl;
+            var gameSessionDTO = await GameHttpClient.TryGetGameInfoAsync<GameSessionInfoDTO>(http);
+            if (false == gameSessionDTO.TryGet(out var gameSession))
+            {
+                http.Dispose();
+                return new MonoResultDTO<GameCodeContext>() { CODE = gameSessionDTO.CODE, MSG = gameSessionDTO.MSG };
+            }
+            var logger = this.LoggerFactory.CreateLogger(gameSession.DisplayName ?? "Game");
+            GameHttpClient gameHttpClient = new(logger, http, http.BaseAddress!);
+            var gameCodeContext = new GameCodeContext(gameHttpClient, gameSession);
+            return new MonoResultDTO<GameCodeContext>() { CODE = gameSessionDTO.CODE, DATA = gameCodeContext };
+
         }
-        var logger = this.LoggerFactory.CreateLogger(gameSession.DisplayName ?? "Game");
-        GameHttpClient gameHttpClient = new(logger, http, gameUrl);
-        var gameCodeContext = new GameCodeContext(gameHttpClient, gameSession);
-        return new MonoResultDTO<GameCodeContext>() { CODE = gameSessionDTO.CODE, DATA = gameCodeContext };
+        catch (Exception ex)
+        {
+            return new MonoResultDTO<GameCodeContext>() { CODE = -1, MSG = ex.Message };
+        }
 
     }
 

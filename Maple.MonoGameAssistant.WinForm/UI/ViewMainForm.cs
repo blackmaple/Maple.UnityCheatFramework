@@ -18,7 +18,7 @@ namespace Maple.MonoGameAssistant.WinForm
         public required UIService UIService { get; set; }
         GameContextFactory GameContextFactory => UIService.GameContextFactory;
 
-        
+
         public ViewMainForm(UIService uIService) : this()
         {
             this.UIService = uIService;
@@ -99,16 +99,16 @@ namespace Maple.MonoGameAssistant.WinForm
             //}
 
         }
-        public async ValueTask AddGameTab(string? pipeName)
+        public async ValueTask AddGameTab(string? args, string key = nameof(NamedPipeHttpClientFactory))
         {
-            if (string.IsNullOrEmpty(pipeName))
+            if (string.IsNullOrEmpty(args))
             {
                 return;
             }
 
             using (this.ShowSplashScreen())
             {
-                var monoResultDTO = await this.GameContextFactory.TryCreateGameCodeContext(pipeName);
+                var monoResultDTO = await this.GameContextFactory.TryCreateGameCodeContext(args, key);
                 if (false == monoResultDTO.TryGet(out var gameCodeContext))
                 {
                     _ = this.ShowErorr(monoResultDTO);
@@ -210,7 +210,7 @@ namespace Maple.MonoGameAssistant.WinForm
         }
 
 
- 
+
 
 
     }
