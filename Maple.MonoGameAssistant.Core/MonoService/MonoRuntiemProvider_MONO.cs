@@ -616,8 +616,9 @@ namespace Maple.MonoGameAssistant.Core
         }
         public virtual PDelegatePointer GetInternalCall(string signature)
         {
-            return default;
+            return UnsafeInternalCall.GetInternalCall(this.Runtime, signature);
         }
+
 
         public REF_MONO_GC_HANDLE MonoGCHandle(PMonoObject pMonoObject, bool pinned)
         {

@@ -52,6 +52,36 @@ namespace Maple.MonoGameAssistant.Core
     }
 
 
+    [StructLayout(LayoutKind.Sequential)]
+    [DebuggerDisplay("{_ptr}")]
+    public readonly unsafe struct PMonoObject<TRefMonoObject>(nint ptr) : IMonoPointer<TRefMonoObject> where TRefMonoObject : unmanaged
+    {
+        [MarshalAs(UnmanagedType.SysInt)]
+        readonly nint _ptr = ptr;
+
+        public static implicit operator nint(PMonoObject<TRefMonoObject> ptr) => ptr._ptr;
+        public static implicit operator PMonoObject<TRefMonoObject>(nint ptr) => new(ptr);
+
+        public override string ToString()
+        {
+            return _ptr.ToString("X8");
+        }
+
+        public bool Valid() => _ptr != IntPtr.Zero;
+
+        public ref TRefMonoObject AsRef()
+        {
+            return ref Unsafe.As<nint, TRefMonoObject>(ref Unsafe.AsRef(in _ptr));
+        }
+
+
+        public static PMonoObject<TRefMonoObject> AsPointer(scoped ref TRefMonoObject monoObject)
+        {
+            var ptr = new nint(Unsafe.AsPointer(ref monoObject));
+            return new PMonoObject<TRefMonoObject>(ptr);
+        }
+    }
+
 
 
 }

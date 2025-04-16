@@ -158,6 +158,8 @@ namespace Maple.MonoGameAssistant.Core
         internal PIL2CPP_RESOLVE_ICALL IL2CPP_RESOLVE_ICALL;
 
         internal PMONO_OBJECT_GET_CLASS MONO_OBJECT_GET_CLASS;
+
+        internal PMONO_LOOKUP_INTERNAL_CALL MONO_LOOKUP_INTERNAL_CALL;
         #endregion
 
         private partial bool LoadMonoRuntime_MONO_Imp(nint hModule)
@@ -285,6 +287,9 @@ namespace Maple.MonoGameAssistant.Core
 
 
             init &= TryCreate(hModule, PMONO_OBJECT_GET_CLASS.mono, out MONO_OBJECT_GET_CLASS);
+
+            init &= TryCreate(hModule, PMONO_LOOKUP_INTERNAL_CALL.mono, out MONO_LOOKUP_INTERNAL_CALL);
+
             return init;
         }
 
