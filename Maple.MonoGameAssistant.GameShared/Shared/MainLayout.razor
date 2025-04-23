@@ -3,12 +3,12 @@
 <MApp>
 
     <MSystemBar App>
-        <MAppBarNavIcon OnClick="()=>LoadGameResourceAsync()">
+        <MAppBarNavIcon OnClick="() => LoadGameResourceAsync()">
             <MIcon>mdi-gamepad-variant-outline</MIcon>
         </MAppBarNavIcon>
         <MAppBarTitle>@Core.GameName</MAppBarTitle>
         <MSpacer></MSpacer>
-        <MButton Icon OnClick="()=>this.Core.ShowVersionInfo()">
+        <MButton Icon OnClick="() => this.Core.ShowVersionInfo()">
             <MIcon>mdi-microsoft-xbox-controller-battery-unknown</MIcon>
         </MButton>
     </MSystemBar>
@@ -42,7 +42,21 @@
                     <MIcon>mdi-face-man-shimmer-outline</MIcon>
                 </MButton>
 
-                <MMenu OpenOnHover Top OffsetY>
+                <MButton Value="UIMainTabs.Tab_Misc">
+                    <span>Misc</span>
+                    <MIcon>mdi-chevron-up</MIcon>
+                </MButton>
+@*                 <MButton Value="UIMainTabs.Tab_Monster">
+                    <span>Monster</span>
+                    <MIcon>mdi-pig-variant-outline</MIcon>
+                </MButton>
+                <MButton Value="UIMainTabs.Tab_Skill">
+                    <span>Skill</span>
+                    <MIcon>mdi-auto-fix</MIcon>
+                </MButton> *@
+
+
+                @*                 <MMenu OpenOnHover Top OffsetY>
                     <ActivatorContent>
                         <MButton Icon Value="UIMainTabs.Tab_Misc" @attributes="@context.Attrs">
                             <span>Misc</span>
@@ -63,11 +77,11 @@
 
                                 </MListItem>
 
-                                @*                             <MListItem Dense PrependIcon="mdi-book-edit-outline"
+                                                          <MListItem Dense PrependIcon="mdi-book-edit-outline"
                             Title="Quest"
                             Value="UIMainTabs.Tab_Quest">
 
-                            </MListItem> *@
+                            </MListItem>  
 
                                 <MListItem Dense PrependIcon="mdi-auto-fix"
                                            Title="Skill"
@@ -78,7 +92,10 @@
                             </MListItemGroup>
                         </MList>
                     </ChildContent>
-                </MMenu>
+                </MMenu> 
+                *@
+
+
             </MBottomNavigation>
         }
     </MFooter>
