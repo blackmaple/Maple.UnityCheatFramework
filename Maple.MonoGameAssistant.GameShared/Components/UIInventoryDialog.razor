@@ -1,6 +1,6 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
-<MDialog Value="Visible" OnOutsideClick="()=>this.ClosePopupAsync()">
+<MDialog Value="Visible" OnOutsideClick="() => this.ClosePopupAsync()">
     <MCard Tile>
         <MListItem>
             <MListItemAvatar Tile>
@@ -49,7 +49,7 @@
                         Disabled="Loading"
                         Label="@InventoryDisplay.DisplayName"
                         @bind-Value="InventoryInfo.InventoryCount"
-                        NumberProps="@(prop => { prop.Min = 0; prop.Max = 99; prop.Step =1; prop.HideControl=true; })" />
+                        NumberProps="@(prop => { prop.Min = 0; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
         </MCardActions>
     </MCard>
 </MDialog>
