@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Maple.MonoGameAssistant.Common;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.Core
 {
@@ -109,6 +111,11 @@ namespace Maple.MonoGameAssistant.Core
         public sealed override PMonoAddress GetMonoStaticFieldAddress(PMonoDomain pMonoDomain, PMonoClass pMonoClass, int fieldOffset)
         {
             return nint.Zero;
+        }
+
+        public sealed override void SetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, in T_STRUCT input)
+        {
+            this.Runtime.IL2CPP_FIELD_STATIC_SET_VALUE.Invoke(pMonoField, MapleRef<T_STRUCT>.FromRef(ref Unsafe.AsRef(in input)) );
         }
         #endregion
 

@@ -17,8 +17,16 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         [Parameter, EditorRequired, NotNull]
         public GameCharacterStatusDTO? CharacterStatus { get; set; }
 
+        public List<GameSwitchDisplayDTO> CharacterAttributes { set; get; } = [];
 
-
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (CharacterStatus is not null && CharacterStatus.CharacterAttributes is not null)
+            {
+                CharacterAttributes.AddRange(CharacterStatus.CharacterAttributes);
+            }
+        }
 
         private async Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue)
         {

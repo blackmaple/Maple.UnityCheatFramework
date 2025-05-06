@@ -81,7 +81,7 @@
                                             Dense
                                             HideDetails="true"
                                             @bind-Value="@context.DecimalValue"
-                                            NumberProps="@(prop => { prop.Min = 0; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
+                                            NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
 
                             }
                             else

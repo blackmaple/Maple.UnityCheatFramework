@@ -17,6 +17,11 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         {
             this.Core.OnSearchCurrency(SearchContent);
         }
+        private void OnSearch(string? displayCategory)
+        {
+            SearchContent = displayCategory;
+            this.OnSearch();
+        }
         private async Task OnReload()
         {
             using (this.Core.ShowWait())

@@ -86,6 +86,9 @@ namespace Maple.MonoGameAssistant.Core
         public T_STRUCT GetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField) where T_STRUCT : unmanaged;
         bool GetMonoStaticFieldValueAsBuffer(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, Span<byte> buffer);
         string? GetMonoStaticFieldValueAsString(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, int readSize = -1);
+
+        void SetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, in T_STRUCT input) where T_STRUCT : unmanaged;
+
         #endregion
 
         #region MonoType

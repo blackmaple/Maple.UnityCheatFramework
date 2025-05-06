@@ -16,11 +16,14 @@ namespace Maple.MonoGameAssistant.Core
 
         //nint MONO_FIELD_STATIC_SET_VALUE (void *vtable, void* field, void* input)
         //typedef void* (__cdecl *MONO_FIELD_STATIC_SET_VALUE)(void *vtable, void* field, void* input);
-        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<void> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<void>)ptr;
+        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoVirtualTable, PMonoField, nint, void> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoVirtualTable, PMonoField, nint, void>)ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly void Invoke() => _func();
+        public readonly void Invoke(PMonoVirtualTable pMonoVirtualTable, PMonoField pMonoField, nint input) => _func(pMonoVirtualTable, pMonoField, input);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly void Invoke<T>(PMonoVirtualTable pMonoVirtualTable, PMonoField pMonoField, MapleRef<T> input) where T : unmanaged
+            => Invoke(pMonoVirtualTable, pMonoField, input.Ptr);
 
     }
 

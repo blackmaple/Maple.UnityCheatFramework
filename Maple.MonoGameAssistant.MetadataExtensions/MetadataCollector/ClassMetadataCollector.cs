@@ -30,11 +30,17 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             return context.GetMonoStaticFieldValueAsUnmanaged<T_FieldValue>(staticFieldSource.SourceClass, staticFieldSource.RuntimeField);
         }
-        [DoesNotReturn]
+
         public static void SetStaticFieldValue<T_FieldValue>(in MonoStaticFieldSource staticFieldSource, in T_FieldValue value)
             where T_FieldValue : unmanaged
         {
-            throw new NotImplementedException();
+            var context = MonoRuntimeContext.GlobalInstance;
+            if (context is null)
+            {
+                return;
+            }
+            context.SetMonoStaticFieldValue(staticFieldSource.SourceClass, staticFieldSource.RuntimeField, value);
+
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset) where T_FieldValue : unmanaged

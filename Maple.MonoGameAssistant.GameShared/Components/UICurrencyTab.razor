@@ -8,11 +8,11 @@
                         Clearable
                         HideDetails="true"
                         AppendOuterIcon="mdi-magnify"
-                        OnAppendOuterClick="()=>this.OnSearch()"
-                        OnClearClick="()=>this.OnSearch()"
-                        OnEnter="()=>this.OnSearch()">
+                        OnAppendOuterClick="() => this.OnSearch()"
+                        OnClearClick="() => this.OnSearch()"
+                        OnEnter="() => this.OnSearch()">
             </MTextField>
-            <MButton Icon OnClick="()=>this.OnReload()">
+            <MButton Icon OnClick="() => this.OnReload()">
                 <MIcon Color="orange darken-4">mdi-refresh</MIcon>
             </MButton>
             <MButton Icon Disabled>
@@ -37,16 +37,34 @@
                         </MListItemAvatar>
                         <MListItemContent>
                             <MListItemTitle>
-                                @context.ToDisplayName()
+                                <span>@context.ToDisplayName()</span>
+                                <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
+                                    @context.DisplayCategory
+                                </MChip>
                             </MListItemTitle>
                             <MListItemSubtitle>
                                 @context.ToDisplayDesc()
                             </MListItemSubtitle>
+                            <MChipGroup ShowArrows="true">
+                                @{
+                                    var datas = context.CurrencyAttributes.GetItemAttributes(false).ToArray();
+                                    if (datas.Any())
+                                    {
+                                        @foreach (var item in datas)
+                                        {
+                                            <MChip XSmall Outlined>
+                                                <span>@item.DisplayName:</span>@item.DisplayValue
+                                            </MChip>
+                                        }
+
+                                    }
+                                }
+                            </MChipGroup>
 
                         </MListItemContent>
                         <MListItemAction>
                             <MButtonGroup Group Rounded>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="()=>OnSelected(context)">
+                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
                                     <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
                                 </MButton>
 
