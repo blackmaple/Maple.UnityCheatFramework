@@ -106,6 +106,7 @@ namespace Maple.MonoGameAssistant.Core
 
         internal PMONO_VTABLE_GET_STATIC_FIELD_DATA MONO_VTABLE_GET_STATIC_FIELD_DATA;
 
+
         internal PMONO_STRING_NEW MONO_STRING_NEW;
 
         internal PMONO_ARRAY_NEW MONO_ARRAY_NEW;
@@ -115,6 +116,8 @@ namespace Maple.MonoGameAssistant.Core
         internal PMONO_RUNTIME_OBJECT_INIT MONO_RUNTIME_OBJECT_INIT;
 
         internal PMONO_FIELD_STATIC_GET_VALUE MONO_FIELD_STATIC_GET_VALUE;
+        internal PMONO_FIELD_STATIC_SET_VALUE MONO_FIELD_STATIC_SET_VALUE;
+
 
         internal PMONO_OBJECT_UNBOX MONO_OBJECT_UNBOX;
 
@@ -262,7 +265,7 @@ namespace Maple.MonoGameAssistant.Core
 
             init &= TryCreate(hModule, PMONO_FIELD_STATIC_GET_VALUE.mono, out MONO_FIELD_STATIC_GET_VALUE);
 
-            //init &= TryCreate(hModule, PMONO_FIELD_STATIC_SET_VALUE.mono, out MONO_FIELD_STATIC_SET_VALUE);
+            init &= TryCreate(hModule, PMONO_FIELD_STATIC_SET_VALUE.mono, out MONO_FIELD_STATIC_SET_VALUE);
 
             init &= TryCreate(hModule, PMONO_OBJECT_UNBOX.mono, out MONO_OBJECT_UNBOX);
 

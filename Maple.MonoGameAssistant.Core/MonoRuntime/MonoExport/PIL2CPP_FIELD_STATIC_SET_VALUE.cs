@@ -16,11 +16,13 @@ namespace Maple.MonoGameAssistant.Core
 
         //nint IL2CPP_FIELD_STATIC_SET_VALUE (void* field, void* input)
         //typedef void* (__cdecl *IL2CPP_FIELD_STATIC_SET_VALUE)(void* field, void* input);
-        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<void> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<void>)ptr;
+        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoField, nint,void> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoField, nint, void>)ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly void Invoke() => _func();
+        public readonly void Invoke(PMonoField pMonoField,nint input) => _func(pMonoField, input);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly void Invoke<T>(PMonoField pMonoField, MapleRef<T> input) where T : unmanaged => _func(pMonoField, input.Ptr);
 
     }
 

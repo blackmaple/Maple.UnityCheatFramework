@@ -486,6 +486,11 @@ namespace Maple.MonoGameAssistant.Core
 
         }
 
+
+        public void SetMonoStaticFieldValue<T_STRUCT>(PMonoClass pMonoClass, PMonoField pMonoField, in T_STRUCT input) where T_STRUCT : unmanaged
+        {
+            this.RuntiemProvider.SetMonoStaticFieldValue(this.RootDomain, pMonoClass, pMonoField, input);
+        }
         #endregion
 
         #region IMonoRuntiemProvider->MonoClasses

@@ -9,6 +9,8 @@ namespace Maple.MonoGameAssistant.Common
         [MarshalAs(UnmanagedType.SysInt)]
         readonly nint _ptr = ptr;
 
+        public nint Ptr => _ptr;
+
         public MapleRef(scoped ref T data) : this(new(Unsafe.AsPointer(ref data)))
         {
 

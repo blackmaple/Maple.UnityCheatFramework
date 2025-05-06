@@ -563,6 +563,15 @@ namespace Maple.MonoGameAssistant.Core
 
         }
 
+
+        public virtual void SetMonoStaticFieldValue<T_STRUCT>(PMonoDomain pMonoDomain, PMonoClass pMonoClass, PMonoField pMonoField, in T_STRUCT input) where T_STRUCT : unmanaged
+        {
+            var pMonoVirtualTable = this.GetMonoVirtualTable(pMonoDomain, pMonoClass);
+            //    var pMonoStaticFieldData = this.GetMonoStaticFieldData(pMonoVirtualTable);
+            this.Runtime.MONO_FIELD_STATIC_SET_VALUE.Invoke(pMonoVirtualTable, pMonoField, MapleRef<T_STRUCT>.FromRef(ref Unsafe.AsRef(in input)));
+
+        }
+
         #endregion
 
         #region MonoType

@@ -108,11 +108,11 @@ namespace Maple.MonoGameAssistant.GameShared.Service
                 {
                     return cmp;
                 }
-                cmp = string.Compare(x.ObjectId, y.ObjectId);
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
+                //cmp = string.Compare(x.ObjectId, y.ObjectId);
+                //if (cmp != 0)
+                //{
+                //    return cmp;
+                //}
                 return string.Compare(x.DisplayName, y.DisplayName);
             }));
         }

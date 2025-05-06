@@ -17,7 +17,16 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         [Parameter, EditorRequired, NotNull]
         public GameCharacterSkillDTO? CharacterSkill { get; set; }
 
+        public List<GameSkillInfoDTO> SkillInfos { get; set; } = [];
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (CharacterSkill is not null && CharacterSkill.SkillInfos is not null)
+            {
+                this.SkillInfos.AddRange(CharacterSkill.SkillInfos);
+            }
+        }
 
         private bool Loading { set; get; } = false;
         private async Task OnUpdateCharacterSkill(GameSkillInfoDTO selectedData, bool remove)
