@@ -3,7 +3,7 @@ using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 {
     public partial class UICharacterStatusDialog
     {
@@ -34,7 +34,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             {
                 gameValue.Loading = true;
 
-                await this.Core.OnUpdateCharacteStatus(CharacterDisplay, CharacterStatus, gameValue);
+                await Core.OnUpdateCharacteStatus(CharacterDisplay, CharacterStatus, gameValue);
 
             }
             finally

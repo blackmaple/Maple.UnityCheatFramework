@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UIBase
 {
     public class UIRedirect : ComponentBase
     {
@@ -19,7 +19,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             NavigationManager.NavigateTo(Url, false);
         }
 
-         
+
 
     }
 }

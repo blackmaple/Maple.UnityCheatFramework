@@ -28,74 +28,25 @@
         @if (Status == EnumGameServiceStatus.OK)
         {
             <MBottomNavigation @bind-Value="@NavTab" Grow Color="teal" App>
-                <MButton Value="UIMainTabs.Tab_Currency">
-                    <span>Currency</span>
-                    <MIcon> mdi-currency-twd</MIcon>
-
+                <MButton Value="UIMainTabs.Tab_Currency" Icon IconName="mdi-alpha-c-circle-outline" Text>
+                    资产
                 </MButton>
-                <MButton Value="UIMainTabs.Tab_Inventory">
-                    <span>Inventory</span>
-                    <MIcon>mdi-bag-personal-outline</MIcon>
+                <MButton Value="UIMainTabs.Tab_Inventory" Icon IconName="mdi-alpha-i-circle-outline" Text>
+                    资源
                 </MButton>
-                <MButton Value="UIMainTabs.Tab_Character">
-                    <span>Character</span>
-                    <MIcon>mdi-face-man-shimmer-outline</MIcon>
+                <MButton Value="UIMainTabs.Tab_Character" Icon IconName="mdi-alpha-p-circle-outline" Text>
+                    玩家
+                </MButton>
+                <MButton Value="UIMainTabs.Tab_Misc" Icon IconName="mdi-alpha-o-circle-outline" Text>
+                    其他
                 </MButton>
 
-                <MButton Value="UIMainTabs.Tab_Misc">
-                    <span>Misc</span>
-                    <MIcon>mdi-chevron-up</MIcon>
+                <MButton Value="UIMainTabs.Tab_Monster" Icon IconName="mdi-alpha-m-circle-outline" Text>
+                    成员
                 </MButton>
-              <MButton Value="UIMainTabs.Tab_Monster">
-                    <span>Monster</span>
-                    <MIcon>mdi-pig-variant-outline</MIcon>
-                </MButton>@*   
-                <MButton Value="UIMainTabs.Tab_Skill">
-                    <span>Skill</span>
-                    <MIcon>mdi-auto-fix</MIcon>
-                </MButton> *@
-
-
-                @*                 <MMenu OpenOnHover Top OffsetY>
-                    <ActivatorContent>
-                        <MButton Icon Value="UIMainTabs.Tab_Misc" @attributes="@context.Attrs">
-                            <span>Misc</span>
-                            <MIcon>mdi-chevron-up</MIcon>
-                        </MButton>
-                    </ActivatorContent>
-                    <ChildContent>
-                        <MList Dense>
-                            <MListItemGroup @bind-Value="@NavTab" Color="teal">
-                                <MListItem Value="UIMainTabs.Tab_Misc" Dense PrependIcon="mdi-file-question-outline"
-                                           Title="Misc">
-
-                                </MListItem>
-
-                                <MListItem Dense PrependIcon="mdi-pig-variant-outline"
-                                           Title="Monster"
-                                           Value="UIMainTabs.Tab_Monster">
-
-                                </MListItem>
-
-                                                          <MListItem Dense PrependIcon="mdi-book-edit-outline"
-                            Title="Quest"
-                            Value="UIMainTabs.Tab_Quest">
-
-                            </MListItem>  
-
-                                <MListItem Dense PrependIcon="mdi-auto-fix"
-                                           Title="Skill"
-                                           Value="UIMainTabs.Tab_Skill">
-
-                                </MListItem>
-
-                            </MListItemGroup>
-                        </MList>
-                    </ChildContent>
-                </MMenu> 
-                *@
-
-
+                <MButton Value="UIMainTabs.Tab_Forge" Icon IconName="mdi-alpha-f-circle-outline" Text>
+                    锻造
+                </MButton>
             </MBottomNavigation>
         }
     </MFooter>

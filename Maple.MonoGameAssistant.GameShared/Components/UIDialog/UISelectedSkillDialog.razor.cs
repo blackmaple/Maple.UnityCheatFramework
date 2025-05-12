@@ -4,7 +4,7 @@ using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
 {
     public partial class UISelectedSkillDialog
     {
@@ -25,21 +25,21 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         }
         private void OnSearch()
         {
-            this.ListSkill_Search.Clear();
-            IEnumerable<GameSkillDisplayDTO> searchDatas = this.ListSkill_All;
+            ListSkill_Search.Clear();
+            IEnumerable<GameSkillDisplayDTO> searchDatas = ListSkill_All;
 
             if (string.IsNullOrEmpty(SearchContent) == false)
             {
                 searchDatas = searchDatas.Where(p => p.ContainsGameDisplay(SearchContent, p.DisplayCategory));
             }
-            this.ListSkill_Search.AddRange(searchDatas);
+            ListSkill_Search.AddRange(searchDatas);
         }
 
         public async Task OnSelectedData(GameSkillDisplayDTO skillDisplayDTO)
         {
-            if (await this.Core.PopupService.ConfirmAsync("Add Skill", $"Add Skill:{skillDisplayDTO.DisplayName}", AlertTypes.Warning))
+            if (await Core.PopupService.ConfirmAsync("Add Skill", $"Add Skill:{skillDisplayDTO.DisplayName}", AlertTypes.Warning))
             {
-                await this.ClosePopupAsync(skillDisplayDTO);
+                await ClosePopupAsync(skillDisplayDTO);
             }
         }
 

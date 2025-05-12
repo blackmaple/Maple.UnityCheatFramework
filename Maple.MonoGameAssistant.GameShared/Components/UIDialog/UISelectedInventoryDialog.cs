@@ -4,7 +4,7 @@ using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
 {
     public partial class UISelectedInventoryDialog
     {
@@ -25,21 +25,21 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         }
         private void OnSearch()
         {
-            this.ListItem_Search.Clear();
-            IEnumerable<GameInventoryDisplayDTO> searchDatas = this.ListItem_All;
+            ListItem_Search.Clear();
+            IEnumerable<GameInventoryDisplayDTO> searchDatas = ListItem_All;
 
             if (string.IsNullOrEmpty(SearchContent) == false)
             {
                 searchDatas = searchDatas.Where(p => p.ContainsGameDisplay(SearchContent, p.DisplayCategory));
             }
-            this.ListItem_Search.AddRange(searchDatas);
+            ListItem_Search.AddRange(searchDatas);
         }
 
-        public async Task OnSelectedData(GameInventoryDisplayDTO  inventoryDisplayDTO)
+        public async Task OnSelectedData(GameInventoryDisplayDTO inventoryDisplayDTO)
         {
-            if (await this.Core.PopupService.ConfirmAsync($"Add {inventoryDisplayDTO.DisplayCategory}", $"Add {inventoryDisplayDTO.DisplayCategory}:{inventoryDisplayDTO.DisplayName}", AlertTypes.Warning))
+            if (await Core.PopupService.ConfirmAsync($"Add {inventoryDisplayDTO.DisplayCategory}", $"Add {inventoryDisplayDTO.DisplayCategory}:{inventoryDisplayDTO.DisplayName}", AlertTypes.Warning))
             {
-                await this.ClosePopupAsync(inventoryDisplayDTO);
+                await ClosePopupAsync(inventoryDisplayDTO);
             }
         }
 

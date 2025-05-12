@@ -3,7 +3,7 @@ using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 {
     public partial class UICharacterSkillDialog
     {
@@ -24,7 +24,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             base.OnParametersSet();
             if (CharacterSkill is not null && CharacterSkill.SkillInfos is not null)
             {
-                this.SkillInfos.AddRange(CharacterSkill.SkillInfos);
+                SkillInfos.AddRange(CharacterSkill.SkillInfos);
             }
         }
 
@@ -33,12 +33,12 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         {
             try
             {
-                this.Loading = true;
-                await this.Core.OnUpdateCharacterSkill(CharacterDisplay, selectedData, remove);
+                Loading = true;
+                await Core.OnUpdateCharacterSkill(CharacterDisplay, selectedData, remove);
             }
             finally
             {
-                this.Loading = false;
+                Loading = false;
             }
         }
 

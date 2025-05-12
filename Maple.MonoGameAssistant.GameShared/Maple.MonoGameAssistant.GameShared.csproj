@@ -17,14 +17,14 @@
   </ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Masa.Blazor" Version="1.9.1" />
+		<PackageReference Include="Masa.Blazor" Version="1.9.3" />
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Content Update="Components\UISelectedSkillDialog.razor">
+	  <Content Update="Components\UIDialog\UISelectedSkillDialog.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
-	  <Content Update="Components\UIMiscTab.razor">
+	  <Content Update="Components\UIMisc\UIMiscTab.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
 	  <Content Update="Shared\MainLayout.razor">

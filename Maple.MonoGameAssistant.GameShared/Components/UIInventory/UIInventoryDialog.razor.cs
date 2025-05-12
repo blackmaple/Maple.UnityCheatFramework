@@ -3,7 +3,7 @@ using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UIInventory
 {
     public partial class UIInventoryDialog
     {
@@ -23,12 +23,12 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         {
             try
             {
-                this.Loading = true;
-                await this.Core.OnUpdateInventory(InventoryDisplay.DisplayCategory, InventoryInfo);
+                Loading = true;
+                await Core.OnUpdateInventory(InventoryDisplay.DisplayCategory, InventoryInfo);
             }
             finally
             {
-                this.Loading = false;
+                Loading = false;
             }
         }
 
