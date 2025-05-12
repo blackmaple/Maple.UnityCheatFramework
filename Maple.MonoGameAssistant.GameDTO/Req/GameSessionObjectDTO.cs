@@ -10,6 +10,8 @@ namespace Maple.MonoGameAssistant.GameDTO
         public required string Session { set; get; }
 
 
+        public int TabKey { set; get; }
+
         public void ThrowIfGameSessionDiff()
         {
             if (Environment.ProcessId.ToString() != this.Session)
@@ -20,10 +22,11 @@ namespace Maple.MonoGameAssistant.GameDTO
 
         [DoesNotReturn]
         public static void ThrowNotFound(string? name) => GameException.Throw($"NOT FOUND {name}");
+
         [DoesNotReturn]
         public static T ThrowNotFound<T>(string? name) => GameException.Throw<T>($"NOT FOUND {name}");
 
- 
+
 
 
     }

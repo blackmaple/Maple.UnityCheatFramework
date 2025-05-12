@@ -3,7 +3,7 @@ using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 {
     public partial class UICharacterEquipmentDialog
     {
@@ -24,13 +24,13 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         {
             try
             {
-                this.Loading = true;
-                await this.Core.OnUpdateCharacterEquipment(CharacterDisplay, selectedData, remove);
+                Loading = true;
+                await Core.OnUpdateCharacterEquipment(CharacterDisplay, selectedData, remove);
               
             }
             finally
             {
-                this.Loading = false;
+                Loading = false;
             }
         }
 

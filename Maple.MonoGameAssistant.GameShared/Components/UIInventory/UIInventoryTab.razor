@@ -1,8 +1,10 @@
-﻿
+﻿@inherits UICommonTab
+
 <MCard Outlined MaxWidth="1024" Class="mx-auto">
     <MCardTitle>
         <MToolbar Dense Flat>
             <MTextField Label="SearchContent"
+                        Color="primary"
                         @bind-Value="@SearchContent"
                         TValue="string"
                         Clearable
@@ -15,17 +17,15 @@
             <MButton Icon OnClick="()=>this.OnReload()">
                 <MIcon Color="orange darken-4">mdi-refresh</MIcon>
             </MButton>
-            <MButton Icon Disabled>
-                <MIcon Color="orange darken-4">mdi-cog-outline</MIcon>
-            </MButton>
+
         </MToolbar>
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListMonster_Search">
-                <ItemContent>
-                    <MListItem Dense>
-                        <MListItemAvatar Tile Size="36">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListInventory_Search">
+                <ItemContent >
+                    <MListItem TwoLine Slim  Dense>
+                        <MListItemAvatar Rounded="true" Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
                                     <MIcon>mdi-border-none-variant</MIcon>
@@ -37,7 +37,7 @@
                         <MListItemContent>
                             <MListItemTitle>
                                 <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green">
+                                <MChip XSmall Outlined Color="green" OnClick="()=>this.OnSearch(context.DisplayCategory)">
                                     @context.DisplayCategory
                                 </MChip>
 
@@ -45,36 +45,36 @@
                             <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
                                 @{
-                                    foreach (var att in context.MonsterAttributes.GetItemAttributes(true))
+                                    var datas = context.ItemAttributes.GetItemAttributes(false).ToArray();
+                                    if (datas.Any())
                                     {
-                                        <MChip Small Outlined>
-                                            <span>@att.DisplayName:</span>@att.DisplayValue
-                                        </MChip>
+
+                                        @foreach (var item in datas)
+                                        {
+                                            <MChip XSmall Outlined>
+                                                <span>@item.DisplayName:</span>@item.DisplayValue
+                                            </MChip>
+                                        }
 
                                     }
                                 }
                             </MChipGroup>
-
                         </MListItemContent>
                         <MListItemAction>
                             <MButtonGroup Group Rounded>
-                                <MButton OnClick="()=>OnSelected(context)">
-                                    <MIcon Color="orange darken-4">mdi-smart-card-outline</MIcon>
+                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="()=>OnSelected(context)">
+                                    <MIcon Color="orange darken-4">
+                                        mdi-file-edit-outline
+                                    </MIcon>
                                 </MButton>
-                                <MButton OnClick="()=>OnAddMonsterMember(context)">
-                                    <MIcon Color="orange darken-4">mdi-plus</MIcon>
-                                </MButton>
-
                             </MButtonGroup>
                         </MListItemAction>
-
                     </MListItem>
 
                     <MDivider></MDivider>
                 </ItemContent>
             </MVirtualScroll>
         </UIDynamicHeight>
-
     </MCardText>
 </MCard>
 

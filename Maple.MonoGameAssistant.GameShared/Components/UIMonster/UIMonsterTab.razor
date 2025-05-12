@@ -1,61 +1,54 @@
-﻿<MCard Outlined MaxWidth="1024" Class="mx-auto">
+﻿@inherits UICommonTab
+
+<MCard Outlined MaxWidth="1024" Class="mx-auto">
     <MCardTitle>
         <MToolbar Dense Flat>
             <MTextField Label="SearchContent"
-                        Color="primary"
                         @bind-Value="@SearchContent"
                         TValue="string"
                         Clearable
                         HideDetails="true"
                         AppendOuterIcon="mdi-magnify"
-                        OnAppendOuterClick="() => this.OnSearch()"
-                        OnClearClick="() => this.OnSearch()"
-                        OnEnter="() => this.OnSearch()">
+                        OnAppendOuterClick="()=>this.OnSearch()"
+                        OnClearClick="()=>this.OnSearch()"
+                        OnEnter="()=>this.OnSearch()">
             </MTextField>
-            <MButton Icon OnClick="() => this.OnReload()">
+            <MButton Icon OnClick="()=>this.OnReload()">
                 <MIcon Color="orange darken-4">mdi-refresh</MIcon>
-            </MButton>
-            <MButton Icon Disabled>
-                <MIcon Color="orange darken-4">mdi-cog-outline</MIcon>
             </MButton>
 
         </MToolbar>
-
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCurrency_Search">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListMonster_Search">
                 <ItemContent>
-                    <MListItem Dense ThreeLine>
-                        <MListItemAvatar Size="36">
+                    <MListItem Dense>
+                        <MListItemAvatar Tile Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
                                     <MIcon>mdi-border-none-variant</MIcon>
                                 </PlaceholderContent>
                             </MImage>
                         </MListItemAvatar>
+
+
                         <MListItemContent>
                             <MListItemTitle>
                                 <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
+                                <MChip XSmall Outlined Color="green">
                                     @context.DisplayCategory
                                 </MChip>
+
                             </MListItemTitle>
-                            <MListItemSubtitle>
-                                @context.ToDisplayDesc()
-                            </MListItemSubtitle>
+                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
                                 @{
-                                    var datas = context.CurrencyAttributes.GetItemAttributes(false).ToArray();
-                                    if (datas.Any())
+                                    foreach (var att in context.MonsterAttributes.GetItemAttributes(true))
                                     {
-                                        @foreach (var item in datas)
-                                        {
-                                            <MChip XSmall Outlined>
-                                                <span>@item.DisplayName:</span>@item.DisplayValue
-                                            </MChip>
-                                        }
+                                        <MChip Small Outlined>
+                                            <span>@att.DisplayName:</span>@att.DisplayValue
+                                        </MChip>
 
                                     }
                                 }
@@ -64,13 +57,18 @@
                         </MListItemContent>
                         <MListItemAction>
                             <MButtonGroup Group Rounded>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
-                                    <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
+                                <MButton OnClick="()=>OnSelected(context)">
+                                    <MIcon Color="orange darken-4">mdi-smart-card-outline</MIcon>
+                                </MButton>
+                                <MButton OnClick="()=>OnAddMonsterMember(context)">
+                                    <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                 </MButton>
 
                             </MButtonGroup>
                         </MListItemAction>
+
                     </MListItem>
+
                     <MDivider></MDivider>
                 </ItemContent>
             </MVirtualScroll>

@@ -1,27 +1,25 @@
 using Maple.MonoGameAssistant.GameDTO;
+using Maple.MonoGameAssistant.GameShared.Components.UIBase;
 using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maple.MonoGameAssistant.GameShared.Components
+namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 {
     public partial class UICharacterTab
     {
-        [Inject]
-        [NotNull]
-        private GameCoreService? Core { get; set; }
-        private bool Fab { get; set; }
-        private string? SearchContent { set; get; }
-        private void OnSearch()
+
+        protected sealed override ValueTask OnSearch()
         {
-            this.Core.OnSearchCharacter(SearchContent);
+            Core.OnSearchCharacter(SearchContent);
+            return ValueTask.CompletedTask;
         }
 
-        private async Task OnReload()
+        protected sealed override async Task OnReload()
         {
-            using (this.Core.ShowWait())
-            { 
-                await this.Core.GetListCharacterDisplayAsync();
+            using (Core.ShowWait())
+            {
+                await Core.GetListCharacterDisplayAsync();
             }
         }
 
@@ -30,8 +28,8 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             try
             {
                 gameCharacter.Loading = true;
-                await this.Core.OnSelectedCharacterStatus(gameCharacter);
-               
+                await Core.OnSelectedCharacterStatus(gameCharacter);
+
             }
             finally
             {
@@ -44,7 +42,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             try
             {
                 gameCharacter.Loading = true;
-                await this.Core.OnSelectedCharacterSkill(gameCharacter);
+                await Core.OnSelectedCharacterSkill(gameCharacter);
             }
             finally
             {
@@ -52,12 +50,13 @@ namespace Maple.MonoGameAssistant.GameShared.Components
             }
         }
 
+        [Obsolete("remove...")]
         private async Task OnSelectedCharacterEquipment(GameCharacterDisplayDTO gameCharacter)
         {
             try
             {
                 gameCharacter.Loading = true;
-                await this.Core.OnSelectedCharacterEquipment(gameCharacter);
+                await Core.OnSelectedCharacterEquipment(gameCharacter);
             }
             finally
             {

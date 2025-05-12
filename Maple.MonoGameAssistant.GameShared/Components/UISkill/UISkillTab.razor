@@ -1,4 +1,6 @@
-﻿<MCard Outlined MaxWidth="1024" Class="mx-auto">
+﻿@inherits UICommonTab
+
+<MCard Outlined MaxWidth="1024" Class="mx-auto">
     <MCardTitle>
         <MToolbar Dense Flat>
             <MTextField Label="SearchContent"
@@ -15,9 +17,7 @@
             <MButton Icon OnClick="()=>this.OnReload()">
                 <MIcon Color="orange darken-4">mdi-refresh</MIcon>
             </MButton>
-            <MButton Icon Disabled>
-                <MIcon Color="orange darken-4">mdi-cog-outline</MIcon>
-            </MButton>
+
         </MToolbar>
     </MCardTitle>
     <MCardText>
