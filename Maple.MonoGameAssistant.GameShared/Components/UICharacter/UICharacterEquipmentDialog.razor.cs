@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 {
+    [Obsolete("remove...")]
     public partial class UICharacterEquipmentDialog
     {
         [Inject]
@@ -20,6 +21,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 
 
         private bool Loading { set; get; } = false;
+        [Obsolete("remove...")]
         private async Task OnUpdateCharacterEquipment(GameEquipmentInfoDTO selectedData, bool remove)
         {
             try

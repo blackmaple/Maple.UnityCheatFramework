@@ -208,6 +208,7 @@ namespace Maple.MonoGameAssistant.GameCore
         /// <param name="gameSessionInfo"></param>
         /// <param name="gameCharacterDisplay"></param>
         /// <returns></returns>
+        [Obsolete("remove...")]
         public Task<MonoResultDTO<GameCharacterEquipmentDTO>> GetCharacterEquipmentAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay)
         {
             return this.TrySendAsync<GameCharacterObjectDTO, GameCharacterEquipmentDTO>("game/GetCharacterEquipment", new GameCharacterObjectDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory });
@@ -221,6 +222,7 @@ namespace Maple.MonoGameAssistant.GameCore
         /// <param name="oldEquip"></param>
         /// <param name="newEquip">为空则移除装备</param>
         /// <returns></returns>
+        [Obsolete("remove...")]
         public Task<MonoResultDTO<GameCharacterEquipmentDTO>> UpdateCharacterEquipmentAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay, string? modifyCategory, string oldEquip, string newEquip)
         {
             return this.TrySendAsync<GameCharacterModifyDTO, GameCharacterEquipmentDTO>("game/UpdateCharacterEquipment", new GameCharacterModifyDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory, ModifyCategory = modifyCategory, ModifyObject = oldEquip, NewValue = newEquip });
@@ -272,62 +274,7 @@ namespace Maple.MonoGameAssistant.GameCore
 
         #endregion
 
-        #region Forge
-        /// <summary>
-        /// Api.获取游戏角色列表
-        /// </summary>
-        /// <param name="gameSessionInfo"></param>
-        /// <returns></returns>
-        public Task<MonoResultDTO<GameCharacterDisplayDTO[]>> GetListForgeDisplayAsync(GameSessionInfoDTO gameSessionInfo)
-        {
-            return this.TrySendAsync<GameSessionObjectDTO, GameCharacterDisplayDTO[]>("game/GetListCharacterDisplay", new GameSessionObjectDTO() { Session = gameSessionInfo.ObjectId });
-        }
-        /// <summary>
-        /// Api.获取角色状态信息
-        /// </summary>
-        /// <param name="gameSessionInfo"></param>
-        /// <param name="gameCharacterDisplay"></param>
-        /// <returns></returns>
-        public Task<MonoResultDTO<GameCharacterStatusDTO>> GetForgeStatusAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay)
-        {
-            return this.TrySendAsync<GameCharacterObjectDTO, GameCharacterStatusDTO>("game/GetCharacterStatus", new GameCharacterObjectDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory });
-        }
-        /// <summary>
-        /// Api.更新角色状态值
-        /// </summary>
-        /// <param name="gameSessionInfo"></param>
-        /// <param name="gameCharacterDisplay"></param>
-        /// <param name="gameValueInfo"></param>
-        /// <returns></returns>
-        public Task<MonoResultDTO<GameCharacterStatusDTO>> UpdateForgeStatusAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay, GameSwitchDisplayDTO gameValueInfo)
-        {
-            return this.TrySendAsync<GameCharacterModifyDTO, GameCharacterStatusDTO>("game/UpdateCharacterStatus", new GameCharacterModifyDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory, ModifyCategory = gameValueInfo.DisplayCategory, ModifyObject = gameValueInfo.ObjectId, NewValue = gameValueInfo.ContentValue });
-        }
-        /// <summary>
-        /// Api.获取角色技能列表
-        /// </summary>
-        /// <param name="gameSessionInfo"></param>
-        /// <param name="gameCharacterDisplay"></param>
-        /// <returns></returns>
-        public Task<MonoResultDTO<GameCharacterSkillDTO>> GetForgeSkillAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay)
-        {
-            return this.TrySendAsync<GameCharacterObjectDTO, GameCharacterSkillDTO>("game/GetCharacterSkill", new GameCharacterObjectDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory });
-        }
-        /// <summary>
-        /// Api.更新角色技能
-        /// </summary>
-        /// <param name="gameSessionInfo"></param>
-        /// <param name="gameCharacterDisplay"></param>
-        /// <param name="modifyCategory"></param>
-        /// <param name="oldSkill"></param>
-        /// <param name="newSkill">为空表示移除技能</param>
-        /// <returns></returns>
-        public Task<MonoResultDTO<GameCharacterSkillDTO>> UpdateForgeSkillAsync(GameSessionInfoDTO gameSessionInfo, GameCharacterDisplayDTO gameCharacterDisplay, string? modifyCategory, string oldSkill, string newSkill)
-        {
-            return this.TrySendAsync<GameCharacterModifyDTO, GameCharacterSkillDTO>("game/UpdateCharacterSkill", new GameCharacterModifyDTO() { Session = gameSessionInfo.ObjectId, CharacterId = gameCharacterDisplay.ObjectId, CharacterCategory = gameCharacterDisplay.DisplayCategory, ModifyCategory = modifyCategory, ModifyObject = oldSkill, NewValue = newSkill });
-        }
 
-        #endregion
         //public Task<MonoResultDTO<GameMonsterInfoDTO[]>> GetListMonsterInfoAsync(GameSessionInfoDTO gameSessionInfo)
         //{
         //    return this.TrySendAsync<GameSessionObjectDTO, GameMonsterInfoDTO[]>("game/GetListMonsterInfo", new GameSessionObjectDTO() { Session = gameSessionInfo.ObjectId });

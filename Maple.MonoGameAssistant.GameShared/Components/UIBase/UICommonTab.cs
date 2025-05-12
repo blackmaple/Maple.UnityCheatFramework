@@ -11,8 +11,8 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIBase
         [NotNull]
         protected GameCoreService? Core { get; set; }
         protected string? SearchContent { set; get; }
-        [Parameter]
-        public EnumGameUITabKey TabKey { set; get; }
+        //[Parameter]
+        //public EnumGameUITabKey TabKey { set; get; }
         protected virtual ValueTask OnSearch()
         {
             return ValueTask.CompletedTask;

@@ -10,7 +10,7 @@ namespace Maple.MonoGameAssistant.GameDTO
         public required string Session { set; get; }
 
 
-        public int TabKey { set; get; }
+        //public int TabKey { set; get; }
 
         public void ThrowIfGameSessionDiff()
         {
