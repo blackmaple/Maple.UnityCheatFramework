@@ -53,15 +53,15 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == SearchService.TrySearchClass(code, out var descriptionClassDTO))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code:X8}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code:X}");
             }
             if (false == TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code:X8}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code:X}");
             }
             if (false == TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code:X8}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code:X}");
             }
             return classMetadataCollection;
         }
@@ -72,7 +72,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == classMetadataCollection.TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorExtensions.TryGetFieldMetadata)}:{descriptionFieldDTO.Code}");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorExtensions.TryGetFieldMetadata)}:{descriptionFieldDTO.Code:X}");
             }
             return fieldInfoDTO;
         }
@@ -80,7 +80,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == SearchService.TrySearchField(code, out var descriptionFieldDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code}");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorSearchService.TrySearchField)}:{code:X}");
             }
             return GetFieldMetadata(classMetadataCollection, descriptionFieldDTO);
         }
@@ -91,11 +91,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == classMetadataCollection.TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code:X}");
             }
             if (false == runtimeContext.TryGetMethodPointer(methodInfoDTO, out var pointer))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code:X}");
             }
             return new(methodInfoDTO.Pointer, pointer);
         }
@@ -103,7 +103,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == SearchService.TrySearchMethod(code, out var descriptionMethodDTO))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code:X}");
             }
             return GetMethodDelegate(this.RuntimeContext, classMetadataCollection, descriptionMethodDTO);
         }
