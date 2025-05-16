@@ -16,7 +16,7 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
     public class GameCoreService(GameHttpClientService gameHttp, IPopupService popupService, NavigationManager navigationManager)
     {
-        const string ShellUI_Ver = "0.15";
+        const string ShellUI_Ver = "0.2 (MASA Blazor:1.9.3)";
 
         #region Service
         GameHttpClientService Http { get; } = gameHttp;
