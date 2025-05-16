@@ -11,20 +11,23 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIInventory
         [NotNull]
         private GameCoreService? Core { get; set; }
 
-        [Parameter, EditorRequired, NotNull]
-        public GameInventoryDisplayDTO? InventoryDisplay { get; set; }
+        public GameInventoryDisplayDTO InventoryDisplay => InventoryView.InventoryDisplay;
+
+        public GameInventoryInfoDTO InventoryInfo => InventoryView.InventoryInfo;
+
+
 
         [Parameter, EditorRequired, NotNull]
-        public GameInventoryInfoDTO? InventoryInfo { get; set; }
+        public GameInventoryView? InventoryView { get; set; }
 
-     
         private bool Loading { set; get; } = false;
         private async Task OnUpdateInventoryInfo()
         {
             try
             {
                 Loading = true;
-                await Core.OnUpdateInventory(InventoryDisplay.DisplayCategory, InventoryInfo);
+                //  await Core.OnUpdateInventory(InventoryDisplay.DisplayCategory, InventoryInfo);
+                await Core.OnUpdateInventory(InventoryView);
             }
             finally
             {
