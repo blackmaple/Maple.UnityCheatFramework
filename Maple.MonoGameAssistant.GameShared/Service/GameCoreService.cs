@@ -178,10 +178,12 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             await PopupService.OpenAsync(typeof(UICurrencyDialog), new Dictionary<string, object?>()
             {
-                { nameof(UICurrencyDialog.CurrencyDisplay), selectedData },
-                { nameof(UICurrencyDialog.CurrencyInfo), currencyInfo }
+                { nameof(UICurrencyDialog.CurrencyView), new GameCurrencyView(){ CurrencyDisplay = selectedData,CurrencyInfo =  currencyInfo } },
+                //{ nameof(UICurrencyDialog.CurrencyDisplay), selectedData },
+                //{ nameof(UICurrencyDialog.CurrencyInfo), currencyInfo }
             });
         }
+        [Obsolete("remove...")]
         public async ValueTask OnUpdateCurrency(GameCurrencyInfoDTO? selectedData, string? category = default)
         {
             if (this.GameSessionInfo is null || selectedData is null)
@@ -198,6 +200,27 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             selectedData.DisplayValue = currencyInfo.DisplayValue;
             await this.ShowInfoAsync($"Update:{currencyInfo.DisplayValue}");
+        }
+        public async ValueTask OnUpdateCurrency(GameCurrencyView currencyView)
+        {
+            var currencyInfoDTO = currencyView.CurrencyInfo;
+
+            if (this.GameSessionInfo is null || currencyInfoDTO is null)
+            {
+                return;
+            }
+
+            var category = currencyView.CurrencyDisplay.DisplayCategory;
+            var dto = await this.Http.UpdateCurrencyInfoAsync(this.GameSessionInfo, currencyInfoDTO, category);
+            if (false == dto.TryGet(out var newCurrencyInfo))
+            {
+                await this.ShowErrorAsync(dto.MSG);
+                return;
+            }
+
+            currencyView.Update(newCurrencyInfo);
+            await this.ShowInfoAsync(currencyView.ToString());
+
         }
 
         #endregion
@@ -259,11 +282,14 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             await PopupService.OpenAsync(typeof(UIInventoryDialog), new Dictionary<string, object?>()
             {
-                { nameof(UIInventoryDialog.InventoryDisplay), selectedData },
-                { nameof(UIInventoryDialog.InventoryInfo), inventoryInfo }
+                { nameof(UIInventoryDialog.InventoryView),new GameInventoryView(){ InventoryDisplay = selectedData,InventoryInfo = inventoryInfo } }
+                //{ nameof(UIInventoryDialog.InventoryDisplay), selectedData },
+                //{ nameof(UIInventoryDialog.InventoryInfo), inventoryInfo }
             });
 
         }
+
+        [Obsolete("remove...")]
         public async ValueTask OnUpdateInventory(string? category, GameInventoryInfoDTO? selectedData)
         {
             if (this.GameSessionInfo is null || selectedData is null)
@@ -281,6 +307,25 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             selectedData.DisplayValue = inventoryInfo.DisplayValue;
             await this.ShowInfoAsync($"Update:{selectedData.DisplayValue}");
+        }
+        public async ValueTask OnUpdateInventory(GameInventoryView inventoryView)
+        {
+            var inventoryInfo = inventoryView.InventoryInfo;
+            if (this.GameSessionInfo is null || inventoryInfo is null)
+            {
+                return;
+            }
+
+            var category = inventoryView.InventoryDisplay.DisplayCategory;
+            var dto = await this.Http.UpdateInventoryInfoAsync(this.GameSessionInfo, category, inventoryInfo);
+            if (false == dto.TryGet(out var newInventoryInfo))
+            {
+                await this.ShowErrorAsync(dto.MSG);
+                return;
+            }
+
+            inventoryView.Update(newInventoryInfo);
+            await this.ShowInfoAsync(inventoryView.ToString());
         }
 
         #endregion

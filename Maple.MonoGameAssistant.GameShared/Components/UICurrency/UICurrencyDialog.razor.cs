@@ -11,12 +11,11 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICurrency
         [NotNull]
         private GameCoreService? Core { get; set; }
 
-        [Parameter, EditorRequired, NotNull]
-        public GameCurrencyDisplayDTO? CurrencyDisplay { get; set; }
+        public GameCurrencyDisplayDTO CurrencyDisplay => CurrencyView.CurrencyDisplay;
+        public GameCurrencyInfoDTO CurrencyInfo => CurrencyView.CurrencyInfo;
 
         [Parameter, EditorRequired, NotNull]
-        public GameCurrencyInfoDTO? CurrencyInfo { get; set; }
-
+        public GameCurrencyView? CurrencyView { get; set; }
 
 
         private async Task OnUpdateCurrency()
@@ -24,7 +23,8 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICurrency
             try
             {
                 CurrencyDisplay.Loading = true;
-                await Core.OnUpdateCurrency(CurrencyInfo, CurrencyDisplay.DisplayCategory);
+       //         await Core.OnUpdateCurrency(CurrencyInfo, CurrencyDisplay.DisplayCategory);
+                await Core.OnUpdateCurrency(this.CurrencyView);
             }
             finally
             {
