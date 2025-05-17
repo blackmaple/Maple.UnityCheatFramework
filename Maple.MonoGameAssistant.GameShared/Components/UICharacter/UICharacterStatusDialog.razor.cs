@@ -1,5 +1,7 @@
 using Maple.MonoGameAssistant.GameDTO;
+using Maple.MonoGameAssistant.GameShared.ModelView;
 using Maple.MonoGameAssistant.GameShared.Service;
+using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,22 +13,16 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
         [NotNull]
         private GameCoreService? Core { get; set; }
 
-        [Parameter, EditorRequired, NotNull]
-        public GameCharacterDisplayDTO? CharacterDisplay { get; set; }
+        public GameCharacterDisplayDTO CharacterDisplay => StatusView.CharacterDisplay;
+
+        public GameCharacterStatusDTO CharacterStatus => StatusView.CharacterStatus;
+
+        public List<GameSwitchDisplayDTO> CharacterAttributes => StatusView.CharacterAttributes;
+
 
         [Parameter, EditorRequired, NotNull]
-        public GameCharacterStatusDTO? CharacterStatus { get; set; }
+        public GameCharacterStatusView StatusView { get; set; }
 
-        public List<GameSwitchDisplayDTO> CharacterAttributes { set; get; } = [];
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            if (CharacterStatus is not null && CharacterStatus.CharacterAttributes is not null)
-            {
-                CharacterAttributes.AddRange(CharacterStatus.CharacterAttributes);
-            }
-        }
 
         private async Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue)
         {
@@ -34,7 +30,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
             {
                 gameValue.Loading = true;
 
-                await Core.OnUpdateCharacteStatus(CharacterDisplay, CharacterStatus, gameValue);
+                await Core.OnUpdateCharacteStatus(this.StatusView, gameValue);
 
             }
             finally

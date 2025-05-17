@@ -14,7 +14,7 @@
                         OnClearClick="()=>this.OnSearch()"
                         OnEnter="()=>this.OnSearch()">
             </MTextField>
-            <MButton Icon OnClick="()=>this.OnReload()">
+            <MButton Icon OnClick="() => this.OnReload()">
                 <MIcon Color="orange darken-4">mdi-refresh</MIcon>
             </MButton>
 
@@ -23,8 +23,8 @@
     <MCardText>
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListInventory_Search">
-                <ItemContent >
-                    <MListItem TwoLine Slim  Dense>
+                <ItemContent>
+                    <MListItem ThreeLine Dense Slim>
                         <MListItemAvatar Rounded="true" Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
@@ -32,42 +32,30 @@
                                 </PlaceholderContent>
                             </MImage>
                         </MListItemAvatar>
-
-
                         <MListItemContent>
                             <MListItemTitle>
                                 <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green" OnClick="()=>this.OnSearch(context.DisplayCategory)">
+                                <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
                                     @context.DisplayCategory
                                 </MChip>
 
                             </MListItemTitle>
                             <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
-                                @{
-                                    var datas = context.ItemAttributes.GetItemAttributes(false).ToArray();
-                                    if (datas.Any())
-                                    {
-
-                                        @foreach (var item in datas)
-                                        {
-                                            <MChip XSmall Outlined>
-                                                <span>@item.DisplayName:</span>@item.DisplayValue
-                                            </MChip>
-                                        }
-
-                                    }
+                                @foreach (var item in context.ItemAttributes.GetItemAttributes(true))
+                                {
+                                    <MChip XSmall Outlined>
+                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
+                                    </MChip>
                                 }
                             </MChipGroup>
                         </MListItemContent>
                         <MListItemAction>
-                            <MButtonGroup Group Rounded>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="()=>OnSelected(context)">
-                                    <MIcon Color="orange darken-4">
-                                        mdi-file-edit-outline
-                                    </MIcon>
-                                </MButton>
-                            </MButtonGroup>
+                            <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
+                                <MIcon Color="orange darken-4">
+                                    mdi-file-edit-outline
+                                </MIcon>
+                            </MButton>
                         </MListItemAction>
                     </MListItem>
 

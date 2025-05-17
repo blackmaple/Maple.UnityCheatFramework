@@ -1,4 +1,5 @@
 using Maple.MonoGameAssistant.GameDTO;
+using Maple.MonoGameAssistant.GameShared.ModelView;
 using Maple.MonoGameAssistant.GameShared.Service;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;

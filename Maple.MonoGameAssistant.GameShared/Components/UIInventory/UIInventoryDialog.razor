@@ -1,9 +1,9 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
-<MDialog Value="Visible" OnOutsideClick="() => this.ClosePopupAsync()">
-    <MCard Tile>
-        <MListItem>
-            <MListItemAvatar Tile>
+<MDialog Value="Visible" MaxWidth="360" OnOutsideClick="() => this.ClosePopupAsync()">
+    <MCard Outlined>
+        <MListItem Dense>
+            <MListItemAvatar Rounded="true" Size="36">
                 <MImage Src="@InventoryDisplay.DisplayImage">
                     <PlaceholderContent>
                         <MIcon>mdi-border-none-variant</MIcon>
@@ -12,33 +12,25 @@
             </MListItemAvatar>
             <MListItemContent>
                 <MListItemTitle>
-                    @InventoryDisplay.ToDisplayName()
-                </MListItemTitle>
-                <MListItemSubtitle>
-
+                    <span>@InventoryDisplay.ToDisplayName()</span>
                     <MChip XSmall Outlined Color="green">
                         @InventoryDisplay.DisplayCategory
                     </MChip>
-                </MListItemSubtitle>
+                </MListItemTitle>
+              
             </MListItemContent>
         </MListItem>
 
         <MCardSubtitle>@InventoryDisplay.ToDisplayDesc()</MCardSubtitle>
         <MCardText>
-            @{
-                var datas = InventoryDisplay.ItemAttributes.GetItemAttributes(false).ToArray();
-                if (datas.Any())
+            <MChipGroup Column>
+                @foreach (var item in InventoryDisplay.ItemAttributes.GetItemAttributes(false))
                 {
-                    <MDescriptions Dense Bordered AlignCenter Vertical Column="4">
-                        @foreach (var item in datas)
-                        {
-                            <MDescriptionsItem Label="@item.DisplayName">
-                                @item.DisplayValue
-                            </MDescriptionsItem>
-                        }
-                    </MDescriptions>
+                    <MChip Outlined>
+                        <span>@item.ToDisplayName():</span>@item.DisplayValue
+                    </MChip>
                 }
-            }
+            </MChipGroup>
         </MCardText>
         <MCardActions>
             <MTextField AppendOuterIcon="mdi-pencil-outline"

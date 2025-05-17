@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
 {
-    [Obsolete("remove...")]
     public partial class UISelectedInventoryDialog
     {
         [Inject]

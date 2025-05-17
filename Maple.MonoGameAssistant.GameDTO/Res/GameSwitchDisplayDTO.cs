@@ -93,6 +93,8 @@ namespace Maple.MonoGameAssistant.GameDTO
         public bool SwitchesType => UIType == (int)EnumGameSwitchUIType.Switches;
         [JsonIgnore]
         public bool SelectsType => UIType == (int)EnumGameSwitchUIType.Selects && SelectedContents is not null;
+        [JsonIgnore]
+        public bool MultipleType => UIType == (int)EnumGameSwitchUIType.CheckedBox && SelectedContents is not null;
 
 
         [JsonIgnore]
@@ -139,6 +141,9 @@ namespace Maple.MonoGameAssistant.GameDTO
         /// 列表
         /// </summary>
         Selects = 4,
-
+        /// <summary>
+        /// 多选
+        /// </summary>
+        CheckedBox = 5,
     }
 }

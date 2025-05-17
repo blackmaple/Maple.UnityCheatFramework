@@ -14,9 +14,9 @@ namespace Maple.MonoGameAssistant.GameShared.Components
         public static StringNumber Tab_Character { get; } = (int)EnumGameUITabKey.Tab_Character;
         public static StringNumber Tab_Misc { get; } = (int)EnumGameUITabKey.Tab_Misc;
         public static StringNumber Tab_Monster { get; } = (int)EnumGameUITabKey.Tab_Monster;
-        public static StringNumber Tab_Quest { get; } = (int)EnumGameUITabKey.Tab_Quest;
+        //public static StringNumber Tab_Quest { get; } = (int)EnumGameUITabKey.Tab_Quest;
         public static StringNumber Tab_Skill { get; } = (int)EnumGameUITabKey.Tab_Skill;
-        public static StringNumber Tab_Forge { get; } = (int)EnumGameUITabKey.Tab_Forge;
+        //public static StringNumber Tab_Forge { get; } = (int)EnumGameUITabKey.Tab_Forge;
 
 
         [NotNull]

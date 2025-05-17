@@ -5,7 +5,7 @@
         <MToolbar>
 
             <MListItem>
-                <MListItemAvatar Tile>
+                <MListItemAvatar Rounded="true" Size="36">
                     <MImage Src="@CharacterDisplay.DisplayImage">
                         <PlaceholderContent>
                             <MIcon>mdi-border-none-variant</MIcon>
@@ -48,7 +48,7 @@
                         @foreach (var item in equipInfos)
                         {
                             <MListItem Dense @key=item>
-                                <MListItemAvatar Tile Size="36">
+                                <MListItemAvatar Rounded="true" Size="36">
                                     <MImage Src="@item.DisplayImage">
                                         <PlaceholderContent>
                                             <MIcon>mdi-border-none-variant</MIcon>

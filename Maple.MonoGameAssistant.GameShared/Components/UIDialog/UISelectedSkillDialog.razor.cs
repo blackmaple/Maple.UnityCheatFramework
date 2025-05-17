@@ -37,7 +37,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
 
         public async Task OnSelectedData(GameSkillDisplayDTO skillDisplayDTO)
         {
-            if (await Core.PopupService.ConfirmAsync("Add Skill", $"Add Skill:{skillDisplayDTO.DisplayName}", AlertTypes.Warning))
+            if (await Core.PopupService.ConfirmAsync("Add Object", $"Add {skillDisplayDTO.DisplayCategory}:{skillDisplayDTO.DisplayName}", AlertTypes.Warning))
             {
                 await ClosePopupAsync(skillDisplayDTO);
             }

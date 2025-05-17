@@ -3,9 +3,8 @@
 <MDialog Value="Visible" Fullscreen >
     <MCard Tile >
         <MToolbar>
-
             <MListItem>
-                <MListItemAvatar Tile>
+                <MListItemAvatar Rounded="true" Size="36">
                     <MImage Src="@MonsterDisplayDTO.DisplayImage">
                         <PlaceholderContent>
                             <MIcon>mdi-border-none-variant</MIcon>
@@ -14,17 +13,14 @@
                 </MListItemAvatar>
                 <MListItemContent>
                     <MListItemTitle>
-                        @MonsterDisplayDTO.ToDisplayName()
-                    </MListItemTitle>
-                    <MListItemSubtitle>
-
+                        <span> @MonsterDisplayDTO.ToDisplayName()</span>
                         <MChip XSmall Outlined Color="green">
                             @MonsterDisplayDTO.DisplayCategory
                         </MChip>
-                    </MListItemSubtitle>
+                    </MListItemTitle>
+                
                 </MListItemContent>
             </MListItem>
-
             <MSpacer></MSpacer>
             <MToolbarItems>
                 <MButton Icon
@@ -36,37 +32,59 @@
 
         <MCardSubtitle>@MonsterDisplayDTO.ToDisplayDesc()</MCardSubtitle>
         <MCardText>
-            @{
-                var datas = MonsterDisplayDTO.MonsterAttributes.GetItemAttributes(false).ToArray();
-                if (datas.Any())
-                {
-                    <MDescriptions  Dense Bordered AlignCenter Title="MonsterAttributes" Vertical
-                                   Xs="3"
-                                   Lg="6"
-                                   Xl="12"
-                                   Column="12">
-                        @foreach (var item in datas)
-                        {
-                            <MDescriptionsItem Label="@item.DisplayName">
-                                @item.DisplayValue
-                            </MDescriptionsItem>
-                        }
-                    </MDescriptions>
-                }
+            <MChipGroup Column>
+                @{
+                    foreach (var att in MonsterDisplayDTO.MonsterAttributes.GetItemAttributes(false))
+                    {
+                        <MChip Small Outlined>
+                            <span>@att.ToDisplayName():</span>@att.DisplayValue
+                        </MChip>
 
-                var skills = MonsterDisplayDTO.SkillInfos;
-                if (skills?.Any()==true)
-                {
-                    <MDescriptions Dense Bordered AlignCenter Title="SkillInfos" Vertical Column="4">
-                        @foreach (var item in skills)
-                        {
-                            <MDescriptionsItem Label="@item.DisplayName">
-                                @item.ToDisplayDesc()
-                            </MDescriptionsItem>
-                        }
-                    </MDescriptions>
+                    }
                 }
-            }
+            </MChipGroup>
+            <UIDynamicHeight PX="180px">
+                <MVirtualScroll OverscanCount="2" ItemSize="64" Items="MonsterDisplayDTO.SkillInfos" Context="item">
+                    <ItemContent>
+                        <MListItem ThreeLine Dense Slim @key=item>
+
+                            <MListItemAvatar Rounded="true" Size="36">
+                                <MImage Src="@item.DisplayImage">
+                                    <PlaceholderContent>
+                                        <MIcon>mdi-border-none-variant</MIcon>
+                                    </PlaceholderContent>
+                                </MImage>
+                            </MListItemAvatar>
+
+
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    <span>@item.ToDisplayName()</span>
+                                    <MChip XSmall Outlined Color="green">
+                                        @item.DisplayCategory
+                                    </MChip>
+
+                                </MListItemTitle>
+                                <MListItemSubtitle>@item.ToDisplayDesc()</MListItemSubtitle>
+                                <MChipGroup ShowArrows="true">
+                                    @foreach (var item in item.SkillAttributes.GetItemAttributes(false))
+                                    {
+                                        <MChip Small Outlined>
+                                            <span>@item.DisplayName:</span>@item.DisplayValue
+                                        </MChip>
+                                    }
+                                </MChipGroup>
+                            </MListItemContent>
+
+
+
+
+                        </MListItem>
+                        <MDivider></MDivider>
+                    </ItemContent>
+                </MVirtualScroll>
+            </UIDynamicHeight>
+
 
         </MCardText>
 

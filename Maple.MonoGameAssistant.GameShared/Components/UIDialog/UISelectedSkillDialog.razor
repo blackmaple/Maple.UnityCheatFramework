@@ -1,7 +1,7 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 <MDialog Value="Visible" Fullscreen>
     <MCard Tile>
-        <MToolbar >
+        <MToolbar>
             <MTextField Label="SearchContent"
                         @bind-Value="@SearchContent"
                         Color="primary"
@@ -14,7 +14,7 @@
                         OnEnter="()=>this.OnSearch()">
             </MTextField>
 
-            <MButton  Icon OnClick="()=>this.ClosePopupAsync(default)">
+            <MButton Icon OnClick="() => this.ClosePopupAsync(default)">
                 <MIcon>mdi-close</MIcon>
             </MButton>
         </MToolbar>
@@ -24,7 +24,7 @@
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="ListSkill_Search">
                     <ItemContent>
                         <MListItem Dense>
-                            <MListItemAvatar Tile Size="36">
+                            <MListItemAvatar Rounded="true" Size="36">
                                 <MImage Src="@context.DisplayImage">
                                     <PlaceholderContent>
                                         <MIcon>mdi-border-none-variant</MIcon>
@@ -39,30 +39,21 @@
                                     <MChip XSmall Outlined Color="green">
                                         @context.DisplayCategory
                                     </MChip>
-
                                 </MListItemTitle>
                                 <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                                 <MChipGroup ShowArrows="true">
-                                    @{
-                                        var datas = context.SkillAttributes.GetItemAttributes(true).ToArray();
-                                        if (datas.Any())
-                                        {
-
-                                            @foreach (var item in datas)
-                                            {
-                                                <MChip XSmall Outlined>
-                                                    <span>@item.DisplayName:</span>@item.DisplayValue
-                                                </MChip>
-                                            }
-
-                                        }
+                                    @foreach (var item in context.SkillAttributes.GetItemAttributes(true))
+                                    {
+                                        <MChip XSmall Outlined>
+                                            <span>@item.ToDisplayName():</span>@item.DisplayValue
+                                        </MChip>
                                     }
                                 </MChipGroup>
                             </MListItemContent>
                             <MListItemAction>
                                 <MButtonGroup Rounded Group>
-                                    <MButton OnClick="()=>this.OnSelectedData(context)">
-                                        <MIcon Color="orange darken-4">mdi-smart-card-outline</MIcon>
+                                    <MButton OnClick="() => this.OnSelectedData(context)">
+                                        <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                     </MButton>
                                 </MButtonGroup>
                             </MListItemAction>

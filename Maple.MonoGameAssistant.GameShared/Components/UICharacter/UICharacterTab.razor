@@ -25,7 +25,7 @@
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCharacter_Search">
                 <ItemContent>
                     <MListItem Dense >
-                        <MListItemAvatar Tile Size="36">
+                        <MListItemAvatar Rounded="true" Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
                                     <MIcon>mdi-border-none-variant</MIcon>
@@ -44,19 +44,11 @@
                             </MListItemTitle>
                             <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
-                                @{
-                                    var datas = context.CharacterAttributes.GetItemAttributes(true).ToArray();
-                                    if (datas.Any())
-                                    {
-
-                                        @foreach (var item in datas)
-                                        {
-                                            <MChip XSmall Outlined>
-                                                <span>@item.DisplayName:</span>@item.DisplayValue
-                                            </MChip>
-                                        }
-
-                                    }
+                                @foreach (var item in context.CharacterAttributes.GetItemAttributes(true))
+                                {
+                                    <MChip XSmall Outlined>
+                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
+                                    </MChip>
                                 }
                             </MChipGroup>
                         </MListItemContent>

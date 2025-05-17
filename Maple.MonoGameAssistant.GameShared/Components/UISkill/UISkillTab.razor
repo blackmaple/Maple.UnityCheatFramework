@@ -25,8 +25,8 @@
 
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSkill_Search">
                 <ItemContent>
-                    <MListItem Dense ThreeLine>
-                        <MListItemAvatar Size="36">
+                    <MListItem ThreeLine Dense Slim>
+                        <MListItemAvatar Rounded="true" Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
                                     <MIcon>mdi-border-none-variant</MIcon>
@@ -43,29 +43,18 @@
                             </MListItemTitle>
                             <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
-                                @{
-                                    var datas = context.SkillAttributes.GetItemAttributes(false).ToArray();
-                                    if (datas.Any())
-                                    {
-
-                                        @foreach (var item in datas)
-                                        {
-                                            <MChip XSmall Outlined>
-                                                <span>@item.DisplayName:</span>@item.DisplayValue
-                                            </MChip>
-                                        }
-
-                                    }
+                                @foreach (var item in context.SkillAttributes.GetItemAttributes(true))
+                                {
+                                    <MChip XSmall Outlined>
+                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
+                                    </MChip>
                                 }
                             </MChipGroup>
                         </MListItemContent>
                         <MListItemAction>
-                            <MButtonGroup Group Rounded>
-                                <MButton Loading="context.Loading" Icon OnClick="()=>OnUpdate(context)" Disabled="@(!context.CanUse)">
-                                    <MIcon Color="orange darken-4">mdi-food-outline</MIcon>
-                                </MButton>
-
-                            </MButtonGroup>
+                            <MButton Loading="context.Loading" Icon OnClick="() => OnUpdate(context)" Disabled="@(!context.CanUse)">
+                                <MIcon Color="orange darken-4">mdi-plus</MIcon>
+                            </MButton>
                         </MListItemAction>
                     </MListItem>
                     <MDivider></MDivider>

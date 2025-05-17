@@ -27,7 +27,7 @@
 
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCurrency_Search">
                 <ItemContent>
-                    <MListItem TwoLine Slim Dense>
+                    <MListItem ThreeLine Dense Slim>
                         <MListItemAvatar Rounded="true" Size="36">
                             <MImage Src="@context.DisplayImage">
                                 <PlaceholderContent>
@@ -46,29 +46,19 @@
                                 @context.ToDisplayDesc()
                             </MListItemSubtitle>
                             <MChipGroup ShowArrows="true">
-                                @{
-                                    var datas = context.CurrencyAttributes.GetItemAttributes(false).ToArray();
-                                    if (datas.Any())
-                                    {
-                                        @foreach (var item in datas)
-                                        {
-                                            <MChip XSmall Outlined>
-                                                <span>@item.DisplayName:</span>@item.DisplayValue
-                                            </MChip>
-                                        }
-
-                                    }
+                                @foreach (var item in context.CurrencyAttributes.GetItemAttributes(true))
+                                {
+                                    <MChip XSmall Outlined>
+                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
+                                    </MChip>
                                 }
                             </MChipGroup>
 
                         </MListItemContent>
                         <MListItemAction>
-                            <MButtonGroup Group Rounded>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
-                                    <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
-                                </MButton>
-
-                            </MButtonGroup>
+                            <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
+                                <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
+                            </MButton>
                         </MListItemAction>
                     </MListItem>
                     <MDivider></MDivider>

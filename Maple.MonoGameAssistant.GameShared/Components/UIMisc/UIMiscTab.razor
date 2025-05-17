@@ -24,13 +24,13 @@
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search">
                 <ItemContent>
-                    <MListItem Dense>
+                    <MListItem Dense Slim>
 
                         <MListItemContent>
                             <MListItemTitle>
-                                @context.DisplayName
+                                @context.ToDisplayName()
                             </MListItemTitle>
-                            <MListItemSubtitle>@context.DisplayDesc</MListItemSubtitle>
+                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
 
                         </MListItemContent>
                         <MListItemAction>
@@ -55,8 +55,7 @@
                                          ItemText="p => p.DisplayName"
                                          ItemValue="p => p.DisplayValue"
                                          Color="orange darken-4"
-                                         AppendOuterIcon="mdi-crosshairs"
-                                         OnAppendOuterClick="() => OnChange(context)"
+                                         OnChange="()=>OnChange(context)"
                                          SingleLine></MSelect>
 
                             }
