@@ -22,70 +22,92 @@
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search" Context="item">
                 <ItemContent>
                     <MListItem Dense Slim>
 
                         <MListItemContent>
                             <MListItemTitle>
-                                @context.ToDisplayName()
+                                @item.ToDisplayName()
+                                <MChip XSmall Outlined Color="green"  >
+                                    @item.DisplayCategory
+                                </MChip> 
                             </MListItemTitle>
-                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
+                            <MListItemSubtitle>
+                                @item.ToDisplayDesc()
+                            </MListItemSubtitle>
 
                         </MListItemContent>
                         <MListItemAction>
-                            @if (context.ButtonType)
+                            @if (item.MultipleType)
+                            {
+                                <MItemGroup Multiple>
+                                    @foreach (var i in item.SelectedContents.GetItemAttributes(false))
+                                    {
+                                        <MItem>
+                                            <MChip ActiveClass="purple--text"
+                                                IsActive="@item.MultipleIsActive(i)"
+                                                   OnClick="() => OnChange(item, i, true)"
+                                                   Outlined Small>
+                                                @i.ToDisplayName()
+                                            </MChip>
+                                        </MItem>
+
+                                    }
+                                </MItemGroup>
+                            }
+                            else if (item.ButtonType)
                             {
                                 <MButton Icon
                                          Color="orange darken-4"
-                                         Loading="@context.Loading"
-                                         Disabled="context.Loading"
-                                         OnClick="() => OnChange(context)">
+                                         Loading="@item.Loading"
+                                         Disabled="item.Loading"
+                                         OnClick="() => OnChange(item)">
                                     <MIcon>mdi-crosshairs</MIcon>
                                 </MButton>
                             }
-                            else if (context.SelectsType)
+                            else if (item.SelectsType)
                             {
                                 <MSelect Solo Dense HideDetails="true"
                                          TItem="GameValueInfoDTO"
                                          TItemValue="string"
                                          TValue="string"
-                                         @bind-Value="@context.ContentValue"
-                                         Items="context.SelectedContents"
+                                         @bind-Value="@item.ContentValue"
+                                         Items="item.SelectedContents"
                                          ItemText="p => p.DisplayName"
                                          ItemValue="p => p.DisplayValue"
                                          Color="orange darken-4"
-                                         OnChange="()=>OnChange(context)"
+                                         OnChange="()=>OnChange(item)"
                                          SingleLine></MSelect>
 
                             }
-                            else if (context.SwitchesType)
+                            else if (item.SwitchesType)
                             {
                                 <MSwitch Inset
                                          Color="orange darken-4"
-                                         Loading="@context.Loading"
-                                         Disabled="context.Loading"
-                                         OnClick="() => OnChange(context, true)"
-                                         @bind-Value="@context.SwitchValue">
+                                         Loading="@item.Loading"
+                                         Disabled="item.Loading"
+                                         OnClick="() => OnChange(item, true)"
+                                         @bind-Value="@item.SwitchValue">
                                 </MSwitch>
                             }
-                            else if (context.TextEditorType)
+                            else if (item.TextEditorType)
                             {
-                                <MTextField Solo OnAppendOuterClick="()=>OnChange(context)"
+                                <MTextField Solo OnAppendOuterClick="()=>OnChange(item)"
                                             AppendOuterIcon="mdi-pencil-outline"
                                             Type="number"
                                             TValue="decimal"
-                                            Loading="context.Loading"
-                                            Disabled="context.Loading"
+                                            Loading="item.Loading"
+                                            Disabled="item.Loading"
                                             Dense
                                             HideDetails="true"
-                                            @bind-Value="@context.DecimalValue"
+                                            @bind-Value="@item.DecimalValue"
                                             NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
 
                             }
                             else
                             {
-                                <MLabel>@context.ContentValue</MLabel>
+                                <MLabel>@item.ContentValue</MLabel>
                             }
                         </MListItemAction>
                     </MListItem>

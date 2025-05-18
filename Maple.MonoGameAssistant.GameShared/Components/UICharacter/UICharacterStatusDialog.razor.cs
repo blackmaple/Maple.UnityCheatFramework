@@ -38,9 +38,26 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
                 gameValue.Loading = false;
             }
         }
-        private Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue, GameValueInfoDTO value, bool isActive)
+        private Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue, GameValueInfoDTO value, bool isMultiple)
         {
-            gameValue.ContentValue = value.DisplayValue;
+            if (isMultiple)
+            {
+                if (gameValue.MultipleIsActive(value))
+                {
+                    gameValue.ContentValue = gameValue.MultipleRemoveActive(value);
+                }
+                else
+                {
+                    gameValue.ContentValue = gameValue.MultipleAddActive(value);
+
+                }
+            }
+            else
+            {
+                gameValue.ContentValue = value.DisplayValue;
+            }
+           // return Task.CompletedTask;
+
             return OnUpdateCharacterStatus(gameValue);
         }
 

@@ -35,5 +35,28 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIMisc
             }
         }
 
+        private Task OnChange(GameSwitchDisplayDTO gameValue, GameValueInfoDTO value, bool isMultiple)
+        {
+            if (isMultiple)
+            {
+                if (gameValue.MultipleIsActive(value))
+                {
+                    gameValue.ContentValue = gameValue.MultipleRemoveActive(value);
+                }
+                else
+                {
+                    gameValue.ContentValue = gameValue.MultipleAddActive(value);
+
+                }
+            }
+            else
+            {
+                gameValue.ContentValue = value.DisplayValue;
+            }
+            // return Task.CompletedTask;
+
+            return OnChange(gameValue);
+        }
+
     }
 }

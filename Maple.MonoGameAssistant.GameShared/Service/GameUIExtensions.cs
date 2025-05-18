@@ -4,6 +4,7 @@ using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Maple.MonoGameAssistant.GameShared.Service
 {
@@ -70,15 +71,19 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
         public static bool MultipleIsActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
         {
-            var content = gameSwitch.ContentValue;
-            if (string.IsNullOrEmpty(content))
+            var content = gameSwitch.ContentValue.AsSpan();
+            if (content.IsEmpty)
             {
                 return false;
             }
-            var span = content.AsSpan();
-            foreach (var s in span.Split(','))
+            var rightSpan = gameValue.DisplayValue.AsSpan();
+            if (MemoryExtensions.SequenceEqual(content, rightSpan))
             {
-                if (span[s] == gameValue.DisplayValue)
+                return true;
+            }
+            foreach (var s in content.Split(','))
+            {
+                if (MemoryExtensions.SequenceEqual(content[s], rightSpan))
                 {
                     return true;
                 }
@@ -87,45 +92,43 @@ namespace Maple.MonoGameAssistant.GameShared.Service
         }
         public static string? MultipleAddActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
         {
-            var content = gameSwitch.ContentValue;
-            if (string.IsNullOrEmpty(content))
+            var content = gameSwitch.ContentValue.AsSpan();
+            if (content.IsEmpty)
             {
-                 return gameValue.DisplayValue;
+                return gameValue.DisplayValue;
             }
-            return string.Join(',', Active());
-
-            IEnumerable<string?> Active()
+            var sb = new StringBuilder(gameValue.DisplayValue);
+            var rightSpan = gameValue.DisplayValue.AsSpan();
+            foreach (var s in content.Split(','))
             {
-                foreach (var s in content.AsSpan().Split(','))
+                var val = content[s];
+                if (val.IsEmpty == false && false==MemoryExtensions.SequenceEqual(val, rightSpan))
                 {
-                    if (content.AsSpan()[s] != gameValue.DisplayValue)
-                    {
-                        yield return content.AsSpan()[s].ToString();
-                    }
+                    sb.Append(',');
+                    sb.Append(val);
                 }
-                yield return gameValue.DisplayValue;
             }
+            return sb.ToString();
         }
-        public static string? MultipleRemoveActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue) 
+        public static string? MultipleRemoveActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
         {
-            var content = gameSwitch.ContentValue;
-            if (string.IsNullOrEmpty(content))
+            var content = gameSwitch.ContentValue.AsSpan();
+            if (content.IsEmpty)
             {
                 return default;
             }
-            return string.Join(',', Active());
-
-            IEnumerable<string?> Active()
+            var sb = new StringBuilder();
+            var rightSpan = gameValue.DisplayValue.AsSpan();
+            foreach (var s in content.Split(','))
             {
-                foreach (var s in content.AsSpan().Split(','))
+                var val = content[s];
+                if (val.IsEmpty == false && false == MemoryExtensions.SequenceEqual(val, rightSpan))
                 {
-                    if (content.AsSpan()[s] != gameValue.DisplayValue)
-                    {
-                        yield return content.AsSpan()[s].ToString();
-                    }
+                    sb.Append(',');
+                    sb.Append(val);
                 }
-                
             }
+            return sb.ToString();
 
 
         }
