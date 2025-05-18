@@ -39,48 +39,65 @@
             <UIDynamicHeight PX="180px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="CharacterAttributes" Context="item">
                     <ItemContent>
-                   
-                            <MListItem Slim @key=item>
 
-                                <MListItemContent>
-                                    <MListItemTitle>
-                                         @item.ToDisplayName()
-                                    </MListItemTitle>
-                                    <MListItemSubtitle>
-                                       @item.ToDisplayDesc()
-                                    </MListItemSubtitle>
+                        <MListItem  Dense Slim @key=item>
 
-                                 
-                                </MListItemContent>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    @item.ToDisplayName()
+                                </MListItemTitle>
+                                <MListItemSubtitle>
+                                    @if (item.SelectsType)
+                                    {
+                                        <MItemGroup>
+                                            @foreach (var i in item.SelectedContents.GetItemAttributes(false))
+                                            {
+                                                <MItem>
+                                                    <MChip ActiveClass="purple--text"
+                                                           IsActive="@item.SelectedIsActive(i)"
+                                                           OnClick="() => OnUpdateCharacterStatus(item, i, context.Active)"
+                                                           Outlined Small>
+                                                        @i.ToDisplayName()
+                                                    </MChip>
+                                                </MItem>
 
-                                <MListItemAction>
-                                     @if (item.ButtonType)
-                                        {
-                                            <MButton Icon
-                                                     Color="orange darken-4"
-                                                     Loading="@item.Loading"
-                                                     Disabled="item.Loading"
-                                                     OnClick="() => OnUpdateCharacterStatus(item)">
-                                                <MIcon>mdi-crosshairs</MIcon>
+                                            }
+                                        </MItemGroup>
+                                    }
+                                </MListItemSubtitle>
+
+
+                            </MListItemContent>
+                            <MListItemAction>
+                                @if (item.ButtonType)
+                                {
+                                    <MButton  Icon
+                                             Color="orange darken-4"
+                                             Loading="@item.Loading"
+                                             Disabled="item.Loading"
+                                             OnClick="() => OnUpdateCharacterStatus(item)">
+                                        <MIcon>mdi-crosshairs</MIcon>
                                     </MButton>
                                 }
                                 else if (item.SelectsType)
                                 {
 
-                                    <MItemGroup Multiple>
+                                    @*     <MItemGroup>
+                                        @foreach (var i in item.SelectedContents.GetItemAttributes(false))
+                                        {
+                                            <MItem>
+                                                <MChip ActiveClass="purple--text"
+                                                       IsActive="@item.IsActive(i)"
+                                                       OnClick="() => OnUpdateCharacterStatus(item, i, context.Active)"
+                                                       Outlined Small>
+                                                    @i.ToDisplayName()
+                                                </MChip>
+                                            </MItem>
 
+                                        }
+                                    </MItemGroup> *@
 
-                                  
-                                    @foreach (var i in item.SelectedContents.GetItemAttributes(false))
-                                    { 
-                                        <MItem>
-                                             <MChip>@i.ToDisplayName()</MChip> 
-                                         </MItem>
-                                    
-                                    }  
-                                    </MItemGroup>
-
-                                           @*  <MSelect Solo Dense HideDetails="true"  
+                                    @*  <MSelect Solo Dense HideDetails="true"  
                                                      TItem="GameValueInfoDTO"
                                                      TItemValue="string"
                                                      TValue="string"
@@ -93,42 +110,43 @@
                                                      OnChange="()=>OnUpdateCharacterStatus(item)"
                                                      SingleLine /> *@
 
-                                        } 
-                                        else if (item.SwitchesType)
-                                        {
-                                            <MSwitch Inset Dense HideDetails="true"
-                                                     Color="orange darken-4"
-                                                     Loading="@item.Loading"
-                                                     Disabled="item.Loading"
-                                                     OnClick="() => OnUpdateCharacterStatus(item)"
-                                                     @bind-Value="@item.SwitchValue">
-                                            </MSwitch>
-                                        }
-                                        else if (item.TextEditorType)
-                                        {
-                                            <MTextField Solo OnAppendOuterClick="()=>OnUpdateCharacterStatus(item)"
-                                                        AppendOuterIcon="mdi-pencil-outline"
-                                                        Type="number"
-                                                        TValue="decimal"
-                                                        Loading="item.Loading"
-                                                        Disabled="item.Loading"
-                                                        Dense
-                                                        HideDetails="true"
-                                                        @bind-Value="@item.DecimalValue"
-                                    NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
+                                }
+                                else if (item.SwitchesType)
+                                {
+                                    <MSwitch Inset Dense HideDetails="true"
+                                             Color="orange darken-4"
+                                             Loading="@item.Loading"
+                                             Disabled="item.Loading"
+                                             OnClick="() => OnUpdateCharacterStatus(item)"
+                                             @bind-Value="@item.SwitchValue">
+                                    </MSwitch>
+                                }
+                                else if (item.TextEditorType)
+                                {
+                                    <MTextField Solo OnAppendOuterClick="()=>OnUpdateCharacterStatus(item)"
+                                                AppendOuterIcon="mdi-pencil-outline"
+                                                Type="number"
+                                                TValue="decimal"
+                                                Loading="item.Loading"
+                                                Disabled="item.Loading"
+                                                Dense
+                                                HideDetails="true"
+                                                @bind-Value="@item.DecimalValue"
+                                                NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
 
                                 }
- 
-                                        else
-                                        {
-                                            <MLabel>@item.ContentValue</MLabel>
-                                        }
-                                </MListItemAction>
-                               
 
-                            </MListItem>
-                         
-                          <MDivider></MDivider>
+                                else
+                                {
+                                    <MLabel>@item.ContentValue</MLabel>
+                                }
+                            </MListItemAction>
+
+
+
+                        </MListItem>
+
+                        <MDivider></MDivider>
                     </ItemContent>
                 </MVirtualScroll>
             </UIDynamicHeight>

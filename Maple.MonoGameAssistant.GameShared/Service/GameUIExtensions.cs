@@ -3,6 +3,7 @@ using Maple.MonoGameAssistant.Model;
 using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.GameShared.Service
 {
@@ -67,7 +68,72 @@ namespace Maple.MonoGameAssistant.GameShared.Service
             }
         }
 
+        public static bool MultipleIsActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
+        {
+            var content = gameSwitch.ContentValue;
+            if (string.IsNullOrEmpty(content))
+            {
+                return false;
+            }
+            var span = content.AsSpan();
+            foreach (var s in span.Split(','))
+            {
+                if (span[s] == gameValue.DisplayValue)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static string? MultipleAddActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
+        {
+            var content = gameSwitch.ContentValue;
+            if (string.IsNullOrEmpty(content))
+            {
+                 return gameValue.DisplayValue;
+            }
+            return string.Join(',', Active());
 
+            IEnumerable<string?> Active()
+            {
+                foreach (var s in content.AsSpan().Split(','))
+                {
+                    if (content.AsSpan()[s] != gameValue.DisplayValue)
+                    {
+                        yield return content.AsSpan()[s].ToString();
+                    }
+                }
+                yield return gameValue.DisplayValue;
+            }
+        }
+        public static string? MultipleRemoveActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue) 
+        {
+            var content = gameSwitch.ContentValue;
+            if (string.IsNullOrEmpty(content))
+            {
+                return default;
+            }
+            return string.Join(',', Active());
+
+            IEnumerable<string?> Active()
+            {
+                foreach (var s in content.AsSpan().Split(','))
+                {
+                    if (content.AsSpan()[s] != gameValue.DisplayValue)
+                    {
+                        yield return content.AsSpan()[s].ToString();
+                    }
+                }
+                
+            }
+
+
+        }
+
+        public static bool SelectedIsActive(this GameSwitchDisplayDTO gameSwitch, GameValueInfoDTO gameValue)
+        {
+            return gameSwitch.ContentValue == gameValue.DisplayValue;
+        }
 
         public static bool ContainsGameDisplay(this GameDisplayDTO gameDisplay, string searchContent, string? displayCategory)
         {

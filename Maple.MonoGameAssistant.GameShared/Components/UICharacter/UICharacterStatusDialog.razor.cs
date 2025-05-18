@@ -38,6 +38,11 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
                 gameValue.Loading = false;
             }
         }
+        private Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue, GameValueInfoDTO value, bool isActive)
+        {
+            gameValue.ContentValue = value.DisplayValue;
+            return OnUpdateCharacterStatus(gameValue);
+        }
 
     }
 }

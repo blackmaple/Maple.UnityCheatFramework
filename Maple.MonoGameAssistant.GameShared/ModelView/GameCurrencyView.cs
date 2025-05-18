@@ -20,36 +20,4 @@ namespace Maple.MonoGameAssistant.GameShared.ModelView
             return $"{CurrencyDisplay.DisplayName}:{CurrencyInfo.DisplayValue}";
         }
     }
-
-    public class GameInventoryView
-    {
-
-        public required GameInventoryDisplayDTO InventoryDisplay { get; init; }
-        public required GameInventoryInfoDTO InventoryInfo { get; init; }
-
-        public void Update(GameInventoryInfoDTO content) => InventoryInfo.DisplayValue = content.DisplayValue;
-        public sealed override string ToString()
-        {
-            return $"{InventoryDisplay.DisplayName}:{InventoryInfo.DisplayValue}";
-        }
-    }
-
-
-    public class GameCharacterSkillView(GameCharacterDisplayDTO characterDisplayDTO, GameCharacterSkillDTO skillDTO)
-    {
-        public GameCharacterDisplayDTO CharacterDisplay { get; } = characterDisplayDTO;
-
-        public GameCharacterSkillDTO CharacterSkill { get; } = skillDTO;
-
-        public List<GameSkillInfoDTO> SkillInfos { get; } = skillDTO.SkillInfos is not null ? [.. skillDTO.SkillInfos] : [];
-    }
-
-
-    public class GameCharacterStatusView(GameCharacterDisplayDTO characterDisplayDTO, GameCharacterStatusDTO statusDTO)
-    {
-        public GameCharacterDisplayDTO CharacterDisplay { get; } = characterDisplayDTO;
-        public GameCharacterStatusDTO CharacterStatus { get; } = statusDTO;
-
-        public List<GameSwitchDisplayDTO> CharacterAttributes { get; } = statusDTO.CharacterAttributes is not null ? [.. statusDTO.CharacterAttributes] : [];
-    }
 }
