@@ -3,90 +3,29 @@
 <MDialog Value="Visible" Fullscreen>
     <MCard Tile MaxWidth="1024" Class="mx-auto">
 
-        <MToolbar>
-            <MListItem Dense>
-                <MListItemAvatar Rounded="true" Size="36">
-                    <MImage Src="@MonsterDisplayDTO.DisplayImage">
-                        <PlaceholderContent>
-                            <MIcon>mdi-border-none-variant</MIcon>
-                        </PlaceholderContent>
-                    </MImage>
-                </MListItemAvatar>
-                <MListItemContent>
-                    <MListItemTitle>
-                        <span> @MonsterDisplayDTO.ToDisplayName()</span>
-                        <MChip XSmall Outlined Color="green">
-                            @MonsterDisplayDTO.DisplayCategory
-                        </MChip>
-                    </MListItemTitle>
-
-                </MListItemContent>
-            </MListItem>
-            <MSpacer></MSpacer>
-            <MToolbarItems>
-                <MButton Rounded Icon OnClick="() => this.ClosePopupAsync()">
-                    <MIcon>mdi-close</MIcon>
-                </MButton>
-            </MToolbarItems>
-        </MToolbar>
-
-        <MCardSubtitle>@MonsterDisplayDTO.ToDisplayDesc()</MCardSubtitle>
+        <MCardTitle>
+            <UICommonDialogToolbar GameObject="MonsterDisplayDTO" CloseClick="() => this.ClosePopupAsync()" />
+        </MCardTitle>
         <MCardText>
-            <MChipGroup Column>
-                @{
-                    foreach (var att in MonsterDisplayDTO.MonsterAttributes.GetItemAttributes(false))
-                    {
-                        <MChip Small Outlined>
-                            <span>@att.ToDisplayName():</span>@att.DisplayValue
-                        </MChip>
+            <UICommonChipGroup Column="true" Items="[..MonsterDisplayDTO.MonsterAttributes.GetItemAttributes(false)]" />
+        </MCardText>
+        <MCardActions>
 
-                    }
-                }
-            </MChipGroup>
             <UIDynamicHeight PX="180px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="MonsterDisplayDTO.SkillInfos" Context="item">
                     <ItemContent>
-                        <MListItem ThreeLine Dense Slim @key=item>
-
-                            <MListItemAvatar Rounded="true" Size="36">
-                                <MImage Src="@item.DisplayImage">
-                                    <PlaceholderContent>
-                                        <MIcon>mdi-border-none-variant</MIcon>
-                                    </PlaceholderContent>
-                                </MImage>
-                            </MListItemAvatar>
-
-
-                            <MListItemContent>
-                                <MListItemTitle>
-                                    <span>@item.ToDisplayName()</span>
-                                    <MChip XSmall Outlined Color="green">
-                                        @item.DisplayCategory
-                                    </MChip>
-
-                                </MListItemTitle>
-                                <MListItemSubtitle>@item.ToDisplayDesc()</MListItemSubtitle>
-                                <MChipGroup ShowArrows="true">
-                                    @foreach (var item in item.SkillAttributes.GetItemAttributes(false))
-                                    {
-                                        <MChip Small Outlined>
-                                            <span>@item.DisplayName:</span>@item.DisplayValue
-                                        </MChip>
-                                    }
-                                </MChipGroup>
-                            </MListItemContent>
-
-
-
-
-                        </MListItem>
+                        <UICommonDisplayItem GameObject="item">
+                            <ChipGroupContent>
+                                <UICommonChipGroup ShowArrows="true" Items="[..item.SkillAttributes.GetItemAttributes(false)]" />
+                            </ChipGroupContent>
+                        </UICommonDisplayItem>
                         <MDivider></MDivider>
                     </ItemContent>
                 </MVirtualScroll>
             </UIDynamicHeight>
 
 
-        </MCardText>
+        </MCardActions>
 
     </MCard>
 </MDialog>

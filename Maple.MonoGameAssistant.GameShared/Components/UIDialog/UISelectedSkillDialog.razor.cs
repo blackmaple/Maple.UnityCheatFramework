@@ -23,6 +23,13 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
             base.OnParametersSet();
             ListSkill_Search.AddRange(ListSkill_All);
         }
+
+        private void OnSearch(string? category)
+        {
+            this.SearchContent = category;
+            this.OnSearch();
+        }
+
         private void OnSearch()
         {
             ListSkill_Search.Clear();

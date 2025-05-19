@@ -2,56 +2,18 @@
 
 <MDialog Value="Visible" Fullscreen>
     <MCard Tile MaxWidth="1024" Class="mx-auto">
-        <MToolbar>
-            <UICommonDisplayObject GameObject="@CharacterDisplay"/>
-            <MSpacer></MSpacer>
-            <MButton Icon OnClick="() => this.ClosePopupAsync()">
-                <MIcon>mdi-close</MIcon>
-            </MButton>
-        </MToolbar>
-
+        <MCardTitle>
+            <UICommonDialogToolbar GameObject="CharacterDisplay" CloseClick="() => this.ClosePopupAsync()" />
+        </MCardTitle>
         <MCardText>
             <UIDynamicHeight PX="180px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="SkillInfos" Context="item">
                     <ItemContent>
-                        <MListItem Dense @key=item>
-
-                            <MListItemAvatar Rounded="true" Size="36">
-                                <MImage Src="@item.DisplayImage">
-                                    <PlaceholderContent>
-                                        <MIcon>mdi-border-none-variant</MIcon>
-                                    </PlaceholderContent>
-                                </MImage>
-                            </MListItemAvatar>
-
-
-                            <MListItemContent>
-                                <MListItemTitle>
-                                    <span>@item.ToDisplayName()</span>
-                                    <MChip XSmall Outlined Color="green">
-                                        @item.DisplayCategory
-                                    </MChip>
-
-                                </MListItemTitle>
-                                <MListItemSubtitle>@item.ToDisplayDesc()</MListItemSubtitle>
-                                <MChipGroup ShowArrows="true">
-                                    @{
-                                        var datas = item.SkillAttributes.GetItemAttributes(true).ToArray();
-                                        if (datas.Any())
-                                        {
-
-                                            @foreach (var item in datas)
-                                            {
-                                                <MChip Small Outlined>
-                                                    <span>@item.DisplayName:</span>@item.DisplayValue
-                                                </MChip>
-                                            }
-
-                                        }
-                                    }
-                                </MChipGroup>
-                            </MListItemContent>
-                            <MListItemAction>
+                        <UICommonDisplayItem GameObject="item">
+                            <ChipGroupContent>
+                                <UICommonChipGroup ShowArrows="true" Items="[..item.SkillAttributes.GetItemAttributes(true)]" />
+                            </ChipGroupContent>
+                            <ItemActionContent>
                                 <MButtonGroup Borderless Dense>
                                     <MButton Icon OnClick="() => OnUpdateCharacterSkill(item, false)" Loading="@item.Loading" Disabled="@(!item.CanWrite)">
                                         <MIcon Color="orange darken-4">mdi-plus</MIcon>
@@ -61,11 +23,12 @@
                                     </MButton>
 
                                 </MButtonGroup>
-                            </MListItemAction>
+
+                            </ItemActionContent>
+                        </UICommonDisplayItem>
 
 
 
-                        </MListItem>
                         <MDivider></MDivider>
                     </ItemContent>
                 </MVirtualScroll>

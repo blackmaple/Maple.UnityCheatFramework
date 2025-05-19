@@ -3,18 +3,14 @@
 <MDialog Value="Visible" MaxWidth="360" OnOutsideClick="() => this.ClosePopupAsync()">
     <MCard Tile MaxWidth="1024" Class="mx-auto">
 
-        <UICommonDisplayObject GameObject="InventoryDisplay"></UICommonDisplayObject>
+        <MCardTitle>
+            <UICommonDisplayCaption GameObject="InventoryDisplay" />
+        </MCardTitle>
 
         <MCardText>
-            <MChipGroup Column>
-                @foreach (var item in InventoryDisplay.ItemAttributes.GetItemAttributes(false))
-                {
-                    <MChip Small Outlined>
-                        <span>@item.ToDisplayName():</span>@item.DisplayValue
-                    </MChip>
-                }
-            </MChipGroup>
+            <UICommonChipGroup Column="true" Items="[..InventoryDisplay.ItemAttributes.GetItemAttributes(false)]" />
         </MCardText>
+
         <MCardActions>
             <MTextField AppendOuterIcon="mdi-pencil-outline"
                         OnAppendOuterClick="@OnUpdateInventoryInfo"

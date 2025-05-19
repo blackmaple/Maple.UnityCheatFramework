@@ -6,47 +6,23 @@
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCharacter_Search">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCharacter_Search" Context="item">
                 <ItemContent>
-                    <MListItem Dense>
-                        <MListItemAvatar Rounded="true" Size="36">
-                            <MImage Src="@context.DisplayImage">
-                                <PlaceholderContent>
-                                    <MIcon>mdi-border-none-variant</MIcon>
-                                </PlaceholderContent>
-                            </MImage>
-                        </MListItemAvatar>
-
-
-                        <MListItemContent>
-                            <MListItemTitle>
-                                <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green">
-                                    @context.DisplayCategory
-                                </MChip>
-
-                            </MListItemTitle>
-                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
-                            <MChipGroup ShowArrows="true">
-                                @foreach (var item in context.CharacterAttributes.GetItemAttributes(true))
-                                {
-                                    <MChip XSmall Outlined>
-                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
-                                    </MChip>
-                                }
-                            </MChipGroup>
-                        </MListItemContent>
-                        <MListItemAction>
+                    <UICommonDisplayItem GameObject="item">
+                        <ChipGroupContent>
+                            <UICommonChipGroup ShowArrows="true" Items="[..item.CharacterAttributes.GetItemAttributes(true)]" />
+                        </ChipGroupContent>
+                        <ItemActionContent>
                             <MButtonGroup Borderless Dense>
-                                <MButton Icon Loading="@context.Loading" Disabled="@context.Loading" OnClick="() => OnSelectedCharacterStatus(context)">
+                                <MButton Icon Loading="@item.Loading" Disabled="@item.Loading" OnClick="() => OnSelectedCharacterStatus(item)">
                                     <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
                                 </MButton>
-                                <MButton Icon Loading="@context.Loading" Disabled="@context.Loading" OnClick="() => OnSelectedCharacterSkill(context)">
+                                <MButton Icon Loading="@item.Loading" Disabled="@item.Loading" OnClick="() => OnSelectedCharacterSkill(item)">
                                     <MIcon Color="orange darken-4">mdi-magic-staff</MIcon>
                                 </MButton>
                             </MButtonGroup>
-                        </MListItemAction>
-                    </MListItem>
+                        </ItemActionContent>
+                    </UICommonDisplayItem>
 
                     <MDivider></MDivider>
                 </ItemContent>

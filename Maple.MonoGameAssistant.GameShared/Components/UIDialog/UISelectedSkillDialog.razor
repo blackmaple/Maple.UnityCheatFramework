@@ -3,7 +3,7 @@
     <MCard Tile MaxWidth="1024" Class="mx-auto">
 
         <MCardTitle>
-            <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" Reload="() => this.OnReload()" />
+            <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" IsReloadButton="false" Reload="() => this.ClosePopupAsync(false)" />
         </MCardTitle>
 
         <MCardText>
@@ -23,7 +23,7 @@
                             <MListItemContent>
                                 <MListItemTitle>
                                     <span>@context.ToDisplayName()</span>
-                                    <MChip XSmall Outlined Color="green">
+                                    <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
                                         @context.DisplayCategory
                                     </MChip>
                                 </MListItemTitle>

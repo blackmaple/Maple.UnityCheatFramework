@@ -1,0 +1,23 @@
+﻿<MChipGroup ShowArrows="@ShowArrows" Column="@Column">
+    @foreach (var item in Items)
+    {
+        <MChip XSmall Outlined>
+            <span>@item.ToDisplayName():</span>@item.DisplayValue
+        </MChip>
+    }
+</MChipGroup>
+@code
+{
+
+    [Parameter, NotNull, EditorRequired]
+    public required List<GameValueInfoDTO> Items { get; set; }
+
+    [Parameter]
+    public bool ShowArrows { set; get; } = false;
+
+    [Parameter]
+    public bool Column { set; get; } = false;
+
+
+
+}

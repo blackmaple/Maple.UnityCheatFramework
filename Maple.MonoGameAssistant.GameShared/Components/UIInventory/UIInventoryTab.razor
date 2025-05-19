@@ -7,47 +7,20 @@
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListInventory_Search">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListInventory_Search" Context="item">
                 <ItemContent>
-                    <MListItem Dense>
-                        <MListItemAvatar Rounded="true" Size="36">
-                            <MImage Src="@context.DisplayImage">
-                                <PlaceholderContent>
-                                    <MIcon>mdi-border-none-variant</MIcon>
-                                </PlaceholderContent>
-                            </MImage>
-                        </MListItemAvatar>
-                        <MListItemContent>
-                            <MListItemTitle>
-                                <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
-                                    @context.DisplayCategory
-                                </MChip>
-
-                            </MListItemTitle>
-                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
-                            <MChipGroup ShowArrows="true">
-                                @foreach (var item in context.ItemAttributes.GetItemAttributes(true))
-                                {
-                                    <MChip XSmall Outlined>
-                                        <span>@item.ToDisplayName():</span>@item.DisplayValue
-                                    </MChip>
-                                }
-                            </MChipGroup>
-                        </MListItemContent>
-                        <MListItemAction>
+                    <UICommonDisplayItem GameObject="item">
+                        <ChipGroupContent>
+                            <UICommonChipGroup ShowArrows="true" Items="[..item.ItemAttributes.GetItemAttributes(true)]" />
+                        </ChipGroupContent>
+                        <ItemActionContent>
                             <MButtonGroup Borderless Dense>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
-                                    <MIcon Color="orange darken-4">
-                                        mdi-file-edit-outline
-                                    </MIcon>
+                                <MButton Loading="@item.Loading" Disabled="@item.Loading" Icon OnClick="() => OnSelected(item)">
+                                    <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
                                 </MButton>
                             </MButtonGroup>
-
-
-                        </MListItemAction>
-                    </MListItem>
-
+                        </ItemActionContent>
+                    </UICommonDisplayItem>
                     <MDivider></MDivider>
                 </ItemContent>
             </MVirtualScroll>

@@ -1,0 +1,15 @@
+﻿<MToolbar>
+    <UICommonDisplayCaption GameObject="@GameObject" />
+    <MSpacer></MSpacer>
+    <MButton Icon OnClick="@CloseClick">
+        <MIcon>mdi-close</MIcon>
+    </MButton>
+</MToolbar>
+@code
+{
+    [EditorRequired, NotNull, Parameter]
+    public required GameObjectDisplayDTO GameObject { get; set; }
+
+    [  Parameter]
+    public EventCallback<MouseEventArgs> CloseClick { set; get; }
+}

@@ -2,24 +2,9 @@
 
 <MDialog Value="Visible" Fullscreen>
     <MCard Tile MaxWidth="1024" Class="mx-auto">
-
-        <MToolbar>
-            <MTextField Label="SearchContent"
-                        @bind-Value="@SearchContent"
-                        Color="primary"
-                        TValue="string"
-                        Clearable
-                        HideDetails="true"
-                        AppendOuterIcon="mdi-magnify"
-                        OnAppendOuterClick="()=>this.OnSearch()"
-                        OnClearClick="()=>this.OnSearch()"
-                        OnEnter="()=>this.OnSearch()">
-            </MTextField>
-
-            <MButton Icon OnClick="() => this.ClosePopupAsync(default)">
-                <MIcon>mdi-close</MIcon>
-            </MButton>
-        </MToolbar>
+        <MCardTitle>
+            <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" IsReloadButton="false" Reload="() => this.ClosePopupAsync(false)" />
+        </MCardTitle>
 
         <MCardText>
             <UIDynamicHeight PX="100px">

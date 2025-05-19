@@ -1,21 +1,27 @@
 ﻿<MToolbar Dense Flat>
-    <MTextField Label="SearchContent"
-                Color="primary"
-                Value="@Value"
-                ValueChanged="@ValueChanged"
-                TValue="string"
-                Clearable
-                HideDetails="true"
-                AppendOuterIcon="mdi-magnify"
-                OnAppendOuterClick="@Search"
-                OnClearClick="@Search"
-                OnEnter="@Search">
+    <MTextField Label="模糊查询"
+    Color="primary"
+    Value="@Value"
+    ValueChanged="@ValueChanged"
+    TValue="string"
+    Clearable
+    HideDetails="true"
+    AppendOuterIcon="mdi-magnify"
+    OnAppendOuterClick="@Search"
+    OnClearClick="@Search"
+    OnEnter="@Search">
     </MTextField>
     <MButton Icon OnClick="@Reload">
-        <MIcon Color="orange darken-4">mdi-refresh</MIcon>
+        @if (IsReloadButton)
+        {
+            <MIcon Color="orange darken-4">mdi-refresh</MIcon>
+        }
+        else
+        {
+            <MIcon>mdi-close</MIcon>
+        }
     </MButton>
-
-
+  
 </MToolbar>
 @code {
 
@@ -30,4 +36,7 @@
 
     [Parameter]
     public EventCallback Reload { set; get; }
+
+    [Parameter]
+    public bool IsReloadButton { set; get; } = true;
 }

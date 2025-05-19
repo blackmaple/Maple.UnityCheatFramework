@@ -15,21 +15,11 @@
         </MListItemTitle>
         <MListItemSubtitle>@GameObject.ToDisplayDesc()</MListItemSubtitle>
     </MListItemContent>
-
-    @if (ChildContent is not null)
-    {
-        <MListItemAction>
-            @ChildContent
-        </MListItemAction>
-    }
-
 </MListItem>
 @code
 {
     [EditorRequired, NotNull, Parameter]
-    public GameObjectDisplayDTO GameObject { get; set; }
+    public required GameObjectDisplayDTO GameObject { get; set; }
 
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
-
+ 
 }

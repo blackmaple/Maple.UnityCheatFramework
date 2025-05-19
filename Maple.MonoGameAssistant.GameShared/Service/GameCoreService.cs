@@ -1068,7 +1068,7 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             if (string.IsNullOrEmpty(searchText) == false)
             {
-                searchDatas = searchDatas.Where(p => p.ContainsGameDisplay(searchText, default));
+                searchDatas = searchDatas.Where(p => p.ContainsGameDisplay(searchText, p.DisplayCategory));
             }
             this.ListSwitch_Search.AddRange(searchDatas);
 

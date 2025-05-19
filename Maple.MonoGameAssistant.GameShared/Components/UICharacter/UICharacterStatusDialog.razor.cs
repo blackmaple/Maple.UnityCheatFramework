@@ -21,7 +21,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
 
 
         [Parameter, EditorRequired, NotNull]
-        public GameCharacterStatusView StatusView { get; set; }
+        public required GameCharacterStatusView StatusView { get; set; }
 
 
         private async Task OnUpdateCharacterStatus(GameSwitchDisplayDTO gameValue)

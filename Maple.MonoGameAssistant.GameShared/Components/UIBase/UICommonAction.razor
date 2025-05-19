@@ -1,0 +1,84 @@
+﻿@if (Item.MultipleType)
+{
+    <MItemGroup Multiple>
+        @foreach (var i in Item.SelectedContents.GetItemAttributes(false))
+        {
+            <MItem>
+                <MChip ActiveClass="purple--text"
+                       IsActive="@Item.MultipleIsActive(i)"
+                       OnClick="() => OnMultiple(i)"
+                       Outlined Small>
+                    @i.ToDisplayName()
+                </MChip>
+            </MItem>
+        }
+    </MItemGroup>
+}
+else if (Item.ButtonType)
+{
+    <MButton Icon
+             Color="orange darken-4"
+             Loading="@Item.Loading"
+             Disabled="Item.Loading"
+             OnClick="OnClick">
+        <MIcon>mdi-crosshairs</MIcon>
+    </MButton>
+}
+else if (Item.SelectsType)
+{
+    <MSelect Solo Dense HideDetails="true"
+             TItem="GameValueInfoDTO"
+             TItemValue="string"
+             TValue="string"
+             @bind-Value="@Item.ContentValue"
+             Items="Item.SelectedContents"
+             ItemText="p => p.DisplayName"
+             ItemValue="p => p.DisplayValue"
+             Color="orange darken-4"
+             OnChange="OnChange"
+             SingleLine></MSelect>
+
+}
+else if (Item.SwitchesType)
+{
+    <MSwitch Inset Dense HideDetails="true"
+             Color="orange darken-4"
+             Loading="@Item.Loading"
+             Disabled="Item.Loading"
+             OnClick="OnClick"
+             @bind-Value="@Item.SwitchValue">
+    </MSwitch>
+}
+else if (Item.TextEditorType)
+{
+    <MTextField Solo OnAppendOuterClick="OnClick"
+                AppendOuterIcon="mdi-pencil-outline"
+                Type="number"
+                TValue="decimal"
+                Loading="Item.Loading"
+                Disabled="Item.Loading"
+                Dense
+                HideDetails="true"
+                @bind-Value="@Item.DecimalValue"
+                NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
+
+}
+else
+{
+    <MLabel>@Item.ContentValue</MLabel>
+}
+@code
+{
+
+    [Parameter, NotNull, EditorRequired]
+    public required GameSwitchDisplayDTO Item { get; set; }
+
+    [Parameter, NotNull, EditorRequired]
+    public EventCallback<MouseEventArgs> OnClick { set; get; }
+    [Parameter, NotNull, EditorRequired]
+    public required Func<GameValueInfoDTO, Task> OnMultiple { set; get; }
+    [Parameter, NotNull, EditorRequired]
+    public EventCallback<string?> OnChange { set; get; }
+
+
+}

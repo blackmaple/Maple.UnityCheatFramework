@@ -6,50 +6,23 @@
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListMonster_Search">
+            <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListMonster_Search" Context="item">
                 <ItemContent>
-                    <MListItem Dense>
-                        <MListItemAvatar Rounded="true" Size="36">
-                            <MImage Src="@context.DisplayImage">
-                                <PlaceholderContent>
-                                    <MIcon>mdi-border-none-variant</MIcon>
-                                </PlaceholderContent>
-                            </MImage>
-                        </MListItemAvatar>
-
-
-                        <MListItemContent>
-                            <MListItemTitle>
-                                <span>@context.ToDisplayName()</span>
-                                <MChip XSmall Outlined Color="green" OnClick="() => this.OnSearch(context.DisplayCategory)">
-                                    @context.DisplayCategory
-                                </MChip>
-                            </MListItemTitle>
-                            <MListItemSubtitle>@context.ToDisplayDesc()</MListItemSubtitle>
-                            <MChipGroup ShowArrows="true">
-                                @foreach (var att in context.MonsterAttributes.GetItemAttributes(true))
-                                {
-                                    <MChip Small Outlined>
-                                        <span>@att.ToDisplayName():</span>@att.DisplayValue
-                                    </MChip>
-
-                                }
-                            </MChipGroup>
-
-                        </MListItemContent>
-                        <MListItemAction>
+                    <UICommonDisplayItem GameObject="item">
+                        <ChipGroupContent>
+                            <UICommonChipGroup ShowArrows="true" Items="[.. item.MonsterAttributes.GetItemAttributes(true)]"/>
+                        </ChipGroupContent>
+                        <ItemActionContent>
                             <MButtonGroup Borderless Dense>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
+                                <MButton Loading="@item.Loading" Disabled="@item.Loading" Icon OnClick="() => OnSelected(item)">
                                     <MIcon Color="orange darken-4">mdi-smart-card-outline</MIcon>
                                 </MButton>
-                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnAddMonsterMember(context)">
+                                <MButton Loading="@item.Loading" Disabled="@item.Loading" Icon OnClick="() => OnAddMonsterMember(item)">
                                     <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                 </MButton>
                             </MButtonGroup>
-                        </MListItemAction>
-
-                    </MListItem>
-
+                        </ItemActionContent>
+                    </UICommonDisplayItem>
                     <MDivider></MDivider>
                 </ItemContent>
             </MVirtualScroll>

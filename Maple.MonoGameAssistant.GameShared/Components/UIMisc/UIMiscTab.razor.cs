@@ -7,7 +7,12 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIMisc
 {
     public partial class UIMiscTab
     {
-
+        protected sealed override ValueTask OnSearch(string? searchText)
+        {
+            this.SearchContent = searchText;
+            this.Core.OnSearchSwitch(searchText);
+            return ValueTask.CompletedTask;
+        }
         protected sealed override ValueTask OnSearch()
         {
             Core.OnSearchSwitch(SearchContent);
