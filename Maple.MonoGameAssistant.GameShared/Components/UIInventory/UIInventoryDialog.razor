@@ -1,32 +1,15 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" MaxWidth="360" OnOutsideClick="() => this.ClosePopupAsync()">
-    <MCard Outlined>
-        <MListItem Dense>
-            <MListItemAvatar Rounded="true" Size="36">
-                <MImage Src="@InventoryDisplay.DisplayImage">
-                    <PlaceholderContent>
-                        <MIcon>mdi-border-none-variant</MIcon>
-                    </PlaceholderContent>
-                </MImage>
-            </MListItemAvatar>
-            <MListItemContent>
-                <MListItemTitle>
-                    <span>@InventoryDisplay.ToDisplayName()</span>
-                    <MChip XSmall Outlined Color="green">
-                        @InventoryDisplay.DisplayCategory
-                    </MChip>
-                </MListItemTitle>
-              
-            </MListItemContent>
-        </MListItem>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
 
-        <MCardSubtitle>@InventoryDisplay.ToDisplayDesc()</MCardSubtitle>
+        <UICommonDisplayObject GameObject="InventoryDisplay"></UICommonDisplayObject>
+
         <MCardText>
             <MChipGroup Column>
                 @foreach (var item in InventoryDisplay.ItemAttributes.GetItemAttributes(false))
                 {
-                    <MChip Outlined>
+                    <MChip Small Outlined>
                         <span>@item.ToDisplayName():</span>@item.DisplayValue
                     </MChip>
                 }

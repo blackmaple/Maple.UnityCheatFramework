@@ -1,47 +1,20 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" Fullscreen>
-    <MCard Tile>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
         <MToolbar>
-
-            <MListItem>
-                <MListItemAvatar Rounded="true" Size="36">
-                    <MImage Src="@CharacterDisplay.DisplayImage">
-                        <PlaceholderContent>
-                            <MIcon>mdi-border-none-variant</MIcon>
-                        </PlaceholderContent>
-                    </MImage>
-                </MListItemAvatar>
-                <MListItemContent>
-
-                    <MListItemTitle>
-                        <span>@CharacterDisplay.ToDisplayName()</span>
-                        <MChip XSmall Outlined Color="green">
-                            @CharacterDisplay.DisplayCategory
-                        </MChip>
-
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-
+            <UICommonDisplayObject GameObject="@CharacterDisplay"/>
             <MSpacer></MSpacer>
-            <MToolbarItems>
-                <MButtonGroup Rounded Group>
-                    <MButton Icon
-                             OnClick="() => this.ClosePopupAsync()">
-                        <MIcon>mdi-close</MIcon>
-                    </MButton>
-                </MButtonGroup>
-
-            </MToolbarItems>
+            <MButton Icon OnClick="() => this.ClosePopupAsync()">
+                <MIcon>mdi-close</MIcon>
+            </MButton>
         </MToolbar>
 
-        <MCardSubtitle>@CharacterDisplay.ToDisplayDesc()</MCardSubtitle>
         <MCardText>
             <UIDynamicHeight PX="180px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="SkillInfos" Context="item">
                     <ItemContent>
-                        <MListItem Dense Slim @key=item>
+                        <MListItem Dense @key=item>
 
                             <MListItemAvatar Rounded="true" Size="36">
                                 <MImage Src="@item.DisplayImage">
@@ -79,11 +52,11 @@
                                 </MChipGroup>
                             </MListItemContent>
                             <MListItemAction>
-                                <MButtonGroup Rounded>
-                                    <MButton Small OnClick="() => OnUpdateCharacterSkill(item, false)" Loading="@item.Loading" Disabled="@(!item.CanWrite)">
+                                <MButtonGroup Borderless Dense>
+                                    <MButton Icon OnClick="() => OnUpdateCharacterSkill(item, false)" Loading="@item.Loading" Disabled="@(!item.CanWrite)">
                                         <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                     </MButton>
-                                    <MButton Small OnClick="() => OnUpdateCharacterSkill(item, true)" Loading="@item.Loading" Disabled="@(!item.CanWrite)">
+                                    <MButton Icon OnClick="() => OnUpdateCharacterSkill(item, true)" Loading="@item.Loading" Disabled="@(!item.CanWrite)">
                                         <MIcon Color="orange darken-4">mdi-trash-can-outline</MIcon>
                                     </MButton>
 

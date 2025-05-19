@@ -1,30 +1,12 @@
 ﻿@inherits UICommonTab
 
-<MCard Outlined MaxWidth="1024" Class="mx-auto">
+<MCard Tile MaxWidth="1024" Class="mx-auto">
+
     <MCardTitle>
-        <MToolbar Dense Flat>
-            <MTextField Label="SearchContent"
-                        Color="primary"
-                        @bind-Value="@SearchContent"
-                        TValue="string"
-                        Clearable
-                        HideDetails="true"
-                        AppendOuterIcon="mdi-magnify"
-                        OnAppendOuterClick="() => this.OnSearch()"
-                        OnClearClick="() => this.OnSearch()"
-                        OnEnter="() => this.OnSearch()">
-            </MTextField>
-            <MButton Icon OnClick="() => this.OnReload()">
-                <MIcon Color="orange darken-4">mdi-refresh</MIcon>
-            </MButton>
-
-
-        </MToolbar>
-
+        <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" Reload="() => this.OnReload()"/>
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
-
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCurrency_Search">
                 <ItemContent>
                     <MListItem ThreeLine Dense Slim>
@@ -56,9 +38,12 @@
 
                         </MListItemContent>
                         <MListItemAction>
-                            <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
-                                <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
-                            </MButton>
+                            <MButtonGroup Borderless Dense>
+                                <MButton Loading="@context.Loading" Disabled="@context.Loading" Icon OnClick="() => OnSelected(context)">
+                                    <MIcon Color="orange darken-4">mdi-file-edit-outline</MIcon>
+                                </MButton>
+                            </MButtonGroup>
+
                         </MListItemAction>
                     </MListItem>
                     <MDivider></MDivider>

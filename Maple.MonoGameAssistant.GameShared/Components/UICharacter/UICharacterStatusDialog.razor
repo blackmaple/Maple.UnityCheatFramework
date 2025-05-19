@@ -1,37 +1,13 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" Fullscreen>
-    <MCard Tile>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
         <MToolbar>
-
-            <MListItem>
-                <MListItemAvatar Rounded="true" Size="36">
-                    <MImage Src="@CharacterDisplay.DisplayImage">
-                        <PlaceholderContent>
-                            <MIcon>mdi-border-none-variant</MIcon>
-                        </PlaceholderContent>
-                    </MImage>
-                </MListItemAvatar>
-                <MListItemContent>
-                    <MListItemTitle>
-                        @CharacterDisplay.ToDisplayName()
-                    </MListItemTitle>
-                    <MListItemSubtitle>
-
-                        <MChip XSmall Outlined Color="green">
-                            @CharacterDisplay.DisplayCategory
-                        </MChip>
-                    </MListItemSubtitle>
-                </MListItemContent>
-            </MListItem>
-
+            <UICommonDisplayObject GameObject="@CharacterDisplay" />
             <MSpacer></MSpacer>
-            <MToolbarItems>
-                <MButton Icon
-                         OnClick="() => this.ClosePopupAsync()">
-                    <MIcon>mdi-close</MIcon>
-                </MButton>
-            </MToolbarItems>
+            <MButton Icon OnClick="() => this.ClosePopupAsync()">
+                <MIcon>mdi-close</MIcon>
+            </MButton>
         </MToolbar>
 
         <MCardSubtitle>@CharacterDisplay.ToDisplayDesc()</MCardSubtitle>

@@ -24,13 +24,29 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIMonster
 
         private async Task OnSelected(GameMonsterDisplayDTO gameMonster)
         {
-            await Core.OnSelectedMonster(gameMonster);
+            try
+            {
+                gameMonster.Loading = true;
+                await Core.OnSelectedMonster(gameMonster);
+            }
+            finally
+            {
+                gameMonster.Loading = false;
+            }
         }
 
         private async Task OnAddMonsterMember(GameMonsterDisplayDTO gameMonster)
         {
 
-            await Core.OnAddMonsterMember(gameMonster);
+            try
+            {
+                gameMonster.Loading = true;
+                await Core.OnAddMonsterMember(gameMonster);
+            }
+            finally
+            {
+                gameMonster.Loading = false;
+            }
         }
 
     }

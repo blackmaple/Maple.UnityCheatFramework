@@ -1,7 +1,8 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" Fullscreen>
-    <MCard Tile>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
+
         <MToolbar>
             <MTextField Label="SearchContent"
                         @bind-Value="@SearchContent"
@@ -53,8 +54,8 @@
                                 </MChipGroup>
                             </MListItemContent>
                             <MListItemAction>
-                                <MButtonGroup Rounded Group>
-                                    <MButton OnClick="() => this.OnSelectedData(context)">
+                                <MButtonGroup Borderless Dense>
+                                    <MButton Icon OnClick="() => this.OnSelectedData(context)">
                                         <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                     </MButton>
                                 </MButtonGroup>

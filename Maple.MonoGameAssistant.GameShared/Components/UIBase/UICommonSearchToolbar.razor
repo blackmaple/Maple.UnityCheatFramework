@@ -1,0 +1,33 @@
+﻿<MToolbar Dense Flat>
+    <MTextField Label="SearchContent"
+                Color="primary"
+                Value="@Value"
+                ValueChanged="@ValueChanged"
+                TValue="string"
+                Clearable
+                HideDetails="true"
+                AppendOuterIcon="mdi-magnify"
+                OnAppendOuterClick="@Search"
+                OnClearClick="@Search"
+                OnEnter="@Search">
+    </MTextField>
+    <MButton Icon OnClick="@Reload">
+        <MIcon Color="orange darken-4">mdi-refresh</MIcon>
+    </MButton>
+
+
+</MToolbar>
+@code {
+
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { set; get; }
+
+    [Parameter]
+    public EventCallback Search { set; get; }
+
+    [Parameter]
+    public EventCallback Reload { set; get; }
+}

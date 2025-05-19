@@ -1,23 +1,10 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 <MDialog Value="Visible" Fullscreen>
-    <MCard Tile>
-        <MToolbar>
-            <MTextField Label="SearchContent"
-                        @bind-Value="@SearchContent"
-                        Color="primary"
-                        TValue="string"
-                        Clearable
-                        HideDetails="true"
-                        AppendOuterIcon="mdi-magnify"
-                        OnAppendOuterClick="()=>this.OnSearch()"
-                        OnClearClick="()=>this.OnSearch()"
-                        OnEnter="()=>this.OnSearch()">
-            </MTextField>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
 
-            <MButton Icon OnClick="() => this.ClosePopupAsync(default)">
-                <MIcon>mdi-close</MIcon>
-            </MButton>
-        </MToolbar>
+        <MCardTitle>
+            <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" Reload="() => this.OnReload()" />
+        </MCardTitle>
 
         <MCardText>
             <UIDynamicHeight PX="100px">
@@ -51,8 +38,8 @@
                                 </MChipGroup>
                             </MListItemContent>
                             <MListItemAction>
-                                <MButtonGroup Rounded Group>
-                                    <MButton OnClick="() => this.OnSelectedData(context)">
+                                <MButtonGroup Borderless Dense>
+                                    <MButton Icon OnClick="() => this.OnSelectedData(context)">
                                         <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                     </MButton>
                                 </MButtonGroup>

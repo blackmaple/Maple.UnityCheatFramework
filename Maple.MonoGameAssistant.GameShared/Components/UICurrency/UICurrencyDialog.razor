@@ -1,42 +1,22 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" MaxWidth="360" OnOutsideClick="() => this.ClosePopupAsync()">
-    <MCard Outlined>
-        <MListItem Dense>
-            <MListItemAvatar Rounded="true" Size="36">
-                <MImage Src="@CurrencyDisplay.DisplayImage">
-                    <PlaceholderContent>
-                        <MIcon>mdi-border-none-variant</MIcon>
-                    </PlaceholderContent>
-                </MImage>
-            </MListItemAvatar>
-            <MListItemContent>
-                <MListItemTitle>
-                    <span>@CurrencyDisplay.ToDisplayName()</span>
-                    <MChip XSmall Outlined Color="green">
-                        @CurrencyDisplay.DisplayCategory
-                    </MChip>
-                </MListItemTitle>
-
-            </MListItemContent>
-        </MListItem>
-        <MCardSubtitle>
-            @CurrencyDisplay.ToDisplayDesc()
-        </MCardSubtitle>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
+        <UICommonDisplayObject GameObject="CurrencyDisplay"></UICommonDisplayObject>
         <MCardText>
             <MChipGroup Column>
                 @foreach (var item in CurrencyDisplay.CurrencyAttributes.GetItemAttributes(true))
                 {
-                    <MChip Outlined>
+                    <MChip Small Outlined>
                         <span>@item.ToDisplayName():</span>@item.DisplayValue
                     </MChip>
                 }
             </MChipGroup>
         </MCardText>
-
         <MCardActions>
             <MTextField OnAppendOuterClick="@OnUpdateCurrency"
                         AppendOuterIcon="mdi-pencil-outline"
+                        
                         Type="number"
                         TValue="decimal"
                         Loading="@CurrencyInfo.Loading"

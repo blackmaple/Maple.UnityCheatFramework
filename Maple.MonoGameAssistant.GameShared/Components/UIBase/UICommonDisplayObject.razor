@@ -1,0 +1,35 @@
+﻿<MListItem ThreeLine Dense>
+    <MListItemAvatar Rounded="true" Size="36">
+        <MImage Src="@GameObject.DisplayImage">
+            <PlaceholderContent>
+                <MIcon>mdi-border-none-variant</MIcon>
+            </PlaceholderContent>
+        </MImage>
+    </MListItemAvatar>
+    <MListItemContent>
+        <MListItemTitle>
+            <span>@GameObject.ToDisplayName()</span>
+            <MChip XSmall Outlined Color="green">
+                @GameObject.DisplayCategory
+            </MChip>
+        </MListItemTitle>
+        <MListItemSubtitle>@GameObject.ToDisplayDesc()</MListItemSubtitle>
+    </MListItemContent>
+
+    @if (ChildContent is not null)
+    {
+        <MListItemAction>
+            @ChildContent
+        </MListItemAction>
+    }
+
+</MListItem>
+@code
+{
+    [EditorRequired, NotNull, Parameter]
+    public GameObjectDisplayDTO GameObject { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

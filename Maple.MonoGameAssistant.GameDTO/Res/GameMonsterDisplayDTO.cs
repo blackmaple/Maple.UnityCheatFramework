@@ -1,4 +1,6 @@
-﻿namespace Maple.MonoGameAssistant.GameDTO
+﻿using System.Text.Json.Serialization;
+
+namespace Maple.MonoGameAssistant.GameDTO
 {
     /// <summary>
     /// 怪物
@@ -13,13 +15,15 @@
         /// <summary>
         /// 技能
         /// </summary>
-        public GameSkillInfoDTO[]? SkillInfos { set; get;}
+        public GameSkillInfoDTO[]? SkillInfos { set; get; }
 
         /// <summary>
         /// 奖励
         /// </summary>
         public GameValueInfoDTO[]? LootAttributes { set; get; }
 
+        [JsonIgnore]
+        public bool Loading { set; get; }
     }
 
 }

@@ -1,40 +1,13 @@
 ﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
 
 <MDialog Value="Visible" Fullscreen>
-    <MCard Tile>
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
         <MToolbar>
-
-            <MListItem>
-                <MListItemAvatar Rounded="true" Size="36">
-                    <MImage Src="@CharacterDisplay.DisplayImage">
-                        <PlaceholderContent>
-                            <MIcon>mdi-border-none-variant</MIcon>
-                        </PlaceholderContent>
-                    </MImage>
-                </MListItemAvatar>
-                <MListItemContent>
-                    <MListItemTitle>
-                        @CharacterDisplay.ToDisplayName()
-                    </MListItemTitle>
-                    <MListItemSubtitle>
-
-                        <MChip XSmall Outlined Color="green">
-                            @CharacterDisplay.DisplayCategory
-                        </MChip>
-                    </MListItemSubtitle>
-                </MListItemContent>
-            </MListItem>
-
+            <UICommonDisplayObject GameObject="@CharacterDisplay" />
             <MSpacer></MSpacer>
-            <MToolbarItems>
-                <MButtonGroup Rounded Group>
-                    <MButton Icon
-                             OnClick="() =>this.ClosePopupAsync()">
-                        <MIcon>mdi-close</MIcon>
-                    </MButton>
-                </MButtonGroup>
-
-            </MToolbarItems>
+            <MButton Icon OnClick="() => this.ClosePopupAsync()">
+                <MIcon>mdi-close</MIcon>
+            </MButton>
         </MToolbar>
 
         <MCardSubtitle>@CharacterDisplay.ToDisplayDesc()</MCardSubtitle>
@@ -84,11 +57,11 @@
                                     </MChipGroup>
                                 </MListItemContent>
                                 <MListItemAction>
-                                    <MButtonGroup Rounded>
-                                        <MButton Small OnClick="()=>OnUpdateCharacterEquipment(item,false)" Disabled="@(!item.CanWrite)">
+                                    <MButtonGroup Borderless Dense>
+                                        <MButton Icon OnClick="() => OnUpdateCharacterEquipment(item, false)" Disabled="@(!item.CanWrite)">
                                             <MIcon Color="orange darken-4">mdi-plus</MIcon>
                                         </MButton>
-                                        <MButton Small OnClick="()=>OnUpdateCharacterEquipment(item,true)" Disabled="@(!item.CanWrite)">
+                                        <MButton Icon OnClick="() => OnUpdateCharacterEquipment(item, true)" Disabled="@(!item.CanWrite)">
                                             <MIcon Color="orange darken-4">mdi-trash-can-outline</MIcon>
                                         </MButton>
 
