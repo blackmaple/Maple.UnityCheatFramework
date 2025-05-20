@@ -18,8 +18,8 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
     public class GameCoreService(GameHttpClientService gameHttp, IPopupService popupService, NavigationManager navigationManager)
     {
-        const string ShellUI_Ver = "0.2 (MASA Blazor:1.9.3)";
-
+        const string ShellUI_Ver = "0.2";
+        const string MASA_Blazor_Ver = "1.9.3";
         #region Service
         GameHttpClientService Http { get; } = gameHttp;
         public IPopupService PopupService { get; } = popupService;
@@ -57,23 +57,34 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
         public GameSessionInfoDTO? GameSessionInfo { get; set; }
         public string GameName => this.GameSessionInfo?.DisplayName ?? "???";
-        public string? QQ => this.GameSessionInfo?.QQ;
-
-        public string ApiVer => $"{nameof(GameSessionInfo.ApiVer)}:{this.GameSessionInfo?.ApiVer ?? "???"}";
-        public string ShellUI => $"{nameof(ShellUI)}:{ShellUI_Ver}";
+        public string QQ => this.GameSessionInfo?.QQ ?? "???";
 
         public Task ShowVersionInfo()
         {
-            return this.PopupService.ConfirmAsync($"{this.GameName}:{ApiVer}", ShellUI, AlertTypes.Info);
-        }
-        public void JumpQQ()
-        {
-            if (string.IsNullOrEmpty(this.QQ))
+            if (GameSessionInfo is null)
             {
-                return;
+                return Task.CompletedTask;
             }
-            NavigationManager.NavigateTo(this.QQ, true);
+            var dto = new GameCharacterDisplayDTO()
+            {
+                ObjectId = this.GameSessionInfo.ObjectId,
+                DisplayName = this.GameSessionInfo.DisplayName,
+                DisplayDesc = this.GameSessionInfo.DisplayDesc,
+                DisplayImage = this.GameSessionInfo.DisplayImage,
+                DisplayCategory = "Game",
+                CharacterAttributes = [
+                    new GameValueInfoDTO() { ObjectId = nameof(this.GameSessionInfo.ApiVer), DisplayName = nameof(this.GameSessionInfo.ApiVer), DisplayValue = this.GameSessionInfo.ApiVer },
+                    new GameValueInfoDTO() { ObjectId = ShellUI_Ver, DisplayName = nameof(ShellUI_Ver), DisplayValue = ShellUI_Ver },
+                    new GameValueInfoDTO() { ObjectId = MASA_Blazor_Ver, DisplayName = nameof(MASA_Blazor_Ver), DisplayValue = MASA_Blazor_Ver },
+
+                    ]
+            };
+            return PopupService.OpenAsync(typeof(UIVersionDialog), new Dictionary<string, object?>()
+            {
+                { nameof(UIVersionDialog.GameCharacter),dto},
+            });
         }
+
         public async Task<EnumGameServiceStatus> OnInitializedAsync()
         {
             var gameSessionDTO = await this.Http.GetGameSessionInfoAsync();
@@ -514,149 +525,6 @@ namespace Maple.MonoGameAssistant.GameShared.Service
             }
 
         }
-
-        #endregion
-
-        #region Forge
-        //public bool ForgeDisabled { set; get; }
-        //public async Task<bool> GetListForgeDisplayAsync()
-        //{
-        //    this.ListForge_All.Clear();
-        //    this.ListForge_Search.Clear();
-        //    if (this.GameSessionInfo is null)
-        //    {
-        //        return false;
-        //    }
-
-        //    var gameForgeDTO = await this.Http.GetListCharacterDisplayAsync(this.GameSessionInfo, EnumGameUITabKey.Tab_Forge);
-        //    if (false == gameForgeDTO.TryGet(out var listGameForge))
-        //    {
-        //        if (gameForgeDTO.CODE == (int)EnumMonoCommonCode.BIZ_UIHIDE)
-        //        {
-        //            ForgeDisabled = true;
-        //        }
-        //        else
-        //        {
-        //            await this.ShowErrorAsync(gameForgeDTO.MSG);
-        //        }
-        //        return false;
-        //    }
-        //    listGameForge.SortArray();
-        //    this.ListForge_All.AddRange(listGameForge);
-        //    this.ListForge_Search.AddRange(listGameForge);
-        //    return true;
-
-
-
-
-        //}
-        //public void OnSearchForge(string? searchText)
-        //{
-        //    this.ListForge_Search.Clear();
-        //    IEnumerable<GameCharacterDisplayDTO> searchDatas = this.ListForge_All;
-
-        //    if (string.IsNullOrEmpty(searchText) == false)
-        //    {
-        //        searchDatas = searchDatas.Where(p => p.ContainsGameDisplay(searchText, p.DisplayCategory));
-        //    }
-        //    this.ListForge_Search.AddRange(searchDatas);
-
-        //}
-        //public async ValueTask OnSelectedForgeStatus(GameCharacterDisplayDTO? selectedData)
-        //{
-        //    if (this.GameSessionInfo is null || selectedData is null)
-        //    {
-        //        return;
-        //    }
-
-
-
-        //    var dto = await this.Http.GetCharacterStatusAsync(this.GameSessionInfo, selectedData);
-        //    if (false == dto.TryGet(out var ForgeStatus))
-        //    {
-        //        await this.ShowErrorAsync(dto.MSG);
-        //        return;
-        //    }
-
-        //    await PopupService.OpenAsync(typeof(UICharacterStatusDialog), new Dictionary<string, object?>()
-        //    {
-        //        { nameof(UICharacterStatusDialog.CharacterDisplay), selectedData },
-        //        { nameof(UICharacterStatusDialog.CharacterStatus), ForgeStatus }
-        //    });
-
-
-        //}
-        //public async ValueTask OnSelectedForgeSkill(GameCharacterDisplayDTO? selectedData)
-        //{
-        //    if (this.GameSessionInfo is null || selectedData is null)
-        //    {
-        //        return;
-        //    }
-
-        //    var dto = await this.Http.GetCharacterSkillAsync(this.GameSessionInfo, selectedData);
-        //    if (false == dto.TryGet(out var ForgeSkill))
-        //    {
-        //        await this.ShowErrorAsync(dto.MSG);
-        //        return;
-        //    }
-
-        //    await PopupService.OpenAsync(typeof(UICharacterSkillDialog), new Dictionary<string, object?>()
-        //    {
-        //        { nameof(UICharacterSkillDialog.CharacterDisplay), selectedData },
-        //        { nameof(UICharacterSkillDialog.CharacterSkill), ForgeSkill }
-        //    });
-
-        //}
-        //[Obsolete("remove...")]
-        //public async ValueTask OnSelectedForgeEquipment(GameCharacterDisplayDTO? selectedData)
-        //{
-        //    if (this.GameSessionInfo is null || selectedData is null)
-        //    {
-        //        return;
-        //    }
-
-        //    var dto = await this.Http.GetCharacterEquipmentAsync(this.GameSessionInfo, selectedData);
-        //    if (false == dto.TryGet(out var ForgeEquipment))
-        //    {
-        //        await this.ShowErrorAsync(dto.MSG);
-        //        return;
-        //    }
-
-        //    await PopupService.OpenAsync(typeof(UICharacterEquipmentDialog), new Dictionary<string, object?>()
-        //    {
-        //        { nameof(UICharacterEquipmentDialog.CharacterDisplay), selectedData },
-        //        { nameof(UICharacterEquipmentDialog.CharacterEquipment), ForgeEquipment }
-        //    });
-
-
-        //}
-        //public async ValueTask OnUpdateForgeStatus(GameCharacterDisplayDTO gameForgeDisplay, GameCharacterStatusDTO gameForgeStatus, GameSwitchDisplayDTO? selectedData)
-        //{
-        //    if (this.GameSessionInfo is null || selectedData is null)
-        //    {
-        //        return;
-        //    }
-
-        //    var dto = await this.Http.UpdateCharacterStatusAsync(this.GameSessionInfo, gameForgeDisplay, selectedData);
-        //    if (false == dto.TryGet(out var ForgeStatus))
-        //    {
-        //        await this.ShowErrorAsync(dto.MSG);
-        //        return;
-        //    }
-        //    if (gameForgeStatus.CharacterAttributes is not null && ForgeStatus.CharacterAttributes is not null)
-        //    {
-        //        foreach (var att in gameForgeStatus.CharacterAttributes)
-        //        {
-        //            var newAtt = ForgeStatus.CharacterAttributes.Where(p => p.ObjectId == att.ObjectId).FirstOrDefault();
-        //            if (newAtt is not null)
-        //            {
-        //                att.ContentValue = newAtt.ContentValue;
-        //            }
-        //        }
-
-        //    }
-        //    await this.ShowInfoAsync($"Update:{selectedData.ContentValue}");
-        //}
 
         #endregion
 

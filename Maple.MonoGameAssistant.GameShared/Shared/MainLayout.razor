@@ -2,16 +2,16 @@
 <PageTitle>@Core.GameName</PageTitle>
 <MApp>
 
-    <MSystemBar App>
-        <MAppBarNavIcon OnClick="() => LoadGameResourceAsync()">
-            <MIcon>mdi-gamepad-variant-outline</MIcon>
+    <MAppBar App Height="36">
+        <MAppBarNavIcon Small OnClick="() => LoadGameResourceAsync()">
+            <MIcon>mdi-controller</MIcon>
         </MAppBarNavIcon>
-        <MAppBarTitle>@Core.GameName</MAppBarTitle>
+        <MToolbarTitle>@Core.GameName</MToolbarTitle>
         <MSpacer></MSpacer>
-        <MButton Icon OnClick="() => this.Core.ShowVersionInfo()">
-            <MIcon>mdi-microsoft-xbox-controller-battery-unknown</MIcon>
+        <MButton Small Icon OnClick="() => this.Core.ShowVersionInfo()">
+            <MIcon Color="orange darken-4">mdi-alpha-i-circle-outline</MIcon>
         </MButton>
-    </MSystemBar>
+    </MAppBar>
 
 
     <MMain>
@@ -24,25 +24,47 @@
         </CascadingValue>
 
     </MMain>
-    <MFooter Rounded="true">
+    <MFooter>
         @if (Status == EnumGameServiceStatus.OK)
         {
-            <MBottomNavigation @bind-Value="@NavTab" Grow Color="teal" App>
-                <MButton Value="UIMainTabs.Tab_Currency" Icon IconName="mdi-alpha-c-circle-outline" Text>
-                    资产
-                </MButton>
-                <MButton Value="UIMainTabs.Tab_Inventory" Icon IconName="mdi-alpha-i-circle-outline" Text>
-                    资源
-                </MButton>
-                <MButton Value="UIMainTabs.Tab_Character" Icon IconName="mdi-alpha-p-circle-outline" Text>
-                    角色
-                </MButton>
-                <MButton Value="UIMainTabs.Tab_Misc" Icon IconName="mdi-alpha-o-circle-outline" Text>
-                    其他
-                </MButton>
-                <MButton Value="UIMainTabs.Tab_Monster" Icon IconName="mdi-alpha-m-circle-outline" Text>
-                    成员
-                </MButton>
+            <MBottomNavigation @bind-Value="@NavTab" Grow Color="teal" App Height="48">
+
+
+                @if (Core.CurrencyDisabled == false)
+                {
+                    <MButton Small Value="UIMainTabs.Tab_Currency" Icon IconName="mdi-alpha-c-circle-outline" Text>
+                        资产
+                    </MButton>
+                }
+                @if (Core.InventoryDisabled == false)
+                {
+                    <MButton Small Value="UIMainTabs.Tab_Inventory" Icon IconName="mdi-alpha-i-circle-outline" Text>
+                        资源
+                    </MButton>
+                }
+
+                @if (Core.CharacterDisabled == false)
+                {
+                    <MButton Small Value="UIMainTabs.Tab_Character" Icon IconName="mdi-alpha-p-circle-outline" Text>
+                        角色
+                    </MButton>
+                }
+
+                @if (Core.MiscDisabled == false)
+                {
+                    <MButton Small Value="UIMainTabs.Tab_Misc" Icon IconName="mdi-alpha-o-circle-outline" Text>
+                        其他
+                    </MButton>
+
+                }
+
+                @if (Core.MonsterDisabled == false)
+                {
+                    <MButton Small Value="UIMainTabs.Tab_Monster" Icon IconName="mdi-alpha-m-circle-outline" Text>
+                        成员
+                    </MButton>
+                }
+
 
             </MBottomNavigation>
         }

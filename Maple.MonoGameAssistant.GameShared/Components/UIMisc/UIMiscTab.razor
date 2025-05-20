@@ -3,86 +3,21 @@
 <MCard Tile MaxWidth="1024" Class="mx-auto">
 
     <MCardTitle>
-        <UICommonSearchToolbar @bind-Value="@SearchContent" Search="() => this.OnSearch()" Reload="() => this.OnReload()" />
+        <UICommonSearchToolbar 
+            @bind-Value="@SearchContent" 
+            Search="() => this.OnSearch()" 
+            Reload="() => this.OnReload()" />
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search" Context="item">
                 <ItemContent>
-                    <UICommonDisplayItem GameObject="item">
+                    <UICommonDisplayItem GameObject="item" ShowIcon="false">
                         <ItemActionContent>
-                            <UICommonAction Item="item" OnClick="() => OnChange(item)" OnChange="() => OnChange(item)" OnMultiple="(i) => OnChange(item, i, true)" />
-
-                            @*   @if (item.MultipleType)
-                            {
-                                <MItemGroup Multiple>
-                                    @foreach (var i in item.SelectedContents.GetItemAttributes(false))
-                                    {
-                                        <MItem>
-                                            <MChip ActiveClass="purple--text"
-                                                   IsActive="@item.MultipleIsActive(i)"
-                                                   OnClick="() => OnChange(item, i, true)"
-                                                   Outlined Small>
-                                                @i.ToDisplayName()
-                                            </MChip>
-                                        </MItem>
-
-                                    }
-                                </MItemGroup>
-                            }
-                            else if (item.ButtonType)
-                            {
-                                <MButton Icon
-                                         Color="orange darken-4"
-                                         Loading="@item.Loading"
-                                         Disabled="item.Loading"
-                                         OnClick="() => OnChange(item)">
-                                    <MIcon>mdi-crosshairs</MIcon>
-                                </MButton>
-                            }
-                            else if (item.SelectsType)
-                            {
-                                <MSelect Solo Dense HideDetails="true"
-                                         TItem="GameValueInfoDTO"
-                                         TItemValue="string"
-                                         TValue="string"
-                                         @bind-Value="@item.ContentValue"
-                                         Items="item.SelectedContents"
-                                         ItemText="p => p.DisplayName"
-                                         ItemValue="p => p.DisplayValue"
-                                         Color="orange darken-4"
-                                         OnChange="() => OnChange(item)"
-                                         SingleLine></MSelect>
-
-                            }
-                            else if (item.SwitchesType)
-                            {
-                                <MSwitch Inset
-                                         Color="orange darken-4"
-                                         Loading="@item.Loading"
-                                         Disabled="item.Loading"
-                                         OnClick="() => OnChange(item, true)"
-                                         @bind-Value="@item.SwitchValue">
-                                </MSwitch>
-                            }
-                            else if (item.TextEditorType)
-                            {
-                                <MTextField Solo OnAppendOuterClick="()=>OnChange(item)"
-                                            AppendOuterIcon="mdi-pencil-outline"
-                                            Type="number"
-                                            TValue="decimal"
-                                            Loading="item.Loading"
-                                            Disabled="item.Loading"
-                                            Dense
-                                            HideDetails="true"
-                                            @bind-Value="@item.DecimalValue"
-                                            NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
-
-                            }
-                            else
-                            {
-                                <MLabel>@item.ContentValue</MLabel>
-                            } *@
+                            <UICommonAction Item="item" 
+                                OnClick="() => OnChange(item)" 
+                                OnChange="() => OnChange(item)" 
+                                OnMultiple="(i) => OnChange(item, i, true)" />
                         </ItemActionContent>
                     </UICommonDisplayItem>
                     <MDivider></MDivider>

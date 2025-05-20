@@ -4,7 +4,7 @@
 @using Maple.MonoGameAssistant.GameShared.Components.UIMisc
 @using Maple.MonoGameAssistant.GameShared.Components.UIMonster
 @using Maple.MonoGameAssistant.GameShared.Components.UISkill
-<MTabsItems @bind-Value="@NavTab">
+<MTabsItems @bind-Value="@NavTab" Mandatory >
     <MTabItem Value="@Tab_Currency">
         <UICurrencyTab></UICurrencyTab>
     </MTabItem>
@@ -17,7 +17,7 @@
     <MTabItem Value="@Tab_Misc">
         <UIMiscTab></UIMiscTab>
     </MTabItem>
-    <MTabItem Value="@Tab_Monster"> 
+    <MTabItem Value="@Tab_Monster">
         <UIMonsterTab></UIMonsterTab>
     </MTabItem>
 

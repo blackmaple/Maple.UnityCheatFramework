@@ -1,11 +1,16 @@
 ﻿<MListItem ThreeLine Dense>
-    <MListItemAvatar Rounded="true" Size="36">
-        <MImage Src="@GameObject.DisplayImage">
-            <PlaceholderContent>
-                <MIcon>mdi-border-none-variant</MIcon>
-            </PlaceholderContent>
-        </MImage>
-    </MListItemAvatar>
+    @if (ShowIcon)
+    {
+        <MListItemAvatar Rounded="true" Size="36">
+            <MImage Src="@GameObject.DisplayImage">
+                <PlaceholderContent>
+                    <MIcon>mdi-border-none-variant</MIcon>
+                </PlaceholderContent>
+            </MImage>
+        </MListItemAvatar>
+    
+    }
+
     <MListItemContent>
         <MListItemTitle>
             <span>@GameObject.ToDisplayName()</span>
@@ -41,4 +46,8 @@
 
     [Parameter]
     public RenderFragment? ItemActionContent { get; set; }
+
+
+    [Parameter]
+    public bool ShowIcon { get; set; } = true;
 }

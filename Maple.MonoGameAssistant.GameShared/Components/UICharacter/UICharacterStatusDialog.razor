@@ -6,82 +6,12 @@
             <UICommonDialogToolbar GameObject="CharacterDisplay" CloseClick="() => this.ClosePopupAsync()" />
         </MCardTitle>
         <MCardText>
-            <UIDynamicHeight PX="180px">
+            <UIDynamicHeight PX="120px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="CharacterAttributes" Context="item">
                     <ItemContent>
-                        <UICommonDisplayItem GameObject="item">
+                        <UICommonDisplayItem GameObject="item" ShowIcon="false">
                             <ItemActionContent>
-                                <UICommonAction Item="item" OnClick ="()=>OnUpdateCharacterStatus(item)" OnChange="()=>OnUpdateCharacterStatus(item)" OnMultiple="(i)=>OnUpdateCharacterStatus(item,i,true)" />
-                            @*     @if (item.MultipleType)
-                                {
-                                    <MItemGroup Multiple>
-                                        @foreach (var i in item.SelectedContents.GetItemAttributes(false))
-                                        {
-                                            <MItem>
-                                                <MChip ActiveClass="purple--text"
-                                                       IsActive="@item.MultipleIsActive(i)"
-                                                       OnClick="() => OnUpdateCharacterStatus(item, i, true)"
-                                                       Outlined Small>
-                                                    @i.ToDisplayName()
-                                                </MChip>
-                                            </MItem>
-
-                                        }
-                                    </MItemGroup>
-                                }
-                                else if (item.ButtonType)
-                                {
-                                    <MButton Icon
-                                             Color="orange darken-4"
-                                             Loading="@item.Loading"
-                                             Disabled="item.Loading"
-                                             OnClick="() => OnUpdateCharacterStatus(item)">
-                                        <MIcon>mdi-crosshairs</MIcon>
-                                    </MButton>
-                                }
-                                else if (item.SelectsType)
-                                {
-                                    <MSelect Solo Dense HideDetails="true"
-                                             TItem="GameValueInfoDTO"
-                                             TItemValue="string"
-                                             TValue="string"
-                                             @bind-Value="@item.ContentValue"
-                                             Items="item.SelectedContents"
-                                             ItemText="p => p.DisplayName"
-                                             ItemValue="p => p.DisplayValue"
-                                             Color="orange darken-4"
-                                             OnChange="() => OnUpdateCharacterStatus(item)"
-                                             SingleLine></MSelect>
-
-                                }
-                                else if (item.SwitchesType)
-                                {
-                                    <MSwitch Inset Dense HideDetails="true"
-                                             Color="orange darken-4"
-                                             Loading="@item.Loading"
-                                             Disabled="item.Loading"
-                                             OnClick="() => OnUpdateCharacterStatus(item)"
-                                             @bind-Value="@item.SwitchValue">
-                                    </MSwitch>
-                                }
-                                else if (item.TextEditorType)
-                                {
-                                    <MTextField Solo OnAppendOuterClick="()=>OnUpdateCharacterStatus(item)"
-                                                AppendOuterIcon="mdi-pencil-outline"
-                                                Type="number"
-                                                TValue="decimal"
-                                                Loading="item.Loading"
-                                                Disabled="item.Loading"
-                                                Dense
-                                                HideDetails="true"
-                                                @bind-Value="@item.DecimalValue"
-                                                NumberProps="@(prop => { prop.Min = int.MinValue; prop.Max = int.MaxValue; prop.Step = 1; prop.HideControl = true; })" />
-
-                                }
-                                else
-                                {
-                                    <MLabel>@item.ContentValue</MLabel>
-                                } *@
+                                <UICommonAction Item="item" OnClick="() => OnUpdateCharacterStatus(item)" OnChange="() => OnUpdateCharacterStatus(item)" OnMultiple="(i) => OnUpdateCharacterStatus(item, i, true)" />
                             </ItemActionContent>
                         </UICommonDisplayItem>
 

@@ -1,0 +1,18 @@
+﻿@inherits Masa.Blazor.Popup.Components.PopupComponentBase
+<MDialog Value="Visible" MaxWidth="360">
+    <MCard Tile MaxWidth="1024" Class="mx-auto">
+        <MCardTitle>
+            <UICommonDisplayCaption GameObject="GameCharacter" ></UICommonDisplayCaption>
+        </MCardTitle>
+        <MCardText>
+             <UICommonChipGroup Column Items="Items"></UICommonChipGroup>
+        </MCardText>
+        <MCardActions>
+            <MSpacer></MSpacer>
+            <PCopyableText>
+                @this.Core.QQ
+            </PCopyableText>
+        </MCardActions>
+    </MCard>
+
+</MDialog>
