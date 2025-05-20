@@ -35,6 +35,12 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIDialog
             ListItem_Search.AddRange(searchDatas);
         }
 
+        private void OnSearch(string? content)
+        {
+            this.SearchContent = content;
+            this.OnSearch();
+        }
+
         public async Task OnSelectedData(GameInventoryDisplayDTO inventoryDisplayDTO)
         {
             if (await Core.PopupService.ConfirmAsync($"Add {inventoryDisplayDTO.DisplayCategory}", $"Add {inventoryDisplayDTO.DisplayCategory}:{inventoryDisplayDTO.DisplayName}", AlertTypes.Warning))

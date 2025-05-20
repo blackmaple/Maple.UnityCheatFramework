@@ -8,13 +8,13 @@
                 </PlaceholderContent>
             </MImage>
         </MListItemAvatar>
-    
+
     }
 
     <MListItemContent>
         <MListItemTitle>
             <span>@GameObject.ToDisplayName()</span>
-            <MChip XSmall Outlined Color="green">
+            <MChip XSmall Outlined Color="green" OnClick="@OnClickCategory">
                 @GameObject.DisplayCategory
             </MChip>
         </MListItemTitle>
@@ -47,6 +47,8 @@
     [Parameter]
     public RenderFragment? ItemActionContent { get; set; }
 
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClickCategory { set; get; }
 
     [Parameter]
     public bool ShowIcon { get; set; } = true;

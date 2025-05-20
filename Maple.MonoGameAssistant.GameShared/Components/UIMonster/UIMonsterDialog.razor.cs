@@ -15,7 +15,7 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UIMonster
         public List<GameSkillInfoDTO> Skills => View.SkillInfos;
 
         [Parameter, EditorRequired, NotNull]
-        public GameMonsterView View { get; set; }
+        public required GameMonsterView View { get; set; }
 
 
 

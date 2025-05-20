@@ -9,7 +9,7 @@
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListCurrency_Search" Context="item">
                 <ItemContent>
-                    <UICommonDisplayItem GameObject="item">
+                    <UICommonDisplayItem GameObject="item" OnClickCategory="() => this.OnSearch(item.DisplayCategory)">
                         <ChipGroupContent>
                             <UICommonChipGroup ShowArrows="true" Items="[..item.CurrencyAttributes.GetItemAttributes(true)]" />
                         </ChipGroupContent>

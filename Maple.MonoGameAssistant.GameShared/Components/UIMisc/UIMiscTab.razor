@@ -12,7 +12,7 @@
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search" Context="item">
                 <ItemContent>
-                    <UICommonDisplayItem GameObject="item" ShowIcon="false">
+                    <UICommonDisplayItem GameObject="item" OnClickCategory="() => this.OnSearch(item.DisplayCategory)">
                         <ItemActionContent>
                             <UICommonAction Item="item" 
                                 OnClick="() => OnChange(item)" 
