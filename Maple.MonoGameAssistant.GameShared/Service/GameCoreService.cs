@@ -577,7 +577,7 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
             await PopupService.OpenAsync(typeof(UIMonsterDialog), new Dictionary<string, object?>()
             {
-                { nameof(UIMonsterDialog.MonsterDisplayDTO), selectedData },
+                { nameof(UIMonsterDialog.View), new GameMonsterView(selectedData) },
 
             });
 

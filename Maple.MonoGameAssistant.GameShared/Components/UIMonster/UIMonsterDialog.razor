@@ -7,12 +7,12 @@
             <UICommonDialogToolbar GameObject="MonsterDisplayDTO" CloseClick="() => this.ClosePopupAsync()" />
         </MCardTitle>
         <MCardText>
-            <UICommonChipGroup Column="true" Items="[..MonsterDisplayDTO.MonsterAttributes.GetItemAttributes(false)]" />
+            <UICommonChipGroup Column="true" Items="[..MonsterAttributes.GetItemAttributes(false)]" />
         </MCardText>
         <MCardActions>
 
             <UIDynamicHeight PX="180px">
-                <MVirtualScroll OverscanCount="2" ItemSize="64" Items="MonsterDisplayDTO.SkillInfos" Context="item">
+                <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Skills" Context="item">
                     <ItemContent>
                         <UICommonDisplayItem GameObject="item">
                             <ChipGroupContent>
