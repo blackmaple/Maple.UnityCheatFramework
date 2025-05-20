@@ -2,16 +2,16 @@
 <PageTitle>@Core.GameName</PageTitle>
 <MApp>
 
-    <MAppBar App Height="36">
-        <MAppBarNavIcon Small OnClick="() => LoadGameResourceAsync()">
+    <MSystemBar App Height="36">
+        <MButton Small Icon OnClick="() =>this.Core.LoadGameResourceAsync()">
             <MIcon>mdi-controller</MIcon>
-        </MAppBarNavIcon>
-        <MToolbarTitle>@Core.GameName</MToolbarTitle>
+        </MButton>
+        <MLabel>@Core.GameName</MLabel>
         <MSpacer></MSpacer>
         <MButton Small Icon OnClick="() => this.Core.ShowVersionInfo()">
-            <MIcon Color="orange darken-4">mdi-alpha-i-circle-outline</MIcon>
+            <MIcon>mdi-alpha-i-circle-outline</MIcon>
         </MButton>
-    </MAppBar>
+    </MSystemBar>
 
 
     <MMain>

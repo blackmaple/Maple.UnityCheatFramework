@@ -110,7 +110,7 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
 
         #region Game Resource
-        public async ValueTask LoadGameResourceAsync()
+        public async Task LoadGameResourceAsync()
         {
             if (this.GameSessionInfo is null)
             {
