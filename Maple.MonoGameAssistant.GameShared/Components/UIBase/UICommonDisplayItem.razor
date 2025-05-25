@@ -14,9 +14,12 @@
     <MListItemContent>
         <MListItemTitle>
             <span>@GameObject.ToDisplayName()</span>
-            <MChip XSmall Outlined Color="green" OnClick="@OnClickCategory">
-                @GameObject.DisplayCategory
-            </MChip>
+            @if(ShowCategory)
+            {
+                <MChip XSmall Outlined Color="green" OnClick="@OnClickCategory">
+                    @GameObject.DisplayCategory
+                </MChip>
+            }
         </MListItemTitle>
         <MListItemSubtitle>
             @GameObject.ToDisplayDesc()
@@ -52,4 +55,6 @@
 
     [Parameter]
     public bool ShowIcon { get; set; } = true;
+    [Parameter]
+    public bool ShowCategory { get; set; } = true;
 }

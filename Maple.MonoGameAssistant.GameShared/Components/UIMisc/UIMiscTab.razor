@@ -3,21 +3,20 @@
 <MCard Tile MaxWidth="1024" Class="mx-auto">
 
     <MCardTitle>
-        <UICommonSearchToolbar 
-            @bind-Value="@SearchContent" 
-            Search="() => this.OnSearch()" 
-            Reload="() => this.OnReload()" />
+        <UICommonSearchToolbar @bind-Value="@SearchContent"
+                               Search="() => this.OnSearch()"
+                               Reload="() => this.OnReload()" />
     </MCardTitle>
     <MCardText>
         <UIDynamicHeight>
             <MVirtualScroll OverscanCount="2" ItemSize="64" Items="Core.ListSwitch_Search" Context="item">
                 <ItemContent>
-                    <UICommonDisplayItem GameObject="item" OnClickCategory="() => this.OnSearch(item.DisplayCategory)">
+                    <UICommonDisplayItem GameObject="item" ShowCategory="false" ShowIcon="false">
                         <ItemActionContent>
-                            <UICommonAction Item="item" 
-                                OnClick="() => OnChange(item)" 
-                                OnChange="() => OnChange(item)" 
-                                OnMultiple="(i) => OnChange(item, i, true)" />
+                            <UICommonAction Item="item"
+                                            OnClick="() => OnChange(item)"
+                                            OnChange="() => OnChange(item)"
+                                            OnMultiple="(i) => OnChange(item, i, true)" />
                         </ItemActionContent>
                     </UICommonDisplayItem>
                     <MDivider></MDivider>

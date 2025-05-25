@@ -9,7 +9,7 @@
             <UIDynamicHeight PX="120px">
                 <MVirtualScroll OverscanCount="2" ItemSize="64" Items="CharacterAttributes" Context="item">
                     <ItemContent>
-                        <UICommonDisplayItem GameObject="item" ShowIcon="false">
+                        <UICommonDisplayItem GameObject="item" ShowIcon="false" ShowCategory="false">
                             <ItemActionContent>
                                 <UICommonAction Item="item" OnClick="() => OnUpdateCharacterStatus(item)" OnChange="() => OnUpdateCharacterStatus(item)" OnMultiple="(i) => OnUpdateCharacterStatus(item, i, true)" />
                             </ItemActionContent>
