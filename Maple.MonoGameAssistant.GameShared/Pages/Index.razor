@@ -13,7 +13,7 @@ else if (Status == EnumGameServiceStatus.Init)
 }
 else
 {
-    <MButton Block Color="primary" OnClick="()=>LoadServiceDataAsync()">
+    <MButton Block Color="primary" Loading="@Loading" OnClick="()=>LoadServiceDataAsync()">
         <MIcon>mdi-cached</MIcon>
         <span>Try</span>
     </MButton>

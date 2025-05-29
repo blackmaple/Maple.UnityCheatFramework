@@ -3,14 +3,19 @@
 <MApp>
 
     <MSystemBar App Height="36">
-        <MButton Small Icon OnClick="() =>this.Core.LoadGameResourceAsync()">
-            <MIcon>mdi-controller</MIcon>
-        </MButton>
-        <MLabel>@Core.GameName</MLabel>
-        <MSpacer></MSpacer>
-        <MButton Small Icon OnClick="() => this.Core.ShowVersionInfo()">
-            <MIcon>mdi-alpha-i-circle-outline</MIcon>
-        </MButton>
+        @if (Status == EnumGameServiceStatus.OK)
+        {
+            <MButton Small Icon OnClick="() => this.Core.LoadGameResourceAsync()">
+                <MIcon>mdi-controller</MIcon>
+            </MButton>
+            <MLabel>@Core.GameName</MLabel>
+            <MSpacer></MSpacer>
+            <MButton Small Icon OnClick="() => this.Core.ShowVersionInfo()">
+                <MIcon>mdi-alpha-i-circle-outline</MIcon>
+            </MButton>
+        }
+        
+
     </MSystemBar>
 
 

@@ -17,7 +17,7 @@ namespace Maple.MonoGameAssistant.GameShared.Pages
 
         public EnumGameServiceStatus Status
         {
-            get => Main.Status; 
+            get => Main.Status;
             set => Main.Status = value;
         }
 
@@ -27,10 +27,21 @@ namespace Maple.MonoGameAssistant.GameShared.Pages
             await LoadServiceDataAsync();
         }
 
+        public bool Loading { set; get; }
+
         public async Task LoadServiceDataAsync()
         {
-            var status = await this.Core.OnInitializedAsync();
-            this.Main.UppdateNavTabs(status);
+            try
+            {
+                this.Loading = true;
+                var status = await this.Core.OnInitializedAsync();
+                this.Main.UppdateNavTabs(status);
+
+            }
+            finally
+            {
+                this.Loading = false;
+            }
         }
 
 
