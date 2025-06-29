@@ -8,6 +8,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
     [MetadataExtensions.MetadataGenerator.ClassModelMetadata("Assembly-CSharp", "GameMain", "Game", "GameMain.Game")]
     public partial class Game
     {
+
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public unsafe readonly partial struct Ptr_Game(nint ptr) : MetadataExtensions.MetadataGenerator.IPtrMetadata
         {
@@ -445,35 +446,35 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// static  System.Void .cctor()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute(".cctor", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public static partial void CCTOR(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute(".cctor", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public static partial void CCTOR(); 
 */
             /// <summary>
             /// static  System.Void Despawn(GameMain.Game game)
             /// </summary>
             /// <param name = "game">class GameMain.Game</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Despawn", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game", 0)]
-            public static partial void DESPAWN(nint game); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Despawn", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game", 0)]
+           public static partial void DESPAWN(nint game); 
 */
             /// <summary>
             /// static  GameMain.Utility.UISetting get_UISetting()
             /// </summary>
             /// <returns>class GameMain.Utility.UISetting</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_UISetting", "GameMain.Utility.UISetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public static partial nint GET_UI_SETTING(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_UISetting", "GameMain.Utility.UISetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public static partial nint GET_UI_SETTING(); 
 */
             /// <summary>
             /// static  System.Collections.Generic.List<GameMain.UnitSystem.UnitSetting> GetActiveHeroSettings()
             /// </summary>
             /// <returns>class System.Collections.Generic.List<GameMain.UnitSystem.UnitSetting></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Collections.Generic.List<GameMain.UnitSystem.UnitSetting>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public static partial nint GET_ACTIVE_HERO_SETTINGS(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Collections.Generic.List<GameMain.UnitSystem.UnitSetting>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public static partial nint GET_ACTIVE_HERO_SETTINGS(); 
 */
             /// <summary>
             /// static  System.Void GetActiveHeroSettings(System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting> result, System.Func<GameMain.UnitSystem.UnitSetting , System.Boolean> where)
@@ -481,11 +482,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <param name = "result">interface System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting></param>
             /// <param name = "where">class System.Func<GameMain.UnitSystem.UnitSetting , System.Boolean></param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting>", 0)]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Func<GameMain.UnitSystem.UnitSetting,System.Boolean>", 1)]
-            public static partial void GET_ACTIVE_HERO_SETTINGS(nint result, nint where); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting>", 0)]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Func<GameMain.UnitSystem.UnitSetting,System.Boolean>", 1)]
+           public static partial void GET_ACTIVE_HERO_SETTINGS(nint result, nint where); 
 */
             /// <summary>
             /// static  System.Void GetActiveHeroSettings(System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting> result, System.Int32 index)
@@ -493,49 +494,49 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <param name = "result">interface System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting></param>
             /// <param name = "index">struct System.Int32</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting>", 0)]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 1)]
-            public static partial void GET_ACTIVE_HERO_SETTINGS(nint result, System.Int32 index); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetActiveHeroSettings", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.ICollection<GameMain.UnitSystem.UnitSetting>", 0)]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 1)]
+           public static partial void GET_ACTIVE_HERO_SETTINGS(nint result, System.Int32 index); 
 */
             /// <summary>
             /// static  GameMain.GameProcedure.GameProcedureTypes GetGameProcedureType()
             /// </summary>
             /// <returns>enum GameMain.GameProcedure.GameProcedureTypes</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetGameProcedureType", "GameMain.GameProcedure.GameProcedureTypes", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public static partial GameMain.GameProcedure.GameProcedureTypes GET_GAME_PROCEDURE_TYPE(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetGameProcedureType", "GameMain.GameProcedure.GameProcedureTypes", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public static partial GameMain.GameProcedure.GameProcedureTypes GET_GAME_PROCEDURE_TYPE(); 
 */
             /// <summary>
             /// static  System.Int32 GetSeasonSalary(System.Collections.Generic.IEnumerable<GameMain.AthleteSystem.Athlete> athletes)
             /// </summary>
             /// <param name = "athletes">interface System.Collections.Generic.IEnumerable<GameMain.AthleteSystem.Athlete></param>
             /// <returns>struct System.Int32</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetSeasonSalary", "System.Int32", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.IEnumerable<GameMain.AthleteSystem.Athlete>", 0)]
-            public static partial System.Int32 GET_SEASON_SALARY(nint athletes); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetSeasonSalary", "System.Int32", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Collections.Generic.IEnumerable<GameMain.AthleteSystem.Athlete>", 0)]
+           public static partial System.Int32 GET_SEASON_SALARY(nint athletes); 
 */
             /// <summary>
             /// static  GameMain.UnitSystem.UnitSetting GetUnitSetting(System.String heroKey)
             /// </summary>
             /// <param name = "heroKey">class System.String</param>
             /// <returns>class GameMain.UnitSystem.UnitSetting</returns>
-             
+
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetUnitSetting", "GameMain.UnitSystem.UnitSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-            public static partial nint GET_UNIT_SETTING(nint heroKey); 
+            public static partial nint GET_UNIT_SETTING(nint heroKey);
 
             /// <summary>
             /// static  System.Boolean ProcedureIsTransfer(System.Boolean excludeInternetCafe)
             /// </summary>
             /// <param name = "excludeInternetCafe">struct System.Boolean</param>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ProcedureIsTransfer", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
-            public static partial System.Boolean PROCEDURE_IS_TRANSFER(System.Boolean excludeInternetCafe); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ProcedureIsTransfer", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
+           public static partial System.Boolean PROCEDURE_IS_TRANSFER(System.Boolean excludeInternetCafe); 
 */
             /// <summary>
             /// static  GameMain.Game Spawn(GameMain.GameSetting setting, System.Guid id)
@@ -543,549 +544,549 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// <param name = "setting">class GameMain.GameSetting</param>
             /// <param name = "id">struct System.Guid</param>
             /// <returns>class GameMain.Game</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Spawn", "GameMain.Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameSetting", 0)]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Guid", 1)]
-            public static partial nint SPAWN(nint setting, System.Guid id); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Spawn", "GameMain.Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameSetting", 0)]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Guid", 1)]
+           public static partial nint SPAWN(nint setting, System.Guid id); 
 */
             /// <summary>
             /// static  GameMain.Game Spawn(GameMain.Game.SaveData data)
             /// </summary>
             /// <param name = "data">class GameMain.Game.SaveData</param>
             /// <returns>class GameMain.Game</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Spawn", "GameMain.Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game.SaveData", 0)]
-            public static partial nint SPAWN(nint data); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Spawn", "GameMain.Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game.SaveData", 0)]
+           public static partial nint SPAWN(nint data); 
 */
             /// <summary>
             ///   System.Void .ctor()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute(".ctor", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void CTOR(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute(".ctor", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void CTOR(); 
 */
             /// <summary>
             ///   System.Boolean <OnRemoveBattle>g__DisconnectNormalBattle|109_0(GameMain.Game.<>c__DisplayClass109_0& )
             /// </summary>
             /// <param name = "">struct GameMain.Game.<>c__DisplayClass109_0&</param>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("<OnRemoveBattle>g__DisconnectNormalBattle|109_0", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game.<>c__DisplayClass109_0&", 0)]
-            public partial System.Boolean ON_REMOVE_BATTLEG__DISCONNECT_NORMAL_BATTLE|109_0(GameMain.Game. < > c__DisplayClass109_0 &); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("<OnRemoveBattle>g__DisconnectNormalBattle|109_0", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.Game.<>c__DisplayClass109_0&", 0)]
+           public partial System.Boolean ON_REMOVE_BATTLEG__DISCONNECT_NORMAL_BATTLE|109_0(GameMain.Game. < > c__DisplayClass109_0 &); 
 */
             /// <summary>
             ///   System.String BuildErrorMessage(System.String message)
             /// </summary>
             /// <param name = "message">class System.String</param>
             /// <returns>class System.String</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("BuildErrorMessage", "System.String", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-            public partial nint BUILD_ERROR_MESSAGE(nint message); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("BuildErrorMessage", "System.String", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+           public partial nint BUILD_ERROR_MESSAGE(nint message); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.Club ClubSimulate(System.Boolean spawnNew)
             /// </summary>
             /// <param name = "spawnNew">struct System.Boolean</param>
             /// <returns>class GameMain.ClubSystem.Club</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ClubSimulate", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
-            public partial nint CLUB_SIMULATE(System.Boolean spawnNew); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("ClubSimulate", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
+           public partial nint CLUB_SIMULATE(System.Boolean spawnNew); 
 */
             /// <summary>
             ///   GameMain.AthleteSystem.AthleteGeneralSetting get_AthleteGeneral()
             /// </summary>
             /// <returns>class GameMain.AthleteSystem.AthleteGeneralSetting</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_AthleteGeneral", "GameMain.AthleteSystem.AthleteGeneralSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_ATHLETE_GENERAL(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_AthleteGeneral", "GameMain.AthleteSystem.AthleteGeneralSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_ATHLETE_GENERAL(); 
 */
             /// <summary>
             ///   GameMain.BattleSystem.Battle get_Battle()
             /// </summary>
             /// <returns>class GameMain.BattleSystem.Battle</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Battle", "GameMain.BattleSystem.Battle", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_BATTLE(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Battle", "GameMain.BattleSystem.Battle", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_BATTLE(); 
 */
             /// <summary>
             ///   System.Collections.Generic.List<GameMain.BattleSystem.Battle> get_BattleAutos()
             /// </summary>
             /// <returns>class System.Collections.Generic.List<GameMain.BattleSystem.Battle></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_BattleAutos", "System.Collections.Generic.List<GameMain.BattleSystem.Battle>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_BATTLE_AUTOS(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_BattleAutos", "System.Collections.Generic.List<GameMain.BattleSystem.Battle>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_BATTLE_AUTOS(); 
 */
             /// <summary>
             ///   GameMain.Game.AthleteManagerComponent get_C_AthleteManager()
             /// </summary>
             /// <returns>class GameMain.Game.AthleteManagerComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_AthleteManager", "GameMain.Game.AthleteManagerComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_ATHLETE_MANAGER(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_AthleteManager", "GameMain.Game.AthleteManagerComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_ATHLETE_MANAGER(); 
 */
             /// <summary>
             ///   GameMain.Game.CompetitionComponent get_C_Competition()
             /// </summary>
             /// <returns>class GameMain.Game.CompetitionComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Competition", "GameMain.Game.CompetitionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_COMPETITION(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Competition", "GameMain.Game.CompetitionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_COMPETITION(); 
 */
             /// <summary>
             ///   GameMain.Game.CustomOptionComponent get_C_Custom()
             /// </summary>
             /// <returns>class GameMain.Game.CustomOptionComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Custom", "GameMain.Game.CustomOptionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_CUSTOM(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Custom", "GameMain.Game.CustomOptionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_CUSTOM(); 
 */
             /// <summary>
             ///   GameMain.Game.DataComponent get_C_Data()
             /// </summary>
             /// <returns>class GameMain.Game.DataComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Data", "GameMain.Game.DataComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_DATA(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Data", "GameMain.Game.DataComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_DATA(); 
 */
             /// <summary>
             ///   GameMain.Game.DivisionComponent get_C_Division()
             /// </summary>
             /// <returns>class GameMain.Game.DivisionComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Division", "GameMain.Game.DivisionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_DIVISION(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Division", "GameMain.Game.DivisionComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_DIVISION(); 
 */
             /// <summary>
             ///   GameMain.Game.FSMComponent get_C_FSM()
             /// </summary>
             /// <returns>class GameMain.Game.FSMComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_FSM", "GameMain.Game.FSMComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_FSM(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_FSM", "GameMain.Game.FSMComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_FSM(); 
 */
             /// <summary>
             ///   GameMain.Game.LogicComponent get_C_Logic()
             /// </summary>
             /// <returns>class GameMain.Game.LogicComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Logic", "GameMain.Game.LogicComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_LOGIC(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Logic", "GameMain.Game.LogicComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_LOGIC(); 
 */
             /// <summary>
             ///   GameMain.Game.MatchComponent get_C_Match()
             /// </summary>
             /// <returns>class GameMain.Game.MatchComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Match", "GameMain.Game.MatchComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_MATCH(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Match", "GameMain.Game.MatchComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_MATCH(); 
 */
             /// <summary>
             ///   GameMain.Game.RuleComponent get_C_Rules()
             /// </summary>
             /// <returns>class GameMain.Game.RuleComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Rules", "GameMain.Game.RuleComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_RULES(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Rules", "GameMain.Game.RuleComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_RULES(); 
 */
             /// <summary>
             ///   Utility.GameSystem.LogicFrameworkX.LogicObject.SettingComponent<GameMain.Game , LogicFramework.LogicEntity_Game , GameMain.GameSetting> get_C_Setting()
             /// </summary>
             /// <returns>class Utility.GameSystem.LogicFrameworkX.LogicObject.SettingComponent<GameMain.Game , LogicFramework.LogicEntity_Game , GameMain.GameSetting></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Setting", "Utility.GameSystem.LogicFrameworkX.LogicObject.SettingComponent<GameMain.Game,LogicFramework.LogicEntity_Game,GameMain.GameSetting>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_SETTING(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_Setting", "Utility.GameSystem.LogicFrameworkX.LogicObject.SettingComponent<GameMain.Game,LogicFramework.LogicEntity_Game,GameMain.GameSetting>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_SETTING(); 
 */
             /// <summary>
             ///   GameMain.Game.UIComponent get_C_UI()
             /// </summary>
             /// <returns>class GameMain.Game.UIComponent</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_UI", "GameMain.Game.UIComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_C_UI(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_C_UI", "GameMain.Game.UIComponent", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_C_UI(); 
 */
             /// <summary>
             ///   GameMain.CalendarSystem.Calendar get_Calendar()
             /// </summary>
             /// <returns>class GameMain.CalendarSystem.Calendar</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Calendar", "GameMain.CalendarSystem.Calendar", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CALENDAR(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Calendar", "GameMain.CalendarSystem.Calendar", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CALENDAR(); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.Club get_ClubPlayer()
             /// </summary>
             /// <returns>class GameMain.ClubSystem.Club</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_ClubPlayer", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CLUB_PLAYER(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_ClubPlayer", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CLUB_PLAYER(); 
 */
             /// <summary>
             ///   System.Collections.Generic.Dictionary<System.Guid , GameMain.ClubSystem.Club> get_Clubs()
             /// </summary>
             /// <returns>class System.Collections.Generic.Dictionary<System.Guid , GameMain.ClubSystem.Club></returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Clubs", "System.Collections.Generic.Dictionary<System.Guid,GameMain.ClubSystem.Club>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CLUBS(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Clubs", "System.Collections.Generic.Dictionary<System.Guid,GameMain.ClubSystem.Club>", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CLUBS(); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.Club get_ClubVirtual()
             /// </summary>
             /// <returns>class GameMain.ClubSystem.Club</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_ClubVirtual", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CLUB_VIRTUAL(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_ClubVirtual", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CLUB_VIRTUAL(); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.ClubAffair get_CurAffair()
             /// </summary>
             /// <returns>abstract class GameMain.ClubSystem.ClubAffair</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_CurAffair", "GameMain.ClubSystem.ClubAffair", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CUR_AFFAIR(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_CurAffair", "GameMain.ClubSystem.ClubAffair", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CUR_AFFAIR(); 
 */
             /// <summary>
             ///   Utility.FSMSystem.FSMState get_CurState()
             /// </summary>
             /// <returns>class Utility.FSMSystem.FSMState</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_CurState", "Utility.FSMSystem.FSMState", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_CUR_STATE(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_CurState", "Utility.FSMSystem.FSMState", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_CUR_STATE(); 
 */
             /// <summary>
             ///   System.Boolean get_EnterAffairIsLoadGame()
             /// </summary>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_EnterAffairIsLoadGame", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial System.Boolean GET_ENTER_AFFAIR_IS_LOAD_GAME(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_EnterAffairIsLoadGame", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial System.Boolean GET_ENTER_AFFAIR_IS_LOAD_GAME(); 
 */
             /// <summary>
             ///   System.Boolean get_IsHell()
             /// </summary>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_IsHell", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial System.Boolean GET_IS_HELL(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_IsHell", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial System.Boolean GET_IS_HELL(); 
 */
             /// <summary>
             ///   System.Boolean get_IsRunning()
             /// </summary>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_IsRunning", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial System.Boolean GET_IS_RUNNING(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_IsRunning", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial System.Boolean GET_IS_RUNNING(); 
 */
             /// <summary>
             ///   System.Boolean get_Loaded()
             /// </summary>
             /// <returns>struct System.Boolean</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Loaded", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial System.Boolean GET_LOADED(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Loaded", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial System.Boolean GET_LOADED(); 
 */
             /// <summary>
             ///   System.Action get_OnAthleteKicked()
             /// </summary>
             /// <returns>class System.Action</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_OnAthleteKicked", "System.Action", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_ON_ATHLETE_KICKED(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_OnAthleteKicked", "System.Action", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_ON_ATHLETE_KICKED(); 
 */
             /// <summary>
             ///   System.Action get_OnBackToMenu()
             /// </summary>
             /// <returns>class System.Action</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_OnBackToMenu", "System.Action", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_ON_BACK_TO_MENU(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_OnBackToMenu", "System.Action", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_ON_BACK_TO_MENU(); 
 */
             /// <summary>
             ///   GameMain.BattleSystem.Battle get_Scrimmage()
             /// </summary>
             /// <returns>class GameMain.BattleSystem.Battle</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Scrimmage", "GameMain.BattleSystem.Battle", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_SCRIMMAGE(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Scrimmage", "GameMain.BattleSystem.Battle", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_SCRIMMAGE(); 
 */
             /// <summary>
             ///   GameMain.GameSetting get_Setting()
             /// </summary>
             /// <returns>class GameMain.GameSetting</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Setting", "GameMain.GameSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_SETTING(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_Setting", "GameMain.GameSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_SETTING(); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.YouthScoutGeneralSetting get_YouthScoutGeneral()
             /// </summary>
             /// <returns>class GameMain.ClubSystem.YouthScoutGeneralSetting</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_YouthScoutGeneral", "GameMain.ClubSystem.YouthScoutGeneralSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint GET_YOUTH_SCOUT_GENERAL(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_YouthScoutGeneral", "GameMain.ClubSystem.YouthScoutGeneralSetting", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint GET_YOUTH_SCOUT_GENERAL(); 
 */
             /// <summary>
             ///   GameMain.ClubSystem.Club GetClubById(System.Guid id)
             /// </summary>
             /// <param name = "id">struct System.Guid</param>
             /// <returns>class GameMain.ClubSystem.Club</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetClubById", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Guid", 0)]
-            public partial nint GET_CLUB_BY_ID(System.Guid id); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetClubById", "GameMain.ClubSystem.Club", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Guid", 0)]
+           public partial nint GET_CLUB_BY_ID(System.Guid id); 
 */
             /// <summary>
             ///   System.Void OnAddBattle(GameMain.BattleSystem.Battle battle)
             /// </summary>
             /// <param name = "battle">class GameMain.BattleSystem.Battle</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddBattle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
-            public partial void ON_ADD_BATTLE(nint battle); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddBattle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
+           public partial void ON_ADD_BATTLE(nint battle); 
 */
             /// <summary>
             ///   System.Void OnAddCalendar(GameMain.CalendarSystem.Calendar calendar)
             /// </summary>
             /// <param name = "calendar">class GameMain.CalendarSystem.Calendar</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddCalendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.CalendarSystem.Calendar", 0)]
-            public partial void ON_ADD_CALENDAR(nint calendar); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddCalendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.CalendarSystem.Calendar", 0)]
+           public partial void ON_ADD_CALENDAR(nint calendar); 
 */
             /// <summary>
             ///   System.Void OnAddClub(GameMain.ClubSystem.Club club)
             /// </summary>
             /// <param name = "club">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void ON_ADD_CLUB(nint club); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void ON_ADD_CLUB(nint club); 
 */
             /// <summary>
             ///   System.Void OnAddGameRule(GameMain.GameRule rule)
             /// </summary>
             /// <param name = "rule">class GameMain.GameRule</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddGameRule", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameRule", 0)]
-            public partial void ON_ADD_GAME_RULE(nint rule); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddGameRule", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameRule", 0)]
+           public partial void ON_ADD_GAME_RULE(nint rule); 
 */
             /// <summary>
             ///   System.Void OnAddPlayerClub(GameMain.ClubSystem.Club club)
             /// </summary>
             /// <param name = "club">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddPlayerClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void ON_ADD_PLAYER_CLUB(nint club); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddPlayerClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void ON_ADD_PLAYER_CLUB(nint club); 
 */
             /// <summary>
             ///   System.Void OnAddSimulateClub(GameMain.ClubSystem.Club club)
             /// </summary>
             /// <param name = "club">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddSimulateClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void ON_ADD_SIMULATE_CLUB(nint club); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddSimulateClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void ON_ADD_SIMULATE_CLUB(nint club); 
 */
             /// <summary>
             ///   System.Void OnAddVirtualClub(GameMain.ClubSystem.Club club)
             /// </summary>
             /// <param name = "club">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddVirtualClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void ON_ADD_VIRTUAL_CLUB(nint club); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnAddVirtualClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void ON_ADD_VIRTUAL_CLUB(nint club); 
 */
             /// <summary>
             ///   System.Void OnRemoveBattle(GameMain.BattleSystem.Battle battle)
             /// </summary>
             /// <param name = "battle">class GameMain.BattleSystem.Battle</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveBattle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
-            public partial void ON_REMOVE_BATTLE(nint battle); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveBattle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
+           public partial void ON_REMOVE_BATTLE(nint battle); 
 */
             /// <summary>
             ///   System.Void OnRemoveCalendar()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveCalendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void ON_REMOVE_CALENDAR(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveCalendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void ON_REMOVE_CALENDAR(); 
 */
             /// <summary>
             ///   System.Void OnRemoveClub(GameMain.ClubSystem.Club club)
             /// </summary>
             /// <param name = "club">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void ON_REMOVE_CLUB(nint club); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void ON_REMOVE_CLUB(nint club); 
 */
             /// <summary>
             ///   System.Void OnRemoveGameRule(GameMain.GameRule rule)
             /// </summary>
             /// <param name = "rule">class GameMain.GameRule</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveGameRule", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameRule", 0)]
-            public partial void ON_REMOVE_GAME_RULE(nint rule); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveGameRule", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.GameRule", 0)]
+           public partial void ON_REMOVE_GAME_RULE(nint rule); 
 */
             /// <summary>
             ///   System.Void OnRemovePlayerClub()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemovePlayerClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void ON_REMOVE_PLAYER_CLUB(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemovePlayerClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void ON_REMOVE_PLAYER_CLUB(); 
 */
             /// <summary>
             ///   System.Void OnRemoveSimulateClub()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveSimulateClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void ON_REMOVE_SIMULATE_CLUB(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveSimulateClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void ON_REMOVE_SIMULATE_CLUB(); 
 */
             /// <summary>
             ///   System.Void OnRemoveVirtualClub()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveVirtualClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void ON_REMOVE_VIRTUAL_CLUB(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnRemoveVirtualClub", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void ON_REMOVE_VIRTUAL_CLUB(); 
 */
             /// <summary>
             ///   System.Void OnReset()
             /// </summary>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnReset", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial void ON_RESET(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("OnReset", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial void ON_RESET(); 
 */
             /// <summary>
             ///   System.Void set_Battle(GameMain.BattleSystem.Battle value)
             /// </summary>
             /// <param name = "value">class GameMain.BattleSystem.Battle</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Battle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
-            public partial void SET_BATTLE(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Battle", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
+           public partial void SET_BATTLE(nint value); 
 */
             /// <summary>
             ///   System.Void set_Calendar(GameMain.CalendarSystem.Calendar value)
             /// </summary>
             /// <param name = "value">class GameMain.CalendarSystem.Calendar</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Calendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.CalendarSystem.Calendar", 0)]
-            public partial void SET_CALENDAR(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Calendar", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.CalendarSystem.Calendar", 0)]
+           public partial void SET_CALENDAR(nint value); 
 */
             /// <summary>
             ///   System.Void set_ClubPlayer(GameMain.ClubSystem.Club value)
             /// </summary>
             /// <param name = "value">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_ClubPlayer", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void SET_CLUB_PLAYER(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_ClubPlayer", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void SET_CLUB_PLAYER(nint value); 
 */
             /// <summary>
             ///   System.Void set_ClubVirtual(GameMain.ClubSystem.Club value)
             /// </summary>
             /// <param name = "value">class GameMain.ClubSystem.Club</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_ClubVirtual", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
-            public partial void SET_CLUB_VIRTUAL(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_ClubVirtual", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.ClubSystem.Club", 0)]
+           public partial void SET_CLUB_VIRTUAL(nint value); 
 */
             /// <summary>
             ///   System.Void set_CurState(Utility.FSMSystem.FSMState value)
             /// </summary>
             /// <param name = "value">class Utility.FSMSystem.FSMState</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_CurState", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("Utility.FSMSystem.FSMState", 0)]
-            public partial void SET_CUR_STATE(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_CurState", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("Utility.FSMSystem.FSMState", 0)]
+           public partial void SET_CUR_STATE(nint value); 
 */
             /// <summary>
             ///   System.Void set_EnterAffairIsLoadGame(System.Boolean value)
             /// </summary>
             /// <param name = "value">struct System.Boolean</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_EnterAffairIsLoadGame", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
-            public partial void SET_ENTER_AFFAIR_IS_LOAD_GAME(System.Boolean value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_EnterAffairIsLoadGame", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
+           public partial void SET_ENTER_AFFAIR_IS_LOAD_GAME(System.Boolean value); 
 */
             /// <summary>
             ///   System.Void set_Loaded(System.Boolean value)
             /// </summary>
             /// <param name = "value">struct System.Boolean</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Loaded", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
-            public partial void SET_LOADED(System.Boolean value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Loaded", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Boolean", 0)]
+           public partial void SET_LOADED(System.Boolean value); 
 */
             /// <summary>
             ///   System.Void set_OnAthleteKicked(System.Action value)
             /// </summary>
             /// <param name = "value">class System.Action</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_OnAthleteKicked", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Action", 0)]
-            public partial void SET_ON_ATHLETE_KICKED(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_OnAthleteKicked", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Action", 0)]
+           public partial void SET_ON_ATHLETE_KICKED(nint value); 
 */
             /// <summary>
             ///   System.Void set_OnBackToMenu(System.Action value)
             /// </summary>
             /// <param name = "value">class System.Action</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_OnBackToMenu", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Action", 0)]
-            public partial void SET_ON_BACK_TO_MENU(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_OnBackToMenu", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Action", 0)]
+           public partial void SET_ON_BACK_TO_MENU(nint value); 
 */
             /// <summary>
             ///   System.Void set_Scrimmage(GameMain.BattleSystem.Battle value)
             /// </summary>
             /// <param name = "value">class GameMain.BattleSystem.Battle</param>
             /// <returns>struct System.Void</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Scrimmage", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
-            public partial void SET_SCRIMMAGE(nint value); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("set_Scrimmage", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("GameMain.BattleSystem.Battle", 0)]
+           public partial void SET_SCRIMMAGE(nint value); 
 */
             /// <summary>
             ///   LogicFramework.LogicEntity_Game SpawnEntity()
             /// </summary>
             /// <returns>class LogicFramework.LogicEntity_Game</returns>
-             /*
-            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("SpawnEntity", "LogicFramework.LogicEntity_Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-            public partial nint SPAWN_ENTITY(); 
+            /*
+           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("SpawnEntity", "LogicFramework.LogicEntity_Game", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+           public partial nint SPAWN_ENTITY(); 
 */
         }
 

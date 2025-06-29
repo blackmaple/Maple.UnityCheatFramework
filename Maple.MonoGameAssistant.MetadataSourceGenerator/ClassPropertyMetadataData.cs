@@ -22,7 +22,18 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string GetDescVariableName() => $"s_{SymbolKind.Parameter}_{PropertySymbol.Name}";
 
         //internal MonoJsonFieldDTO GetMonoJsonFieldDTO() => new(this.Code, this.Utf8PropertyName, this.Utf8PropertyType, this.PropertySymbol.IsStatic);
+
+        /// <summary>
+        /// 附加的元数据 多条件查询
+        /// </summary>
+        public ClassPropertyMetadataCollection[]? AdditionalMetadata { set; get; }
     }
 
+    public class ClassPropertyMetadataCollection
+    {
+        public byte[]? Utf8PropertyName { set; get; }
+        public byte[]? Utf8PropertyType { set; get; }
+
+    }
 }
 #pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。

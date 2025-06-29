@@ -36,12 +36,25 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         //        Methods = [.. MethodMetadataDatas.Select(p => p.GetMonoJsonMethodDTO())]
         //    };
         //}
+
+        /// <summary>
+        /// 附加的元数据 多条件查询
+        /// </summary>
+        public ClassMemberMetadataCollection[]? AdditionalMetadata { set; get; }
     }
 
 
     public class GenericClassMemberMetadataData : ClassMemberMetadataData
     {
         public ITypeSymbol[] TypeSymbols { set; get; } = default!;
+    }
+
+    public class ClassMemberMetadataCollection
+    {
+        public byte[]? Utf8ImageName { set; get; }
+        public byte[]? Utf8Namespace { set; get; }
+        public byte[]? Utf8ClassName { set; get; }
+        public byte[]? Utf8FullName { set; get; }
     }
 }
 #pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。

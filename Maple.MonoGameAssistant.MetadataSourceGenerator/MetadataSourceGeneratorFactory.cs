@@ -13,6 +13,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             try
             {
 
+
                 InitializeClassMetadata(context);
                 InitializeGenericClassModelMetadata(context);
                 InitializeContextMetadata(context);
