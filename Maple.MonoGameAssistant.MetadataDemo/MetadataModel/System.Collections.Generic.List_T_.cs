@@ -154,7 +154,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo
 
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Add", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
             //  [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("T", 0)]
+
+
+
             public partial void ADD(TITEM item);
+
 
             /// <summary>
             ///   System.Void AddEnumerable(System.Collections.Generic.IEnumerable<T> enumerable)

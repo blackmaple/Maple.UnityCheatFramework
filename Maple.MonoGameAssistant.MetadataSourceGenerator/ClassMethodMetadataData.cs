@@ -17,9 +17,12 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public ISymbol[]? CallConvs { set; get; }
         public bool RuntimeMethod { set; get; }
 
-        public string GetDelegatePointerStructCtorArgName() => $"{nameof(Pointer).ToLower()}";
+        public string GetDelegatePointerStructCtorArgName() => $"{nameof(Metadata).ToLower()}";
         public string GetDelegatePointerStructMemberName() => $"m_{nameof(Pointer)}";
+        public string GetDelegateMetadataStructMemberName() => $"m_{nameof(Metadata)}";
+
         public string GetDelegatePointerStructCaller() => nameof(Delegate);
+        public string GetDelegatePointerStructCaller_IL2CPP() => $"{nameof(Delegate)}_IL2CPP";
 
         public string GetDelegatePointerStructName() => $"{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";
         public string GetDelegatePointerStaticFieldName() => $"s_{nameof(SymbolKind.FunctionPointerType)}_{MethodSymbol.Name}_{Code:X8}";

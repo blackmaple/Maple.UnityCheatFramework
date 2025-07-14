@@ -26,6 +26,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public string? ProjectPath { set; get; }
 
 
+        public bool IsGeneric { set; get; }
+
         public string GetConstCodeName() => $"{nameof(Code)}_{ContextSymbol.Name}";
         //internal MonoJsonCollectionDTO GetJsonCollectionDTO()
         //{

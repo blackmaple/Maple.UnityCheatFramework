@@ -26,5 +26,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
     {
         public Type TParent { get; } = parent;
         public Type TPtr { get; } = ptr;
+
+        public bool IL2CPP { get; set; } = false;
     }
 }

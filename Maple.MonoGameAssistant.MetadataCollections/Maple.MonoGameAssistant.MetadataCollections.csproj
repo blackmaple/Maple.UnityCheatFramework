@@ -34,6 +34,10 @@
 		<ProjectReference Include="..\Maple.MonoGameAssistant.MetadataSourceGenerator\Maple.MonoGameAssistant.MetadataSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="SysCollectionsMetadata_IL2CPP\" />
+	</ItemGroup>
+
 
 
 </Project>

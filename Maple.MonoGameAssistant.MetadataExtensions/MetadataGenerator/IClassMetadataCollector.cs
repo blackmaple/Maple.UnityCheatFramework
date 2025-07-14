@@ -9,12 +9,16 @@
          interface IClassMetadataCollector : IAbstractClassMetadataCollector
     {
         MonoMethodDelegate GetMethodDelegate(ulong code);
+
+        [Obsolete("REMOVE")]
         MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged;
+        [Obsolete("REMOVE")]
         nint GetMethodPointer(ulong code);
 
         MonoMemberFieldSource GetMemberFieldMetadata(ulong code);
         MonoStaticFieldSource GetStaticFieldMetadata(ulong code);
 
+        [Obsolete("REMOVE")]
         int GetMemberFieldOffset(ulong code);
 
 
@@ -48,6 +52,7 @@
 #endif 
          interface IGenericClassMetadataCollector : IAbstractClassMetadataCollector
     {
+        [Obsolete("remove...")]
         MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(MonoJsonMethodDTO descriptionMethodDTO) where TFUNC : unmanaged;
         nint GetMethodPointer(MonoJsonMethodDTO descriptionMethodDTO);
 
@@ -57,6 +62,6 @@
         int GetMemberFieldOffset(MonoJsonFieldDTO descriptionFieldDTO);
 
 
- 
+
     }
 }

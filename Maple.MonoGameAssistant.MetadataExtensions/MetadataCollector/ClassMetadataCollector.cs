@@ -42,6 +42,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             context.SetMonoStaticFieldValue(staticFieldSource.SourceClass, staticFieldSource.RuntimeField, value);
 
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset) where T_FieldValue : unmanaged
         {
@@ -51,6 +52,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return ref ref_Value;
 
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, in MonoMemberFieldSource fieldSource) where T_FieldValue : unmanaged
+           => ref GetMemberFieldValue<T_FieldValue>(@this, fieldSource.FieldOffset);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset, in T_FieldValue value)
             where T_FieldValue : unmanaged
@@ -58,6 +64,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             ref var ref_Value = ref GetMemberFieldValue<T_FieldValue>(@this, fieldOffset);
             ref_Value = value;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetMemberFieldValue<T_FieldValue>(nint @this, in MonoMemberFieldSource fieldSource, in T_FieldValue value)
+            where T_FieldValue : unmanaged
+            => SetMemberFieldValue(@this, fieldSource.FieldOffset, value);
 
     }
 
@@ -73,6 +84,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
         public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged
             => GetMethodDelegate(code);
+        [Obsolete("REMOVE")]
         public nint GetMethodPointer(ulong code)
         {
             MonoMethodDelegate methodDelegate = GetMethodDelegate(code);
@@ -94,6 +106,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             var fieldInfoDTO = GetFieldMetadata(code);
             return new MonoStaticFieldSource(fieldInfoDTO.Pointer, fieldInfoDTO.SourceClass);
         }
+        [Obsolete("REMOVE")]
         public int GetMemberFieldOffset(ulong code)
         {
             var fieldSource = GetFieldMetadata(code);

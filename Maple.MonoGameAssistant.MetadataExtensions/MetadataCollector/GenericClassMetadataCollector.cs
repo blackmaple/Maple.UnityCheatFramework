@@ -22,6 +22,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return ContextMetadataCollector.GetMethodDelegate(this.RuntimeContext, this.ClassMetadata, descriptionMethodDTO);
 
         }
+        [Obsolete("remove...")]
         public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(MonoJsonMethodDTO descriptionMethodDTO) where TFUNC : unmanaged
             => GetMethodDelegate(descriptionMethodDTO);
         public nint GetMethodPointer(MonoJsonMethodDTO descriptionMethodDTO)

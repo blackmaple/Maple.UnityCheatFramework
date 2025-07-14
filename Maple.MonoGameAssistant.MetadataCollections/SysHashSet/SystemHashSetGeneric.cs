@@ -10,6 +10,11 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             return LoadMetadata<SystemHashSetGeneric<T>>(runtimeContext, ptr, static (r, c) => new(r, c));
         }
 
+        public static Ptr_SystemHashSetGeneric LoadSelf(MonoRuntimeContext runtimeContext, Ptr_SystemHashSetGeneric ptr)
+        {
+            _ = LoadMetadata<SystemHashSetGeneric<T>>(runtimeContext, ptr, static (r, c) => new(r, c));
+            return ptr;
+        }
         partial struct Ptr_SystemHashSetGeneric : ISysPtrHashSet<T>
         {
             public int Count => _COUNT;

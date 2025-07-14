@@ -1,6 +1,6 @@
 ﻿namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 {
-
+    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
 #if MetadataSourceGenerator
     internal
 #else
@@ -8,8 +8,11 @@
 #endif 
          readonly struct MonoStaticFieldSource(nint runtimeField, nint sourceClass)
     {
-        public readonly nint RuntimeField { get; } = runtimeField;
-        public readonly nint SourceClass { get; } = sourceClass;
+        [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.SysInt)]
+        public readonly nint RuntimeField = runtimeField;
+
+        [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.SysInt)]
+        public readonly nint SourceClass = sourceClass;
 
     }
 }

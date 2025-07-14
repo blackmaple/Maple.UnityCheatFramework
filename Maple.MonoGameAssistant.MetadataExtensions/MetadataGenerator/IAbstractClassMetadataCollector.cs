@@ -23,12 +23,12 @@
 #if !MetadataSourceGenerator
         static abstract
 #endif
-        ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset) where T_FieldValue : unmanaged;
+        ref T_FieldValue GetMemberFieldValue<T_FieldValue>(nint @this, in MonoMemberFieldSource  fieldSource) where T_FieldValue : unmanaged;
 
 #if !MetadataSourceGenerator
         static abstract
 #endif
-        void SetMemberFieldValue<T_FieldValue>(nint @this, int fieldOffset, in T_FieldValue value) where T_FieldValue : unmanaged;
+        void SetMemberFieldValue<T_FieldValue>(nint @this, in MonoMemberFieldSource fieldSource, in T_FieldValue value) where T_FieldValue : unmanaged;
 
 
 

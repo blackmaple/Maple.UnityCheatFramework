@@ -283,48 +283,13 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         {
             return SystemDictionaryGeneric<TKey, TValue>.LoadSelf(runtimeContext.GetNotNullValue(), ptr.Ptr);
         }
-
-        public static bool Remove<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, MonoRuntimeContext? runtimeContext = default)
+        static EnumMonoRuntimeType TryLoadSelf<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, out SystemDictionaryGeneric<TKey, TValue>.Ptr_SystemDictionaryGeneric ptr_SystemDictionaryGeneric, MonoRuntimeContext? runtimeContext = default)
             where TKey : unmanaged
             where TValue : unmanaged
         {
-            return ptr.LoadSelf(runtimeContext).REMOVE(key);
-        }
-        public static void Clear<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, MonoRuntimeContext? runtimeContext = default)
-            where TKey : unmanaged
-            where TValue : unmanaged
-        {
-            ptr.LoadSelf(runtimeContext).CLEAR();
-        }
-        public static void Add<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, in TValue val, MonoRuntimeContext? runtimeContext = default)
-            where TKey : unmanaged
-            where TValue : unmanaged
-        {
-            ptr.LoadSelf(runtimeContext).ADD(key, val);
-        }
-        public static int Count<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, MonoRuntimeContext? runtimeContext = default)
-             where TKey : unmanaged
-             where TValue : unmanaged
-        {
-            return ptr.LoadSelf(runtimeContext).GET_COUNT();
-        }
-        public static bool ContainsKey<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, MonoRuntimeContext? runtimeContext = default)
-            where TKey : unmanaged
-            where TValue : unmanaged
-        {
-            return ptr.LoadSelf(runtimeContext).CONTAINS_KEY(key);
-        }
-        public static bool ContainsValue<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TValue val, MonoRuntimeContext? runtimeContext = default)
-            where TKey : unmanaged
-            where TValue : unmanaged
-        {
-            return ptr.LoadSelf(runtimeContext).CONTAINS_VALUE(val);
-        }
-        public static bool TryGetValue<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, out TValue val, MonoRuntimeContext? runtimeContext = default)
-            where TKey : unmanaged
-            where TValue : unmanaged
-        {
-            return ptr.LoadSelf(runtimeContext).TRY_GET_VALUE(key, MapleOut<TValue>.FromOut(out val));
+            runtimeContext = runtimeContext.GetNotNullValue();
+            ptr_SystemDictionaryGeneric = SystemDictionaryGeneric<TKey, TValue>.LoadSelf(runtimeContext, ptr.Ptr);
+            return runtimeContext.RuntimeType;
         }
 
         public static IEnumerable<PMonoEntry<Ref_MonoEntry<TKey, TValue>, TKey, TValue>> AsRefEnumerable<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, MonoRuntimeContext? runtimeContext = default)
@@ -333,6 +298,69 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         {
             return ptr.LoadSelf(runtimeContext).AsRefEnumerable();
         }
+
+        public static bool Remove<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+            => ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+                ? ptr_SystemDictionaryGeneric.REMOVE_IL2CPP(key)
+                : ptr_SystemDictionaryGeneric.REMOVE(key);
+
+        public static void Clear<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+        {
+            if (ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP)
+            {
+                ptr_SystemDictionaryGeneric.CLEAR_IL2CPP();
+            }
+            else
+            {
+                ptr_SystemDictionaryGeneric.CLEAR();
+            }
+        }
+        public static void Add<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, in TValue val, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+        {
+            if (ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP)
+            {
+                ptr_SystemDictionaryGeneric.ADD_IL2CPP(key, val);
+            }
+            else
+            {
+                ptr_SystemDictionaryGeneric.ADD(key, val);
+            }
+        }
+        public static int Count<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, MonoRuntimeContext? runtimeContext = default)
+             where TKey : unmanaged
+             where TValue : unmanaged
+            => ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+                ? ptr_SystemDictionaryGeneric.GET_COUNT_IL2CPP()
+                : ptr_SystemDictionaryGeneric.GET_COUNT();
+
+        public static bool ContainsKey<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+            => ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+                ? ptr_SystemDictionaryGeneric.CONTAINS_KEY_IL2CPP(key)
+                : ptr_SystemDictionaryGeneric.CONTAINS_KEY(key);
+        public static bool ContainsValue<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TValue val, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+            => ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+                ? ptr_SystemDictionaryGeneric.CONTAINS_VALUE_IL2CPP(val)
+                : ptr_SystemDictionaryGeneric.CONTAINS_VALUE(val);
+
+        public static bool TryGetValue<TKey, TValue>(this SysPtrDictionary<TKey, TValue> ptr, in TKey key, out TValue val, MonoRuntimeContext? runtimeContext = default)
+            where TKey : unmanaged
+            where TValue : unmanaged
+
+        => ptr.TryLoadSelf(out var ptr_SystemDictionaryGeneric, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+                ? ptr_SystemDictionaryGeneric.TRY_GET_VALUE_IL2CPP(key, MapleOut<TValue>.FromOut(out val))
+                : ptr_SystemDictionaryGeneric.TRY_GET_VALUE(key, MapleOut<TValue>.FromOut(out val));
+
+
 
         #endregion
 
@@ -344,9 +372,7 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         public static IEnumerable<PMonoSlot<Ref_MonoSlot<T>, T>> AsRefEnumerable<T>(this MonoRuntimeContext @this, SystemHashSetGeneric<T>.Ptr_SystemHashSetGeneric ptr)
             where T : unmanaged
         {
-            SystemHashSetGeneric<T>.LoadMetadata(@this, ptr);
-            return ptr.AsRefEnumerable();
-
+            return SystemHashSetGeneric<T>.LoadSelf(@this, ptr).AsRefEnumerable();
         }
         #endregion
 
@@ -356,27 +382,58 @@ namespace Maple.MonoGameAssistant.MetadataCollections
         {
             return SystemListGeneric<T>.LoadSelf(runtimeContext.GetNotNullValue(), ptr.Ptr);
         }
+        static EnumMonoRuntimeType TryLoadSelf<T>(this SysPtrList<T> ptr, out SystemListGeneric<T>.Ptr_SystemListGeneric ptr_SystemListGeneric, MonoRuntimeContext? runtimeContext = default)
+            where T : unmanaged
+        {
+            runtimeContext = runtimeContext.GetNotNullValue();
+            ptr_SystemListGeneric = SystemListGeneric<T>.LoadSelf(runtimeContext, ptr.Ptr);
+            return runtimeContext.RuntimeType;
+
+        }
+
         public static ReadOnlySpan<T> AsReadOnlySpan<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsReadOnlySpan();
-
         public static Span<T> AsSpan<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsSpan();
-
         public static IEnumerable<T> AsEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsEnumerable();
         public static IEnumerable<Ptr_MonoItem<T>> AsRefEnumerable<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
             => ptr.LoadSelf(runtimeContext).AsRefEnumerable();
 
         public static int Count<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
-            => ptr.LoadSelf(runtimeContext).GET_COUNT();
+            => ptr.TryLoadSelf(out var ptrList, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+            ? ptrList.GET_COUNT_IL2CPP()
+            : ptrList.GET_COUNT();
         public static void Clear<T>(this SysPtrList<T> ptr, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
-            => ptr.LoadSelf(runtimeContext).CLEAR();
+        {
+            if (ptr.TryLoadSelf(out var ptrList, runtimeContext) == EnumMonoRuntimeType.IL2CPP)
+            {
+                ptrList.CLEAR_IL2CPP();
+            }
+            else
+            {
+                ptrList.CLEAR();
+            }
+        }
         public static void Add<T>(this SysPtrList<T> ptr, in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
-            => ptr.LoadSelf(runtimeContext).ADD(val);
+        {
+            if (ptr.TryLoadSelf(out var ptrList, runtimeContext) == EnumMonoRuntimeType.IL2CPP)
+            {
+                ptrList.ADD_IL2CPP(val);
+            }
+            else
+            {
+                ptrList.ADD(val);
+            }
+        }
         public static bool Remove<T>(this SysPtrList<T> ptr, in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
-            => ptr.LoadSelf(runtimeContext).REMOVE(val);
+            => ptr.TryLoadSelf(out var ptrList, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+            ? ptrList.REMOVE_IL2CPP(val)
+            : ptrList.REMOVE(val);
         public static bool Contains<T>(this SysPtrList<T> ptr, in T val, MonoRuntimeContext? runtimeContext = default) where T : unmanaged
-            => ptr.LoadSelf(runtimeContext).CONTAINS(val);
+            => ptr.TryLoadSelf(out var ptrList, runtimeContext) == EnumMonoRuntimeType.IL2CPP
+            ? ptrList.CONTAINS_IL2CPP(val)
+            : ptrList.CONTAINS(val);
 
         #endregion
 

@@ -29,6 +29,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
         /// 区别重载函数 0参数 与 不匹配参数
         /// </summary>
         public bool VoidArgument { set; get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsGeneric { set; get; }
     }
 }
 #pragma warning restore IDE0060 // 删除未使用的参数

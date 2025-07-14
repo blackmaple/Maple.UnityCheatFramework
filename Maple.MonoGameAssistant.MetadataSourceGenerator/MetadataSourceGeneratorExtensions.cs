@@ -706,6 +706,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var classDisplayString = ctx.TargetSymbol.ToDisplayString();
             var metadata = new GenericClassMemberMetadataData()
             {
+                IsGeneric = true,
                 Code = GetClassCode(classDisplayString),
                 ParentSymbol = parentSymbol.OriginalDefinition,
                 PtrSymbol = ptrSymbol.OriginalDefinition,
@@ -893,7 +894,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                    SyntaxFactory.IdentifierName(typeof(MonoStaticFieldSource).FullName),
                    [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())])
                 : SyntaxFactory.VariableDeclaration(
-                       SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                      SyntaxFactory.IdentifierName(typeof(MonoMemberFieldSource).FullName),
                    [SyntaxFactory.VariableDeclarator(classProperty.GetOffsetVariableName())]);
             return SyntaxFactory.FieldDeclaration(variableDeclaration).WithModifiers([SyntaxFactory.Token(SyntaxKind.StaticKeyword)]);
 
@@ -905,7 +906,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             var callMethod = classProperty.PropertySymbol.IsStatic
                 ? nameof(IClassMetadataCollector.GetStaticFieldMetadata)
-                : nameof(IClassMetadataCollector.GetMemberFieldOffset);
+                : nameof(IClassMetadataCollector.GetMemberFieldMetadata);
             return SyntaxFactory.ExpressionStatement
                     (
                         SyntaxFactory.AssignmentExpression
@@ -1176,7 +1177,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
             var callMethod = classProperty.PropertySymbol.IsStatic
                 ? nameof(IGenericClassMetadataCollector.GetStaticFieldMetadata)
-                : nameof(IGenericClassMetadataCollector.GetMemberFieldOffset);
+                : nameof(IGenericClassMetadataCollector.GetMemberFieldMetadata);
             return SyntaxFactory.ExpressionStatement
                     (
                         SyntaxFactory.AssignmentExpression
@@ -1442,7 +1443,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         }
 
 
-        public static StructDeclarationSyntax BuildMethodMemberPointerExpression(ClassMethodMetadataData classMethod)
+        public static StructDeclarationSyntax BuildMethodMemberPointerExpression(ClassMethodMetadataData classMethod, bool build_il2cpp = false)
         {
             var functionPointer = SyntaxFactory.FunctionPointerType(
                     GetFunctionPointerCallingConvention(classMethod),
@@ -1455,6 +1456,10 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     )
                 );
 
+            var metadataName = SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCtorArgName());
+            var delegateData = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, metadataName, SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate.MethodPointer)));
+            var metadataData = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, metadataName, SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate.RuntimeMethod)));
+
             var delegateField = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(functionPointer)
                 .WithVariables([
@@ -1462,11 +1467,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         .WithInitializer(SyntaxFactory.EqualsValueClause(
                                SyntaxFactory.CastExpression(
                                     functionPointer,
-                                    SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCtorArgName())
+                                    delegateData
                                    )
                             ))
                     ]))
-                .WithModifiers([SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
                 .WithAttributeLists(
                 [
                     SyntaxFactory.AttributeList(
@@ -1474,6 +1479,25 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         NewAttribute<MarshalAsAttribute,UnmanagedType>(nameof(UnmanagedType.SysInt))
                     ])
                 ]);
+
+
+            var metadataField = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
+                .WithVariables([
+                        SyntaxFactory.VariableDeclarator(classMethod.GetDelegateMetadataStructMemberName())
+                                    .WithInitializer(SyntaxFactory.EqualsValueClause(
+                                           metadataData
+                                        ))
+                    ]))
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)])
+                .WithAttributeLists(
+                [
+                    SyntaxFactory.AttributeList(
+                                [
+                                    NewAttribute<MarshalAsAttribute,UnmanagedType>(nameof(UnmanagedType.SysInt))
+                                ])
+                ]);
+
 
             var methodDeclaration = SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.GetDelegatePointerStructCaller())
                 .WithAttributeLists([
@@ -1494,17 +1518,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 ))
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
-
-
-            //
-
             var operatorDeclaration = SyntaxFactory.ConversionOperatorDeclaration(SyntaxFactory.Token(SyntaxKind.ImplicitKeyword), SyntaxFactory.ParseTypeName(classMethod.GetDelegatePointerStructName()))
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
                 .WithOperatorKeyword(SyntaxFactory.Token(SyntaxKind.OperatorKeyword))
                 .WithParameterList(
                     SyntaxFactory.ParameterList([
                         SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName()))
-                        .WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
+                        .WithType(SyntaxFactory.ParseTypeName(typeof(MonoMethodDelegate).FullName))
                     ])
                 )
                 .WithExpressionBody(
@@ -1533,9 +1553,48 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 ])
                 .WithParameterList(SyntaxFactory.ParameterList(
                     [
-                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName())).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName))
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(classMethod.GetDelegatePointerStructCtorArgName())).WithType(SyntaxFactory.ParseTypeName(typeof(MonoMethodDelegate).FullName))
                     ]))
-                .WithMembers([delegateField, methodDeclaration, operatorDeclaration]);
+                .WithMembers([metadataField, delegateField, methodDeclaration, operatorDeclaration]);
+
+            if (build_il2cpp)
+            {
+                var functionPointer_IL2CPP = SyntaxFactory.FunctionPointerType(
+                    GetFunctionPointerCallingConvention(classMethod),
+                    SyntaxFactory.FunctionPointerParameterList(
+                        SyntaxFactory.SeparatedList(
+                        [
+                            ..EnumFunctionPointerParameterSyntax(classMethod,true),
+                            GetFunctionPointerReturnSyntax(classMethod),
+                        ])
+                    )
+                );
+
+                var methodDeclaration_IL2CPP = SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.GetDelegatePointerStructCaller_IL2CPP())
+                .WithAttributeLists([
+                    SyntaxFactory.AttributeList(
+                    [
+                        NewAttribute<MethodImplAttribute,MethodImplOptions>(nameof(MethodImplOptions.AggressiveInlining))
+                    ])
+                ])
+                .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
+                .WithParameterList(SyntaxFactory.ParameterList(
+                            SyntaxFactory.SeparatedList(
+                            [
+                                ..EnumParameterSyntax(classMethod),
+                            ])
+                ))
+                .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(
+                        GetBodyExpressionSyntax_IL2CPP(classMethod, functionPointer_IL2CPP)
+                ))
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+
+                ptrStruct = ptrStruct.AddMembers(methodDeclaration_IL2CPP);
+
+
+
+            }
 
             return ptrStruct;
 
@@ -1577,7 +1636,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
             }
-            static IEnumerable<FunctionPointerParameterSyntax> EnumFunctionPointerParameterSyntax(ClassMethodMetadataData classMethod)
+
+            static IEnumerable<FunctionPointerParameterSyntax> EnumFunctionPointerParameterSyntax(ClassMethodMetadataData classMethod, bool il2cpp = false)
             {
                 if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
                 {
@@ -1589,6 +1649,12 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(arg.Type.ToDisplayString()))
                         .WithModifiers([.. EnumParameterModifiers(arg)]);
 
+                }
+
+                if (il2cpp)
+                {
+                    //追加一个method metadata pointer
+                    yield return SyntaxFactory.FunctionPointerParameter(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
                 }
 
 
@@ -1640,7 +1706,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
             static IEnumerable<ParameterSyntax> EnumParameterSyntax(ClassMethodMetadataData classMethod)
             {
-                if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
+                if (/*classMethod.RuntimeMethod || */
+                    classMethod.MethodSymbol.IsStatic == false)
                 {
                     yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier($"@{SyntaxFactory.ThisExpression().ToFullString()}")).WithType(SyntaxFactory.ParseTypeName(typeof(nint).FullName));
                 }
@@ -1678,9 +1745,21 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
-            static IEnumerable<ArgumentSyntax> EnumArgumentSyntax(ClassMethodMetadataData classMethod)
+            static IEnumerable<ArgumentSyntax> EnumArgumentSyntax(ClassMethodMetadataData classMethod, bool il2cpp = false)
             {
-                if (classMethod.RuntimeMethod || classMethod.MethodSymbol.IsStatic == false)
+                if (classMethod.RuntimeMethod)
+                {
+                    yield return SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                             SyntaxKind.SimpleMemberAccessExpression,
+                             SyntaxFactory.ThisExpression(),
+                             SyntaxFactory.IdentifierName(classMethod.GetDelegateMetadataStructMemberName())
+                            )
+                        );
+
+                }
+                if (/*classMethod.RuntimeMethod || */
+                    classMethod.MethodSymbol.IsStatic == false)
                 {
                     yield return SyntaxFactory.Argument(SyntaxFactory.IdentifierName($"@{SyntaxFactory.ThisExpression().ToFullString()}"));
                 }
@@ -1689,6 +1768,19 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     yield return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(arg.Name)).WithRefKindKeyword(GetParameterModifiers(arg));
                 }
+
+                if (il2cpp)
+                {
+                    yield return SyntaxFactory.Argument(
+                       SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(classMethod.GetDelegateMetadataStructMemberName())
+                           )
+                       );
+                }
+
+
                 static SyntaxToken GetParameterModifiers(IParameterSymbol parameterSymbol)
                 {
                     if (parameterSymbol.RefKind == RefKind.Ref)
@@ -1746,18 +1838,48 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
                 return typeSyntax;
             }
+            static ExpressionSyntax GetBodyExpressionSyntax_IL2CPP(ClassMethodMetadataData classMethod, FunctionPointerTypeSyntax functionPointerType)
+            {
+                var member = SyntaxFactory.MemberAccessExpression(
+                              SyntaxKind.SimpleMemberAccessExpression,
+                              SyntaxFactory.ThisExpression(),
+                              SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructMemberName()));
+
+                var baseBody =
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.ParenthesizedExpression(
+                           SyntaxFactory.CastExpression(
+                                functionPointerType,
+                                SyntaxFactory.CastExpression(
+                                        SyntaxFactory.ParseTypeName(typeof(nint).FullName),
+                                        member
+                                    )
+                               )
+                    ))
+                    .WithArgumentList(SyntaxFactory.ArgumentList(
+                    [
+                        ..EnumArgumentSyntax(classMethod,true)
+                    ]));
+                if (classMethod.MethodSymbol.ReturnsByRef || classMethod.MethodSymbol.ReturnsByRefReadonly)
+                {
+                    return SyntaxFactory.RefExpression(baseBody);
+                }
+                return baseBody;
+
+            }
 
         }
         public static FieldDeclarationSyntax BuildMethodMemberFieldExpression(ClassMethodMetadataData classMethod, StructDeclarationSyntax functionPointer)
         {
 
             VariableDeclarationSyntax variableDeclaration =
-                classMethod.RuntimeMethod ?
+                //classMethod.RuntimeMethod ?
+                //SyntaxFactory.VariableDeclaration(
+                //    SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
+                //        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
+                //    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())])
+                //:
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
-                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
-                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())])
-                : SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text),
                     [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())]);
 
@@ -1770,10 +1892,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.ThisExpression(),
                     (
-                        classMethod.RuntimeMethod ?
-                        SyntaxFactory.GenericName(nameof(IClassMetadataCollector.GetMethodDelegate))
-                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)]))
-                        : SyntaxFactory.IdentifierName(nameof(IClassMetadataCollector.GetMethodPointer))
+                        //classMethod.RuntimeMethod ?
+                        //SyntaxFactory.GenericName(nameof(IClassMetadataCollector.GetMethodDelegate))
+                        //.WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)]))
+                        //: 
+                        SyntaxFactory.IdentifierName(nameof(IClassMetadataCollector.GetMethodDelegate))
                     )
                 );
             return SyntaxFactory.ExpressionStatement
@@ -1794,20 +1917,34 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     );
 
         }
-        public static MemberDeclarationSyntax BuildMethodMemberCallExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
+        public static IEnumerable<MemberDeclarationSyntax> BuildMethodMemberCallExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod, bool build_il2cpp = false)
         {
-            return
-                SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.MethodSymbol.Name)
-                .WithModifiers([.. EnumModifiers(classMethod)])
-                .WithParameterList(SyntaxFactory.ParameterList([
-                    ..EnumParameterSyntax(classMethod)
-                ]))
-                .WithExpressionBody(
-                    SyntaxFactory.ArrowExpressionClause(GetBodyExpression(contextSymbol, classMethod))
-                )
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            yield return
+                 SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), classMethod.MethodSymbol.Name)
+                 .WithModifiers([.. EnumModifiers(classMethod)])
+                 .WithParameterList(SyntaxFactory.ParameterList([
+                     ..EnumParameterSyntax(classMethod)
+                 ]))
+                 .WithExpressionBody(
+                     SyntaxFactory.ArrowExpressionClause(GetBodyExpression(contextSymbol, classMethod))
+                 )
+                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
-            static IEnumerable<SyntaxToken> EnumModifiers(ClassMethodMetadataData classMethod)
+            if (build_il2cpp)
+            {
+                yield return
+                   SyntaxFactory.MethodDeclaration(GetReturnSyntax(classMethod), $"{classMethod.MethodSymbol.Name}_IL2CPP")
+                   .WithModifiers([.. EnumModifiers(classMethod, true)])
+                   .WithParameterList(SyntaxFactory.ParameterList([
+                       ..EnumParameterSyntax(classMethod)
+                   ]))
+                   .WithExpressionBody(
+                       SyntaxFactory.ArrowExpressionClause(GetBodyExpression(contextSymbol, classMethod, true))
+                   )
+                   .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+
+            static IEnumerable<SyntaxToken> EnumModifiers(ClassMethodMetadataData classMethod, bool build_il2cpp = false)
             {
                 if (classMethod.MethodSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
@@ -1817,7 +1954,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.StaticKeyword);
                 }
-                if (classMethod.MethodSymbol.IsPartialDefinition)
+                if (build_il2cpp == false && classMethod.MethodSymbol.IsPartialDefinition)
                 {
                     yield return SyntaxFactory.Token(SyntaxKind.PartialKeyword);
                 }
@@ -1863,17 +2000,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             {
                 if (classMethod.RuntimeMethod)
                 {
-                    yield return SyntaxFactory.Argument(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
-                                SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
-                             ),
-                            SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.RuntimeMethod))
-                        )
-                    );
+                    //yield return SyntaxFactory.Argument(
+                    //    SyntaxFactory.MemberAccessExpression(
+                    //        SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.MemberAccessExpression(
+                    //            SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
+                    //            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
+                    //         ),
+                    //        SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.RuntimeMethod))
+                    //    )
+                    //);
                 }
                 else if (classMethod.MethodSymbol.IsStatic == false)
                 {
@@ -1904,27 +2041,27 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 }
 
             }
-            static InvocationExpressionSyntax GetInvocationExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
+            static InvocationExpressionSyntax GetInvocationExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod, bool build_il2cpp = false)
             {
                 if (classMethod.RuntimeMethod)
                 {
                     //DemoGameSystem.s_Delegate_GetGlod_0.f.GetDelegatePointerStructCaller
-                    return
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
-                                    SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
-                                ),
-                                SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.MethodPointer))
-                            ),
-                            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
-                        )
-                    );
+                    //return
+                    //SyntaxFactory.InvocationExpression(
+                    //    SyntaxFactory.MemberAccessExpression(
+                    //        SyntaxKind.SimpleMemberAccessExpression,
+                    //        SyntaxFactory.MemberAccessExpression(
+                    //            SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.MemberAccessExpression(
+                    //                SyntaxKind.SimpleMemberAccessExpression,
+                    //                SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
+                    //                SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
+                    //            ),
+                    //            SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.MethodPointer))
+                    //        ),
+                    //        SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
+                    //    )
+                    //);
                 }
 
                 return
@@ -1936,7 +2073,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                             SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
                             SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
                         ),
-                        SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStructCaller())
+                        SyntaxFactory.IdentifierName(build_il2cpp ? classMethod.GetDelegatePointerStructCaller_IL2CPP() : classMethod.GetDelegatePointerStructCaller())
                     )
                 );
 
@@ -1959,9 +2096,9 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 return typeSyntax;
             }
 
-            static ExpressionSyntax GetBodyExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod)
+            static ExpressionSyntax GetBodyExpression(ISymbol contextSymbol, ClassMethodMetadataData classMethod, bool build_il2cpp = false)
             {
-                var baseBody = GetInvocationExpression(contextSymbol, classMethod)
+                var baseBody = GetInvocationExpression(contextSymbol, classMethod, build_il2cpp)
                                   .WithArgumentList(SyntaxFactory.ArgumentList(
                                    [
                                        ..EnumArgumentSyntax(contextSymbol,classMethod)
@@ -1976,6 +2113,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
             }
+
         }
 
         public static void BuildClassPartialMethodExpression(this ClassMemberMetadataData classMember,
@@ -2000,7 +2138,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 expressions.Add(e);
 
                 var m = BuildMethodMemberCallExpression(classMember.ContextSymbol, member);
-                members.Add(m);
+                members.AddRange(m);
             }
             var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. members]);
             structs.Add(ptr);
@@ -2013,12 +2151,13 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         {
 
             VariableDeclarationSyntax variableDeclaration =
-                classMethod.RuntimeMethod ?
+                //classMethod.RuntimeMethod ?
+                //SyntaxFactory.VariableDeclaration(
+                //    SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
+                //        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
+                //    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())])
+                //:
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.GenericName(typeof(MonoMethodDelegate).FullName)
-                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)])),
-                    [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())])
-                : SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text),
                     [SyntaxFactory.VariableDeclarator(classMethod.GetDelegatePointerStaticFieldName())]);
 
@@ -2032,10 +2171,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.ThisExpression(),
                     (
-                        classMethod.RuntimeMethod ?
-                        SyntaxFactory.GenericName(nameof(IGenericClassMetadataCollector.GetMethodDelegate))
-                        .WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)]))
-                        : SyntaxFactory.IdentifierName(nameof(IGenericClassMetadataCollector.GetMethodPointer))
+                    //classMethod.RuntimeMethod ?
+                    //SyntaxFactory.GenericName(nameof(IGenericClassMetadataCollector.GetMethodDelegate))
+                    //.WithTypeArgumentList(SyntaxFactory.TypeArgumentList([SyntaxFactory.ParseTypeName(functionPointer.Identifier.Text)]))
+                    //:
+                    SyntaxFactory.IdentifierName(nameof(IGenericClassMetadataCollector.GetMethodDelegate))
                     )
                 );
 
@@ -2133,17 +2273,17 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
                 if (classMethod.RuntimeMethod)
                 {
-                    yield return SyntaxFactory.Argument(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
-                                SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
-                             ),
-                            SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.RuntimeMethod))
-                        )
-                    );
+                    //yield return SyntaxFactory.Argument(
+                    //    SyntaxFactory.MemberAccessExpression(
+                    //        SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.MemberAccessExpression(
+                    //            SyntaxKind.SimpleMemberAccessExpression,
+                    //            SyntaxFactory.IdentifierName(contextSymbol.ToDisplayString()),
+                    //            SyntaxFactory.IdentifierName(classMethod.GetDelegatePointerStaticFieldName())
+                    //         ),
+                    //        SyntaxFactory.IdentifierName(nameof(MonoMethodDelegate<>.RuntimeMethod))
+                    //    )
+                    //);
                 }
                 else if (classMethod.MethodSymbol.IsStatic == false)
                 {
@@ -2282,7 +2422,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             List<MemberDeclarationSyntax> members = [];
             foreach (var member in classMember.MethodMetadataDatas)
             {
-                var s = BuildMethodMemberPointerExpression(member);
+                var s = BuildMethodMemberPointerExpression(member, true);
                 structs.Add(s);
 
                 var f = BuildMethodMemberFieldExpression(member, s);
@@ -2291,8 +2431,8 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                 var e = GenericAssignmentMethodMemberExpression(classMember.ContextSymbol, member, s);
                 expressions.Add(e);
 
-                var m = BuildMethodMemberCallExpression(classMember.ContextSymbol, member);
-                members.Add(m);
+                var m = BuildMethodMemberCallExpression(classMember.ContextSymbol, member, true);
+                members.AddRange(m);
             }
             var ptr = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [.. members]);
             structs.Add(ptr);

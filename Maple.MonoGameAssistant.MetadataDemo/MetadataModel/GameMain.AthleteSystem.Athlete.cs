@@ -25,6 +25,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
         /// </summary>
         public unsafe readonly partial struct Ptr_Athlete
         {
+
             /// <summary>
             /// 0x0 UnityEngine.Vector2Int SkipInternetCafeAbilityLimitRange
             /// struct ["UnityEngine.CoreModule"."UnityEngine"."Vector2Int"]

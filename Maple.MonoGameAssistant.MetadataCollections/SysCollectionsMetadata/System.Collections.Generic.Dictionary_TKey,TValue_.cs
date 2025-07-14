@@ -294,6 +294,8 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Clear", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
             public partial void CLEAR();
 
+
+
             /// <summary>
             ///   System.Boolean ContainsKey(TKey key)
             /// </summary>
@@ -435,7 +437,7 @@ namespace Maple.MonoGameAssistant.MetadataCollections
             /// <returns>struct System.Boolean</returns>
 
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("Remove", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-        //    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
+            //    [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("TKey", 0)]
             public partial System.Boolean REMOVE(TKey key);
 
             /// <summary>
