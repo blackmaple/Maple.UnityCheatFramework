@@ -34,10 +34,12 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         /// <summary>
         /// 附加的元数据 多条件查询
         /// </summary>
+        [Obsolete("remove...")]
         public ClassMethodMetadataCollection[]? AdditionalMetadata { set; get; }
 
         //internal MonoJsonMethodDTO GetMonoJsonMethodDTO() => new(this.Code, this.Utf8MethodName, this.Utf8MethodParameterTypes, this.Utf8MethodReturnType);
     }
+    [Obsolete("remove...")]
     public class ClassMethodMetadataCollection
     {
         public byte[]? Utf8MethodName { set; get; }

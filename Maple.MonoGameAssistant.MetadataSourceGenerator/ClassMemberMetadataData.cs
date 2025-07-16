@@ -42,6 +42,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         /// <summary>
         /// 附加的元数据 多条件查询
         /// </summary>
+        [Obsolete("remove...")]
         public ClassMemberMetadataCollection[]? AdditionalMetadata { set; get; }
     }
 
@@ -51,6 +52,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         public ITypeSymbol[] TypeSymbols { set; get; } = default!;
     }
 
+    [Obsolete("remove...")]
     public class ClassMemberMetadataCollection
     {
         public byte[]? Utf8ImageName { set; get; }

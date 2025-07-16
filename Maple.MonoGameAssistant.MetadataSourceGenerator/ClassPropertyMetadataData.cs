@@ -26,9 +26,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         /// <summary>
         /// 附加的元数据 多条件查询
         /// </summary>
+        [Obsolete("remove...")]
         public ClassPropertyMetadataCollection[]? AdditionalMetadata { set; get; }
     }
 
+    [Obsolete("remove...")]
     public class ClassPropertyMetadataCollection
     {
         public byte[]? Utf8PropertyName { set; get; }

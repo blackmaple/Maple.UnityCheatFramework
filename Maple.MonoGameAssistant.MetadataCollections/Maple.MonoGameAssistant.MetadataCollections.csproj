@@ -15,7 +15,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.3.1-rc</Version>
+		<Version>1.3.5-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="SysCollectionsMetadata_IL2CPP\" />
+		<Folder Include="SysCollectionsMetadata_IL2CPP\" />
 	</ItemGroup>
 
 
