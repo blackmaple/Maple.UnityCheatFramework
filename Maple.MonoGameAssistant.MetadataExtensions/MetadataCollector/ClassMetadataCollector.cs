@@ -82,6 +82,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             return ContextMetadata.GetMethodDelegate(code, ClassMetadata);
         }
+        [Obsolete("REMOVE")]
         public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged
             => GetMethodDelegate(code);
         [Obsolete("REMOVE")]
