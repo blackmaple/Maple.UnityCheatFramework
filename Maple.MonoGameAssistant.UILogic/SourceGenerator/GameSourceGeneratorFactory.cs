@@ -212,7 +212,7 @@ namespace Maple.MonoGameAssistant.UILogic
             {
                 foreach (var p in methodInfoDTO.ParameterTypes)
                 {
-                    var name = p.ParameterName!;
+                    var name = p.ParameterName ?? "_arg_";
                     var type = p.GetTypeDisplayName()!;
                     yield return SyntaxFactory.Parameter(SyntaxFactory.Identifier(name))
                         .WithType(SyntaxFactory.ParseTypeName(type));

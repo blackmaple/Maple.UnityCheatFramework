@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maple.MonoGameAssistant.WinForm
@@ -35,10 +36,34 @@ namespace Maple.MonoGameAssistant.WinForm
             WindowsFormsSettings.ForceDirectXPaint();
             UserLookAndFeel.Default.SetSkinStyle(SkinSvgPalette.WXI.Darkness);
 
+
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += Application_ThreadException; ;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; ;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             Application.Run(ConfigService());
             //   Application.Exit
         }
 
+        private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            e.SetObserved();
+            XtraMessageBox.Show(e.Exception.Message);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                XtraMessageBox.Show(ex.Message);
+            }
+        }
+
+        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+
+            XtraMessageBox.Show(e.Exception.Message);
+        }
 
         static ViewMainForm ConfigService()
         {
