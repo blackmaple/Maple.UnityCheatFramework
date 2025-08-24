@@ -23,12 +23,16 @@ builder.Services.AddMasaBlazor(p =>
     };
     p.ConfigureTheme(theme =>
     {
-        theme.Dark = true;
+        theme.DefaultTheme = "dark";
     });
 });
 
-builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://localhost:18272/"))
-    .ConfigurePrimaryHttpMessageHandler(p => new HttpClientHandler() { AutomaticDecompression = System.Net.DecompressionMethods.Brotli });
+builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://127.0.0.1:29009/"))
+    .ConfigurePrimaryHttpMessageHandler(p => new HttpClientHandler() 
+    { 
+        AutomaticDecompression = System.Net.DecompressionMethods.Brotli ,
+        UseProxy = false,
+    });
 
 
 
