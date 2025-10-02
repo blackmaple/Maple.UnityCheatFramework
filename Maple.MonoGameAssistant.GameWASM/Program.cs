@@ -43,7 +43,7 @@ builder.Services.AddMasaBlazor(p =>
     };
     p.ConfigureTheme(theme =>
     {
-        theme.Dark = true;
+        theme.DefaultTheme = "dark";
     });
 });
 await builder.Build().RunAsync();
