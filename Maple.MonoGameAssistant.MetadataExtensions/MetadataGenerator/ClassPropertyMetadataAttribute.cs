@@ -24,5 +24,25 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
         }
 
     }
+
+
+    [Conditional("DEBUG")]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif
+     class ClassPropertyCollectionAttribute : Attribute
+    {
+
+        public ClassPropertyCollectionAttribute(string description, string? id = null)
+        {
+
+        }
+
+    }
+
+
 }
 #pragma warning restore IDE0060 // 删除未使用的参数
