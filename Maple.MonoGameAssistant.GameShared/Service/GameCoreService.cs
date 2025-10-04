@@ -860,6 +860,91 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
         }
 
+        public async ValueTask<GameSkillInfoDTO[]?> OnUpdateCharacterSkillEx(GameCharacterSkillView skillView, GameSkillInfoDTO selectedData, bool remove)
+        {
+
+            if (this.GameSessionInfo is null)
+            {
+                return default;
+            }
+
+            GameCharacterDisplayDTO characterDisplayDTO = skillView.CharacterDisplay;
+
+            if (remove)
+            {
+                var dialog = await this.PopupService.ConfirmAsync("Remove Object", $"Remove {selectedData.DisplayCategory}:{selectedData.DisplayName}", AlertTypes.Warning);
+                if (false == dialog)
+                {
+                    return default;
+                }
+                var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, string.Empty);
+                if (false == dto.TryGet(out var skillDTO))
+                {
+                    await this.ShowErrorAsync(dto.MSG);
+                    return default;
+                }
+                return skillDTO.SkillInfos;
+
+
+            }
+            else
+            {
+                var selectedSkills = this.ListSkill_All.Where(p => p.DisplayCategory == selectedData.DisplayCategory).ToList();
+                if (selectedSkills.Count != 0)
+                {
+                    var selectedObj = await PopupService.OpenAsync(typeof(UISelectedSkillDialog),
+                         new Dictionary<string, object?>()
+                         {
+                             [nameof(UISelectedSkillDialog.ListSkill_All)] = selectedSkills
+                         });
+
+                    if (selectedObj is not GameSkillDisplayDTO newSkill)
+                    {
+                        return default;
+                    }
+
+
+                    var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, newSkill.ObjectId);
+                    if (false == dto.TryGet(out var skillDTO))
+                    {
+                        await this.ShowErrorAsync(dto.MSG);
+                        return default;
+                    }
+
+                    return skillDTO.SkillInfos;
+
+                }
+                else
+                {
+                    var selectedItems = this.ListInventory_All.Where(p => p.DisplayCategory == selectedData.DisplayCategory).ToList();
+                    var selectedObj = await PopupService.OpenAsync(typeof(UISelectedInventoryDialog),
+                        new Dictionary<string, object?>()
+                        {
+                            [nameof(UISelectedInventoryDialog.ListItem_All)] = selectedItems
+                        });
+
+                    if (selectedObj is not GameInventoryDisplayDTO newItem)
+                    {
+                        return default;
+                    }
+
+
+                    var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, newItem.ObjectId);
+                    if (false == dto.TryGet(out var skillDTO))
+                    {
+                        await this.ShowErrorAsync(dto.MSG);
+                        return default;
+                    }
+
+                    return skillDTO.SkillInfos;
+                }
+
+
+
+
+            }
+
+        }
 
         [Obsolete("remove...")]
         public async ValueTask OnUpdateCharacterEquipment(GameCharacterDisplayDTO characterDisplayDTO, GameEquipmentInfoDTO? selectedData, bool remove)

@@ -59,7 +59,7 @@
 		<PackageReference Include="Microsoft.AspNetCore" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Composite" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Composite" Version="9.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
