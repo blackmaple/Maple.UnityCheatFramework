@@ -27,7 +27,7 @@ builder.Services.AddMasaBlazor(p =>
     });
 });
 
-builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://127.0.0.1:29009/"))
+builder.Services.AddHttpClient<GameHttpClientService>(p => p.BaseAddress = new Uri("http://127.0.0.1:55654/"))
     .ConfigurePrimaryHttpMessageHandler(p => new HttpClientHandler() 
     { 
         AutomaticDecompression = System.Net.DecompressionMethods.Brotli ,
