@@ -785,7 +785,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                     if (attCollection is not null)
                     {
                         metadata.CollectionEnabled = true;
-                  
+
                         metadata.CollectionWrite = !propertySymbol.IsReadOnly;
 
                         if (attCollection.TryGetAttributeValue_CtorArgs(0, out string? name))
@@ -2681,47 +2681,113 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         #region ClassPropertyCollectionAttribute
 
-        public static PropertyDeclarationSyntax BuildClassPropertyCollection(this ClassMemberMetadataData classMember,List<StructDeclarationSyntax> structs)
+        public static void BuildClassPropertyCollection(this ClassMemberMetadataData classMember, List<StructDeclarationSyntax> structs)
         {
             var props = classMember.PropertyMetadataDatas.Where(p => p.CollectionEnabled).ToArray();
             var writers = props.Where(p => p.CollectionWrite).ToArray();
 
-
+            var t = EnumClassPropertyContent(classMember, props);
 
         }
 
-        private static MemberDeclarationSyntax EnumClassPropertyCollectionReader(IEnumerable<ClassPropertyMetadataData> reader) 
-        { 
-        
-        }
+        //private static MemberDeclarationSyntax EnumClassPropertyCollectionReader(this ClassMemberMetadataData classMember, IEnumerable<ClassPropertyMetadataData> reader)
+        //{
 
-        private static ExpressionStatementSyntax CreateClassPropertyContent(ClassPropertyMetadataData m)
+        //}
+
+        private static StatementSyntax CreateClassPropertyContent(this ClassMemberMetadataData classMember, ClassPropertyMetadataData m)
         {
             // 创建参数列表
-            var arguments = SyntaxFactory.ArgumentList(
-                SyntaxFactory.SeparatedList(new[]
-                {
-                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,ConvertToHexLiteral(m.Code))),
-                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringKeyword, )),
-                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodParameterTypes)),
-                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodReturnType)),
+            var arguments = SyntaxFactory.ArgumentList([
+                ..EnumArgumentSyntax().Select(p=>SyntaxFactory.Argument(p))
+                ]);
 
-                })
-            );
 
             // 创建方法调用表达式
             var invocationExpression = SyntaxFactory.InvocationExpression(
                 SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
-                    SyntaxFactory.IdentifierName("ClassPropertyContent"),
-                    SyntaxFactory.IdentifierName("Create")
+                    SyntaxFactory.IdentifierName(typeof(ClassPropertyContent).FullName),
+                    SyntaxFactory.IdentifierName(nameof(ClassPropertyContent.Create))
                 ),
                 arguments
             );
 
             // 创建表达式语句
-            return SyntaxFactory.ExpressionStatement(invocationExpression);
+            return SyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, invocationExpression);
+
+            IEnumerable<ExpressionSyntax> EnumArgumentSyntax()
+            {
+                yield return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(m.Code.ToString("X")));
+                string? name = m.CollectionName;
+                if (string.IsNullOrEmpty(name))
+                {
+                    yield return SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression);
+                }
+                else
+                {
+                    yield return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(name!));
+                }
+                string? desc = m.CollectionDescription;
+                if (string.IsNullOrEmpty(desc))
+                {
+                    yield return SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression);
+                }
+                else
+                {
+                    yield return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(desc!));
+                }
+
+                yield return GetPropValue();
+            }
+
+
+            ExpressionSyntax GetPropValue()
+            {
+                if (m.PropertySymbol.IsStatic)
+                {
+                    return SyntaxFactory.IdentifierName(m.PropertySymbol.ToDisplayString());
+                }
+                else
+                {
+                    return SyntaxFactory.MemberAccessExpression(
+                       SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                       SyntaxFactory.IdentifierName(m.PropertySymbol.Name)
+                    );
+                }
+            }
+
+
         }
+        private static MethodDeclarationSyntax EnumClassPropertyContent(this ClassMemberMetadataData classMember, ClassPropertyMetadataData[] metadataDatas)
+        {
+            var typedata = typeof(System.Collections.Generic.IEnumerable<>);
+            var genericName = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.IdentifierName(typedata.Namespace),
+                SyntaxFactory.IdentifierName(nameof(System.Collections.Generic.IEnumerable<>)));
+
+            var returnType = SyntaxFactory.GenericName(genericName.ToFullString()).WithTypeArgumentList(
+                  SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(typeof(ClassPropertyContent).FullName)
+                                        )
+                                    ));
+        
+          
+
+            // 创建方法声明
+            MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
+                returnType,
+                "ReadContent"
+            )
+            .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
+            .WithBody(SyntaxFactory.Block(metadataDatas.Select(p => CreateClassPropertyContent(classMember, p))));
+
+            return method;
+        }
+
         //private MemberDeclarationSyntax EnumClassPropertyCollectionWriter(ClassPropertyMetadataData[] writer) { }
 
         #endregion
