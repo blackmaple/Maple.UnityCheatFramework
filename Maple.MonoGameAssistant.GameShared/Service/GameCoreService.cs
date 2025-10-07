@@ -860,12 +860,12 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
         }
 
-        public async ValueTask<GameSkillInfoDTO[]?> OnUpdateCharacterSkillEx(GameCharacterSkillView skillView, GameSkillInfoDTO selectedData, bool remove)
+        public async ValueTask OnUpdateCharacterSkillEx(GameCharacterSkillView skillView, GameSkillInfoDTO selectedData, bool remove)
         {
 
             if (this.GameSessionInfo is null)
             {
-                return default;
+                return;
             }
 
             GameCharacterDisplayDTO characterDisplayDTO = skillView.CharacterDisplay;
@@ -875,15 +875,17 @@ namespace Maple.MonoGameAssistant.GameShared.Service
                 var dialog = await this.PopupService.ConfirmAsync("Remove Object", $"Remove {selectedData.DisplayCategory}:{selectedData.DisplayName}", AlertTypes.Warning);
                 if (false == dialog)
                 {
-                    return default;
+                    return;
                 }
                 var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, string.Empty);
-                if (false == dto.TryGet(out var skillDTO))
+                if (dto.TryGet(out var skillDTO))
+                {
+                    skillView.SkillInfos.ReplaceRange(skillDTO.SkillInfos ?? []);
+                }
+                else
                 {
                     await this.ShowErrorAsync(dto.MSG);
-                    return default;
                 }
-                return skillDTO.SkillInfos;
 
 
             }
@@ -900,18 +902,21 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
                     if (selectedObj is not GameSkillDisplayDTO newSkill)
                     {
-                        return default;
+                        return;
                     }
 
 
                     var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, newSkill.ObjectId);
-                    if (false == dto.TryGet(out var skillDTO))
+                    if (dto.TryGet(out var skillDTO))
+                    {
+                        skillView.SkillInfos.ReplaceRange(skillDTO.SkillInfos ?? []);
+                    }
+                    else
                     {
                         await this.ShowErrorAsync(dto.MSG);
-                        return default;
                     }
 
-                    return skillDTO.SkillInfos;
+
 
                 }
                 else
@@ -925,18 +930,21 @@ namespace Maple.MonoGameAssistant.GameShared.Service
 
                     if (selectedObj is not GameInventoryDisplayDTO newItem)
                     {
-                        return default;
+                        return;
                     }
 
 
                     var dto = await this.Http.UpdateCharacterSkillAsync(this.GameSessionInfo, characterDisplayDTO, selectedData.DisplayCategory, selectedData.ObjectId, newItem.ObjectId);
-                    if (false == dto.TryGet(out var skillDTO))
+                    if (dto.TryGet(out var skillDTO))
+                    {
+                        skillView.SkillInfos.ReplaceRange(skillDTO.SkillInfos ?? []);
+                    }
+                    else
                     {
                         await this.ShowErrorAsync(dto.MSG);
-                        return default;
                     }
 
-                    return skillDTO.SkillInfos;
+
                 }
 
 

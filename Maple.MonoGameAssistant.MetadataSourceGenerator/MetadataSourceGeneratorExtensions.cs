@@ -781,6 +781,24 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                         metadata.Utf8PropertyType = utf8Type;
                     }
 
+                    var attCollection = propertySymbol.GetAttributes().Where(p => p.AttributeClass!.ToDisplayString() == typeof(ClassPropertyCollectionAttribute).FullName).FirstOrDefault();
+                    if (attCollection is not null)
+                    {
+                        metadata.CollectionEnabled = true;
+                  
+                        metadata.CollectionWrite = !propertySymbol.IsReadOnly;
+
+                        if (attCollection.TryGetAttributeValue_CtorArgs(0, out string? name))
+                        {
+                            metadata.CollectionName = name;
+                        }
+                        if (attCollection.TryGetAttributeValue_CtorArgs(1, out string? desc))
+                        {
+                            metadata.CollectionDescription = desc;
+                        }
+                    }
+
+
                     metadata.Code = GetPropertyCode(propertySymbol.ToDisplayString());
 
                     yield return metadata;
@@ -2661,7 +2679,51 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         #endregion
 
 
+        #region ClassPropertyCollectionAttribute
+
+        public static PropertyDeclarationSyntax BuildClassPropertyCollection(this ClassMemberMetadataData classMember,List<StructDeclarationSyntax> structs)
+        {
+            var props = classMember.PropertyMetadataDatas.Where(p => p.CollectionEnabled).ToArray();
+            var writers = props.Where(p => p.CollectionWrite).ToArray();
 
 
+
+        }
+
+        private static MemberDeclarationSyntax EnumClassPropertyCollectionReader(IEnumerable<ClassPropertyMetadataData> reader) 
+        { 
+        
+        }
+
+        private static ExpressionStatementSyntax CreateClassPropertyContent(ClassPropertyMetadataData m)
+        {
+            // 创建参数列表
+            var arguments = SyntaxFactory.ArgumentList(
+                SyntaxFactory.SeparatedList(new[]
+                {
+                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,ConvertToHexLiteral(m.Code))),
+                                SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringKeyword, )),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodParameterTypes)),
+                                SyntaxFactory.Argument(ArrayInitializerExpression(m.Utf8MethodReturnType)),
+
+                })
+            );
+
+            // 创建方法调用表达式
+            var invocationExpression = SyntaxFactory.InvocationExpression(
+                SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName("ClassPropertyContent"),
+                    SyntaxFactory.IdentifierName("Create")
+                ),
+                arguments
+            );
+
+            // 创建表达式语句
+            return SyntaxFactory.ExpressionStatement(invocationExpression);
+        }
+        //private MemberDeclarationSyntax EnumClassPropertyCollectionWriter(ClassPropertyMetadataData[] writer) { }
+
+        #endregion
     }
 }

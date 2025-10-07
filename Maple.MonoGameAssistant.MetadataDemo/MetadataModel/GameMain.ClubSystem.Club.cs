@@ -201,6 +201,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// </summary>
             /// <returns>class GameMain.ClubSystem.Club.DataComponent</returns>
 
+            [MetadataExtensions.MetadataGenerator.ClassPropertyCollection("Êý¾Ý", "ÃèÊö")]
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("<C_Data>k__BackingField", "GameMain.ClubSystem.Club.DataComponent")]
             public partial Maple.MonoGameAssistant.MetadataDemo.MetadataModel.DataComponent.Ptr_DataComponent C_DATA { get; }
 
@@ -210,10 +211,11 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// class ["Assembly-CSharp".""."AffairComponent"]
             /// </summary>
             /// <returns>class GameMain.ClubSystem.Club.AffairComponent</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("<C_Affair>k__BackingField", "GameMain.ClubSystem.Club.AffairComponent")]
-           public partial nint C_AFFAIR { get; set; } 
-*/
+
+            [MetadataExtensions.MetadataGenerator.ClassPropertyCollection("C_AFFAIR", "C_AFFAIR DESC")]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("<C_Affair>k__BackingField", "GameMain.ClubSystem.Club.AffairComponent")]
+            public partial nint C_AFFAIR { get; set; }
+
 
             /// <summary>
             /// 0x98 GameMain.ClubSystem.ClubStatusComponent <C_Status>k__BackingField

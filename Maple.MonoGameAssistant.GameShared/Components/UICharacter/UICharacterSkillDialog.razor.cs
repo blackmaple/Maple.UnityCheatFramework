@@ -28,11 +28,8 @@ namespace Maple.MonoGameAssistant.GameShared.Components.UICharacter
             try
             {
                 selectedData.Loading = true;
-                var skills = await Core.OnUpdateCharacterSkillEx(SkillView, selectedData, remove);
-                if (skills is not null)
-                {
-                    this.SkillInfos.ReplaceRange(skills);
-                }
+                await Core.OnUpdateCharacterSkillEx(SkillView, selectedData, remove);
+                
             }
             finally
             {

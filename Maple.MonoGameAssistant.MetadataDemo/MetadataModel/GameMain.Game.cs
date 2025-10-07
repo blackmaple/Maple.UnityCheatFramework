@@ -411,20 +411,22 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// class ["Assembly-CSharp"."GameMain.ClubSystem"."Club"]
             /// </summary>
             /// <returns>class GameMain.ClubSystem.Club</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("m_clubSimulate", "GameMain.ClubSystem.Club")]
-           public partial nint M_CLUB_SIMULATE { get; set; } 
-*/
+
+            [MetadataExtensions.MetadataGenerator.ClassPropertyCollection]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("m_clubSimulate", "GameMain.ClubSystem.Club")]
+            public partial nint M_CLUB_SIMULATE { get; set; }
+
 
             /// <summary>
             /// 0x128 System.Boolean <Loaded>k__BackingField
             /// struct ["mscorlib"."System"."Boolean"]
             /// </summary>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("<Loaded>k__BackingField", "System.Boolean")]
-           public partial System.Boolean LOADED { get; set; } 
-*/
+
+            [MetadataExtensions.MetadataGenerator.ClassPropertyCollection]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassPropertyMetadataAttribute("<Loaded>k__BackingField", "System.Boolean")]
+            public partial System.Boolean LOADED { get; set; }
+
 
             /// <summary>
             /// 0x129 System.Boolean <EnterAffairIsLoadGame>k__BackingField

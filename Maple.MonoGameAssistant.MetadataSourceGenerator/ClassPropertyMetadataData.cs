@@ -28,6 +28,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
         /// </summary>
         [Obsolete("remove...")]
         public ClassPropertyMetadataCollection[]? AdditionalMetadata { set; get; }
+
+        public bool CollectionEnabled { set; get; } = false;    
+        public bool CollectionWrite { set; get; } = false;
+        public string? CollectionName { set; get; } 
+        public string? CollectionDescription { set; get; }  
     }
 
     [Obsolete("remove...")]
