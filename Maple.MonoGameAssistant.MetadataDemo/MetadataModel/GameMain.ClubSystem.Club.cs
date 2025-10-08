@@ -203,7 +203,7 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
 
             [MetadataExtensions.MetadataGenerator.ClassPropertyCollection("Êý¾Ý", "ÃèÊö")]
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("<C_Data>k__BackingField", "GameMain.ClubSystem.Club.DataComponent")]
-            public partial Maple.MonoGameAssistant.MetadataDemo.MetadataModel.DataComponent.Ptr_DataComponent C_DATA { get; }
+            public partial Maple.MonoGameAssistant.MetadataDemo.MetadataModel.DataComponent.Ptr_DataComponent C_DATA { get; set; }
 
 
             /// <summary>
