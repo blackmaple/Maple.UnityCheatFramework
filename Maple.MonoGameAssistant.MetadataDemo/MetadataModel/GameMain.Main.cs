@@ -30,9 +30,9 @@ namespace Maple.MonoGameAssistant.MetadataDemo.MetadataModel
             /// class ["Assembly-CSharp"."GameMain"."Main"]
             /// </summary>
             /// <returns>class GameMain.Main</returns>
-
+            [MetadataExtensions.MetadataGenerator.ClassPropertyCollection("≤‚ ‘", "≤‚ ‘")]
             [MetadataExtensions.MetadataGenerator.ClassPropertyMetadata("inst", "GameMain.Main")]
-            public static partial Main.Ptr_Main C_INST { get; }
+            public static partial Main.Ptr_Main C_INST { get; set; }
 
 
             /// <summary>

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection.PortableExecutable;
@@ -2686,8 +2687,11 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
             var props = classMember.PropertyMetadataDatas.Where(p => p.CollectionEnabled).ToArray();
             var writers = props.Where(p => p.CollectionWrite).ToArray();
 
-            var t = EnumClassPropertyContent(classMember, props);
+            var readerContent = EnumClassPropertyContent_Reader(classMember, props);
+            var writerContent = EnumClassPropertyContent_Writer(classMember, writers);
+            var ptrStruct = CreateStructDeclarationSyntaxExpression(classMember.PtrSymbol, [readerContent, writerContent]);
 
+            structs.Add(ptrStruct);
         }
 
         //private static MemberDeclarationSyntax EnumClassPropertyCollectionReader(this ClassMemberMetadataData classMember, IEnumerable<ClassPropertyMetadataData> reader)
@@ -2695,7 +2699,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
         //}
 
-        private static StatementSyntax CreateClassPropertyContent(this ClassMemberMetadataData classMember, ClassPropertyMetadataData m)
+        private static YieldStatementSyntax CreateClassPropertyContent_Reader(this ClassMemberMetadataData classMember, ClassPropertyMetadataData m)
         {
             // 创建参数列表
             var arguments = SyntaxFactory.ArgumentList([
@@ -2760,7 +2764,7 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
 
 
         }
-        private static MethodDeclarationSyntax EnumClassPropertyContent(this ClassMemberMetadataData classMember, ClassPropertyMetadataData[] metadataDatas)
+        private static MethodDeclarationSyntax EnumClassPropertyContent_Reader(this ClassMemberMetadataData classMember, ClassPropertyMetadataData[] metadataDatas)
         {
             var typedata = typeof(System.Collections.Generic.IEnumerable<>);
             var genericName = SyntaxFactory.MemberAccessExpression(
@@ -2774,21 +2778,121 @@ namespace Maple.MonoGameAssistant.MetadataSourceGenerator
                                             SyntaxFactory.IdentifierName(typeof(ClassPropertyContent).FullName)
                                         )
                                     ));
-        
-          
+            var blocks = metadataDatas.Length > 0 ? metadataDatas.Select(p => CreateClassPropertyContent_Reader(classMember, p)) :
+                [SyntaxFactory.YieldStatement(SyntaxKind.YieldBreakStatement)];
 
             // 创建方法声明
             MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
                 returnType,
-                "ReadContent"
+               $"{nameof(Enum)}{classMember.ContextSymbol.Name}Reader"
             )
             .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
-            .WithBody(SyntaxFactory.Block(metadataDatas.Select(p => CreateClassPropertyContent(classMember, p))));
+            .WithBody(SyntaxFactory.Block(blocks));
 
             return method;
         }
 
-        //private MemberDeclarationSyntax EnumClassPropertyCollectionWriter(ClassPropertyMetadataData[] writer) { }
+
+        private static MethodDeclarationSyntax EnumClassPropertyContent_Writer(this ClassMemberMetadataData classMember, ClassPropertyMetadataData[] metadataDatas)
+        {
+
+
+            var returnType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
+
+            var defReturn = SyntaxFactory.ReturnStatement(
+                  SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression)
+              );
+
+
+            StatementSyntax[] blocks = [.. metadataDatas.Select(p => classMember.CreateClassPropertyContent_Writer(p)), defReturn];
+
+            // 创建方法声明
+            MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
+                returnType,
+
+               $"Try{classMember.ContextSymbol.Name}Writer"
+            )
+            .WithModifiers([SyntaxFactory.Token(SyntaxKind.PublicKeyword)])
+            .WithParameterList(SyntaxFactory.ParameterList([
+                  SyntaxFactory.Parameter(SyntaxFactory.Identifier(ClassPropertyContent.ArgName_Key )).WithType(SyntaxFactory.NullableType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)))),
+                  SyntaxFactory.Parameter(SyntaxFactory.Identifier(ClassPropertyContent.ArgName_Str )).WithType(SyntaxFactory.NullableType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)))),
+                ]))
+            .WithBody(SyntaxFactory.Block(blocks));
+
+            return method;
+        }
+
+        private static IfStatementSyntax CreateClassPropertyContent_Writer(this ClassMemberMetadataData classMember, ClassPropertyMetadataData w)
+        {
+
+            //key == "XXXX"
+            var leftCondition = SyntaxFactory.BinaryExpression(
+                SyntaxKind.EqualsExpression,
+                SyntaxFactory.IdentifierName(ClassPropertyContent.ArgName_Key),
+                SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(w.Code.ToString("X"))));
+
+
+            var callTryRead = SyntaxFactory.MemberAccessExpression(
+         SyntaxKind.SimpleMemberAccessExpression,
+         SyntaxFactory.IdentifierName(typeof(ClassPropertyContent).FullName),
+         SyntaxFactory.IdentifierName(nameof(ClassPropertyContent.TryRead))
+     );
+
+
+            var rightCondition = SyntaxFactory.InvocationExpression(callTryRead)
+                .WithArgumentList(
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName(ClassPropertyContent.ArgName_Str)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.DeclarationExpression(
+                                        SyntaxFactory.IdentifierName(w.PropertySymbol.Type.ToDisplayString()),
+                                        SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier(w.PropertySymbol.Name.ToLower()))))
+                                    .WithRefOrOutKeyword(SyntaxFactory.Token(SyntaxKind.OutKeyword))
+                            })));
+            var fullCondition = SyntaxFactory.BinaryExpression(
+                SyntaxKind.LogicalAndExpression,
+                leftCondition,
+                rightCondition);
+
+
+            var assignment = SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                      SetPropValue(),
+                    SyntaxFactory.IdentifierName(w.PropertySymbol.Name.ToLower())));
+
+            // return true;
+            var returnStatement = SyntaxFactory.ReturnStatement(
+                SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression));
+
+            var block = SyntaxFactory.Block(assignment, returnStatement);
+
+            var ifStatement = SyntaxFactory.IfStatement(fullCondition, block);
+
+
+            return ifStatement;
+            ExpressionSyntax SetPropValue()
+            {
+                if (w.PropertySymbol.IsStatic)
+                {
+                    return SyntaxFactory.IdentifierName(w.PropertySymbol.ToDisplayString());
+                }
+                else
+                {
+                    return SyntaxFactory.MemberAccessExpression(
+                       SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                       SyntaxFactory.IdentifierName(w.PropertySymbol.Name)
+                    );
+                }
+            }
+
+
+        }
 
         #endregion
     }
