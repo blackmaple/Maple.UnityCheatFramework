@@ -1,35 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Maple.MonoGameAssistant.GameCore\Maple.MonoGameAssistant.GameCore.csproj" />
-    <ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />
-  </ItemGroup>
-	
+	<ItemGroup>
+		<ProjectReference Include="..\Maple.MonoGameAssistant.GameCore\Maple.MonoGameAssistant.GameCore.csproj" />
+		<ProjectReference Include="..\Maple.MonoGameAssistant.GameDTO\Maple.MonoGameAssistant.GameDTO.csproj" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Masa.Blazor" Version="1.11.0" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <Content Update="Components\UIDialog\UISelectedSkillDialog.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Components\UIMisc\UIMiscTab.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Shared\MainLayout.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
+		<Content Update="Components\UIDialog\UISelectedSkillDialog.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+		<Content Update="Components\UIMisc\UIMiscTab.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+		<Content Update="Shared\MainLayout.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
 	</ItemGroup>
-	
+
 </Project>

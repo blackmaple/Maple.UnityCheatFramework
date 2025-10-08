@@ -13,8 +13,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Masa.Blazor" Version="1.11.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.9" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.9" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-rc.1.25451.107" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-rc.1.25451.107" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
