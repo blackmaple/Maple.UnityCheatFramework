@@ -22,29 +22,41 @@ void WINAPI LoadProxy(HINSTANCE hInstance)
 	LoadFunctions(LoadOriginalModule(hInstance));
 }
 
-BOOL WINAPI InitDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMainImp(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved, LoadPluginImp loadImp)
 {
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
 		LoadProxy(hModule);
-		InitializePlugin();
+		AsyncLoadPlugin(loadImp);
 	}
 	return TRUE;
 }
-int WINAPI LoadPlugin()
+int WINAPI LoadDefaultPlugin()
 {
+#ifdef _WINDLL
 	HMODULE hModule = LoadLibrary(L"Maple.dll");
 	if (hModule == NULL)
 	{
 		return -1;
 	}
-	typedef int (*MapleAPI)();
+	typedef int (WINAPI* MapleAPI)();
 	MapleAPI func = (MapleAPI)GetProcAddress(hModule, "Maple");
 	if (func == nullptr)
 	{
 		return -2;
 	}
 	return func();
+#else
+	return Maple();
+#endif
+}
+void WINAPI AsyncLoadPlugin(LoadPluginImp loadImp)
+{
+	HANDLE hThread = CreateThread(NULL, 0, ThreadProc, loadImp, 0, NULL);
+	if (hThread) {
+		CloseHandle(hThread);
+	}
+
 }
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	DWORD processId;
@@ -58,7 +70,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	}
 	return TRUE;
 }
-BOOL WINAPI CheckMainWindow(int count)
+BOOL WINAPI WaitForMainWindowVisible(int count)
 {
 	HWND mainWindowHandle = NULL;
 	while (count--)
@@ -73,28 +85,28 @@ BOOL WINAPI CheckMainWindow(int count)
 	}
 	return FALSE;
 }
-void WINAPI InitializePlugin()
-{
-	HANDLE hThread = CreateThread(NULL, 0, ThreadProc, NULL, 0, NULL);
-	if (hThread) {
-		CloseHandle(hThread);
-	}
-
-}
 DWORD WINAPI ThreadProc(LPVOID lpParam)
 {
-	if (CheckMainWindow())
+	if (lpParam != nullptr)
 	{
-		LoadPlugin();
+		if (WaitForMainWindowVisible())
+		{
+			LoadPluginImp proc = (LoadPluginImp)(lpParam);
+			proc();
+		}
 	}
+	
 
 	return 0;
 }
 
-BOOL WINAPI DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+ 
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
-	return InitDllMain(hModule, ul_reason_for_call, lpReserved);
+	DisableThreadLibraryCalls(hModule);
+	return DllMainImp(hModule, ul_reason_for_call, lpReserved, LoadDefaultPlugin);
 }
+ 
 
 
 void WINAPI Export_CloseDriver() { ApiAddresses[Index_CloseDriver](); }

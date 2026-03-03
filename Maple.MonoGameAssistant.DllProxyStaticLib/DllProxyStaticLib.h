@@ -786,18 +786,21 @@ wchar_t FullPath[512] = { 0 };
 #pragma endregion
 
 #pragma region Funcs
-
+typedef int (WINAPI* LoadPluginImp)();
 HMODULE WINAPI LoadOriginalModule(HINSTANCE hInstance);
 void WINAPI LoadFunctions(HMODULE hOriginal);
 void WINAPI LoadProxy(HINSTANCE hInstance);
-BOOL WINAPI InitDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
-int WINAPI  LoadPlugin();
+BOOL WINAPI DllMainImp(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved, LoadPluginImp load);
+int WINAPI  LoadDefaultPlugin();
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
-BOOL WINAPI CheckMainWindow(int count = 15);
-void WINAPI InitializePlugin();
+BOOL WINAPI WaitForMainWindowVisible(int count = 15);
+void WINAPI AsyncLoadPlugin(LoadPluginImp load);
 DWORD WINAPI ThreadProc(LPVOID lpParam);
-BOOL WINAPI DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved);
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved);
 
+#ifndef _WINDLL
+extern "C"  int WINAPI Maple();
+#endif
 #pragma endregion
 
 #pragma region Exports
@@ -805,7 +808,7 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserve
 
 
 ////#pragma comment(linker, "/export:AddMaple=Add")
-//extern "C"  int WINAPI Add(int a, int b);
+ 
 
 
 #pragma comment(lib, "Shlwapi.lib")

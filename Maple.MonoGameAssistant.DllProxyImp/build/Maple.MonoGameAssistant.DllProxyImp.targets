@@ -1,0 +1,72 @@
+<Project>
+	<PropertyGroup>
+		<_OutputType >Library</_OutputType>
+		<_AssemblyName >winhttp</_AssemblyName>
+
+		<_NativeLibraryAotEnabled Condition="'$(PublishAot)' == 'true'">true</_NativeLibraryAotEnabled>
+		<_NativeLibraryRuntimeIdentifier>$(RuntimeIdentifier)</_NativeLibraryRuntimeIdentifier>
+		<_MSBuildThisFileDirectory>$(MSBuildThisFileDirectory)</_MSBuildThisFileDirectory>
+		<_DirectPInvoke>winhttp</_DirectPInvoke>
+		<_Extension>.lib</_Extension>
+		<_DllMain_X86>_DllMain@12</_DllMain_X86>
+		<_DllMain_X64>DllMain</_DllMain_X64>
+
+		<_NativeLibraryRuntimeIdentifier Condition="'$(_NativeLibraryRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</_NativeLibraryRuntimeIdentifier>
+	</PropertyGroup>
+
+	<Target Name="SetAssemblyName" BeforeTargets="Publish">
+		<PropertyGroup>
+			<OutputType >$(_OutputType)</OutputType>
+			<AssemblyName>$(_AssemblyName)</AssemblyName>
+		</PropertyGroup>
+		<Message Text="OutputType Reset:$(OutputType) AssemblyName Rename: $(AssemblyName)" Importance="high" />
+	</Target>
+
+	<Target Name="SetupNativeLibraryForAot" BeforeTargets="ComputeIlcCompileInputs" Condition="'$(_NativeLibraryAotEnabled)' == 'true'">
+		<!--<Message Importance="high" Text="_MSBuildThisFileDirectory:$(_MSBuildThisFileDirectory) " />-->
+		<PropertyGroup Condition="'$(_NativeLibraryRuntimeIdentifier)' == 'win-x64'">
+			<_DllMainSymbol >$(_DllMain_X64)</_DllMainSymbol>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(_NativeLibraryRuntimeIdentifier)' == 'win-x86'">
+			<_DllMainSymbol >$(_DllMain_X86)</_DllMainSymbol>
+		</PropertyGroup>
+
+		<PropertyGroup>
+			<_NativeLibPath>$(_MSBuildThisFileDirectory)runtimes\$(_NativeLibraryRuntimeIdentifier)\</_NativeLibPath>
+		</PropertyGroup>
+		<!--<Message Importance="high" Text="_NativeLibPath:$(_NativeLibPath) " />-->
+		<Error Condition="!Exists('$(_NativeLibPath)')" Text="NOT FOUND: $(_NativeLibraryRuntimeIdentifier)=>$(_NativeLibPath)" />
+
+
+		<PropertyGroup Condition="Exists('$(_NativeLibPath)')">
+			<_NativeStaticLibs>$(_NativeLibPath)$(_DirectPInvoke)$(_Extension)</_NativeStaticLibs>
+		</PropertyGroup>
+
+
+		<!--<Message Importance="high" Text="ItemGroup _NativeStaticLibs:$(_NativeStaticLibs) " />-->
+		<Error Condition="!Exists('$(_NativeStaticLibs)')" Text="NOT FOUND: $(_NativeLibraryRuntimeIdentifier)=>$(_NativeStaticLibs)" />
+
+		<ItemGroup Condition="Exists('$(_NativeStaticLibs)')">
+			<LinkerArg Include="/LTCG"/>
+			<NativeLibrary Include="$(_NativeStaticLibs)"/>
+			<LinkerArg Include="/INCLUDE:$(_DllMainSymbol)" />
+		</ItemGroup>
+		<Message Importance="high" Text="AOT $(_NativeLibraryRuntimeIdentifier)=>$(_NativeStaticLibs)" />
+
+
+
+	</Target>
+	<Target Name="RemoveDllMainStub" AfterTargets="SetupOSSpecificProps">
+
+		<PropertyGroup>
+			<_DllMainStub>$(IlcSdkPath)dllmain$(ObjectSuffix)</_DllMainStub>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<NativeLibrary Remove="$(_DllMainStub)" />
+			<LinkerArg Remove="&quot;$(_DllMainStub)&quot;" />
+		</ItemGroup>
+
+	</Target>
+
+</Project>

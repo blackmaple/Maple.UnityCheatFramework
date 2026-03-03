@@ -40,6 +40,7 @@
     <Project Path="Maple.MonoGameAssistant.WinForm\Maple.MonoGameAssistant.WinForm.csproj" />
   </Folder>
   <Folder Name="/Windows/">
+    <Project Path="Maple.MonoGameAssistant.DllProxyImp/Maple.MonoGameAssistant.DllProxyImp.csproj" Id="afd18228-7376-46d2-b4c9-06d761c29fbd" />
     <Project Path="Maple.MonoGameAssistant.DllProxyStaticLib\Maple.MonoGameAssistant.DllProxyStaticLib.vcxproj" Id="387edf65-9b50-4d1d-832d-777411a112b1" />
     <Project Path="Maple.MonoGameAssistant.Windows/Maple.MonoGameAssistant.Windows.csproj" Id="fd613371-c9a0-4891-af8c-a3b049b45495" />
   </Folder>
