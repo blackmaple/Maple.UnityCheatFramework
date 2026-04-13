@@ -1,4 +1,5 @@
-﻿using Maple.MonoGameAssistant.Core;
+﻿using Maple.MonoGameAssistant.Common;
+using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.Model;
 using System.Diagnostics.CodeAnalysis;
@@ -11,16 +12,35 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
     internal static class MetadataCollectorExtensions
     {
 
-
         public static bool EqualImageName(this MonoObjectNameDTO imageNameDTO, MonoDescriptionClassDTO searchClassDTO)
         {
             var imageName = imageNameDTO.Utf8Name.AsSpan();
             var searchImageName = searchClassDTO.Utf8ImageName.AsSpan();
-            if (MemoryExtensions.SequenceEqual(imageName, searchImageName))
-            {
-                return true;
-            }
-            return searchImageName.EndsWith(".dll"u8) && MemoryExtensions.SequenceEqual(imageName, searchImageName[..^4]);
+            return CompareBytesWithOptionalSuffix(imageName, searchImageName, ".dll"u8);
+            
+        }
+
+        static bool CompareBytesWithOptionalSuffix(
+          ReadOnlySpan<byte> a,
+          ReadOnlySpan<byte> b,
+          ReadOnlySpan<byte> suffix)
+        {
+            if (suffix.IsEmpty)
+                return a.SequenceEqual(b);
+
+            int sufLen = suffix.Length;
+
+            static int TrimmedLength(ReadOnlySpan<byte> s, ReadOnlySpan<byte> suf, int sufLen)
+                => (s.Length >= sufLen && s.EndsWith(suf)) ? (s.Length - sufLen) : s.Length;
+
+            int aLen = TrimmedLength(a, suffix, sufLen);
+            int bLen = TrimmedLength(b, suffix, sufLen);
+
+            if (aLen != bLen)
+                return false;
+
+            // 只切一边，另一边用 StartsWith 比较前缀
+            return b.StartsWith(a[..aLen]);
         }
 
         public static bool EqualMethodName(this MonoMethodInfoDTO methodInfoDTO, MonoDescriptionMethodDTO descriptionMethodDTO)
@@ -114,13 +134,16 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 
         public static bool TryGetMethodMetadata(this MonoClassMetadataCollection classMetadata, MonoDescriptionMethodDTO descriptionMethodDTO, [MaybeNullWhen(false)] out MonoMethodInfoDTO methodInfoDTO)
         {
+
             Unsafe.SkipInit(out methodInfoDTO);
             foreach (var method in classMetadata.MethodInfos)
             {
+
                 if (method.EqualMethodName(descriptionMethodDTO)
                     && method.EqualMethodReturnType(descriptionMethodDTO)
                     && method.EqualMethodParameterTypes(descriptionMethodDTO))
                 {
+
                     methodInfoDTO = method;
                     return true;
                 }

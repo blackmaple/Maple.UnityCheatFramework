@@ -10,8 +10,9 @@ namespace Maple.MonoGameAssistant.Core
             var moduleView = new MonoRuntimeModuleView();
             action.Invoke(moduleView);
             services.AddSingleton(moduleView);
-            services.AddSingleton<MonoRuntimeFactory>();
+            services.AddSingleton(MonoRuntimeFactory.Create);
             services.AddSingleton(p => p.GetRequiredService<MonoRuntimeFactory>().GetProvider());
+
             services.AddSingleton<MonoRuntimeContext>();
             if (android)
             {

@@ -1,3 +1,5 @@
+using Maple.MonoGameAssistant.MetadataUnity.UnityMetadata;
+
 namespace Maple.MonoGameAssistant.MetadataUnity
 {
     /// <summary>

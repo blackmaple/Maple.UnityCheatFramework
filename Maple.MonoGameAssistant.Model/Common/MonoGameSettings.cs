@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
@@ -59,6 +60,10 @@ namespace Maple.MonoGameAssistant.Model
         /// </summary>
         public string? GameResource { set; get; }
 
+        /// <summary>
+        /// 主窗口句柄
+        /// </summary>
+        public nint MainWindowHandle { set; get; } = Process.GetCurrentProcess().MainWindowHandle;
 
         public string? QQ { set; get; }
 

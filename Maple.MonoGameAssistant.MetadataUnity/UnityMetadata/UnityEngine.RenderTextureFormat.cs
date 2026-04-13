@@ -1,4 +1,4 @@
-namespace Maple.MonoGameAssistant.MetadataUnity
+namespace Maple.MonoGameAssistant.MetadataUnity.UnityMetadata
 {
     /// <summary>
     /// ["UnityEngine.CoreModule"."UnityEngine"."RenderTextureFormat"]

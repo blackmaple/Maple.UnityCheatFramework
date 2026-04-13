@@ -1,5 +1,6 @@
 ﻿using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
+using Maple.MonoGameAssistant.MetadataUnity;
 using Maple.MonoGameAssistant.Model;
 using Maple.MonoGameAssistant.Windows.HotKey.HookWindowMessage;
 using Maple.MonoGameAssistant.Windows.Service;
@@ -32,7 +33,7 @@ namespace Maple.MonoGameAssistant.MonoDataCollector
 
         protected override IUnityPlayerNativeMethods? LoadUnityEngineContext()
         {
-            throw new NotImplementedException();
+            return UnityMetadataContext.CreateUnityMetadataContext(this.RuntimeContext, this.Logger);
         }
         #endregion
 

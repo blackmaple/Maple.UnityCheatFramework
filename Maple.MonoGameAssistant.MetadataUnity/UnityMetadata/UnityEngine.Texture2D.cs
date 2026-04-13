@@ -1842,10 +1842,10 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             ///   System.IntPtr GetNativeTexturePtr()
             /// </summary>
             /// <returns>struct System.IntPtr</returns>
-            /*
+            
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetNativeTexturePtr", "System.IntPtr", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition), typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
            public partial System.IntPtr GET_NATIVE_TEXTURE_PTR(); 
-*/
+
             /// <summary>
             ///   System.Int32 GetPixelDataOffset(System.Int32 mipLevel, System.Int32 element)
             /// </summary>
