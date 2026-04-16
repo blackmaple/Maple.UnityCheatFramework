@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -32,15 +32,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Maple.MonoGameAssistant.DllProxyImp" Version="0.26.401.4-rc" />
+	  <PackageReference Include="Maple.MonoGameAssistant.DllProxyDobbyHook" Version="0.26.415.20-rc" />
 	</ItemGroup>
 
-	<!--<ItemGroup>
-		<NativeLibrary Include="..\x64\Release\Maple.MonoGameAssistant.DllProxyStaticLib.lib" />
-		<LinkerArg Include="/LTCG" />
-		<LinkerArg Include="/MAP" />
-
-	</ItemGroup>-->
+ 
 
 	<ItemGroup>
 		<ProjectReference Include="..\Maple.MonoGameAssistant.Core\Maple.MonoGameAssistant.Core.csproj" />

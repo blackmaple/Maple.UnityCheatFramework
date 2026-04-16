@@ -54,4 +54,5 @@
   <Folder Name="/Windows/GameWebAPI/" Id="8550ca64-01d8-75ff-3a89-151525c7b3e4">
     <Project Path="Maple.MonoGameAssistant.WebApi\Maple.MonoGameAssistant.WebApi.csproj" />
   </Folder>
+  <Project Path="Maple.MonoGameAssistant.DllProxyDobbyHook/Maple.MonoGameAssistant.DllProxyDobbyHook.csproj" Id="e9128af2-e7be-49ec-b85a-b4aadbf18960" />
 </Solution>

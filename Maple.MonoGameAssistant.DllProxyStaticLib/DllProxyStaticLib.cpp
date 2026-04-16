@@ -1,7 +1,13 @@
 #include "DllProxyStaticLib.h"
+#include "HookMonoApi.h"
+
+ 
 
 HMODULE WINAPI LoadOriginalModule(HINSTANCE hInstance)
 {
+	wchar_t FileName[MAX_PATH] = { 0 };
+	wchar_t SysPath[MAX_PATH] = { 0 };
+	wchar_t FullPath[MAX_PATH] = { 0 };
 	GetModuleFileName(hInstance, FileName, MAX_PATH);
 	PathStripPath(FileName);
 	GetSystemDirectory(SysPath, MAX_PATH);
@@ -26,6 +32,11 @@ BOOL WINAPI DllMainImp(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpRes
 {
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
+	 
+#ifndef _WINDLL
+		InstallHook(hModule);
+#endif // !_WINDLL
+
 		LoadProxy(hModule);
 		AsyncLoadPlugin(loadImp);
 	}

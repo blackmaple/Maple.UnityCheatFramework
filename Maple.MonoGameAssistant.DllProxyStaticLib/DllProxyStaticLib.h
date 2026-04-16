@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
-#include <Shlwapi.h> 
-
+//#include <pathcch.h>
+#include<Shlwapi.h>
 #pragma region Api Const
 
 #define Index_CloseDriver 0
@@ -780,13 +780,12 @@ static FARPROC ApiAddresses[Index_MaxSize] =
 #pragma endregion
 
 #pragma region Cache
-wchar_t FileName[512] = { 0 };
-wchar_t SysPath[512] = { 0 };
-wchar_t FullPath[512] = { 0 };
+
 #pragma endregion
 
 #pragma region Funcs
 typedef int (WINAPI* LoadPluginImp)();
+
 HMODULE WINAPI LoadOriginalModule(HINSTANCE hInstance);
 void WINAPI LoadFunctions(HMODULE hOriginal);
 void WINAPI LoadProxy(HINSTANCE hInstance);
@@ -812,6 +811,7 @@ extern "C"  int WINAPI Maple();
 
 
 #pragma comment(lib, "Shlwapi.lib")
+//#pragma comment(lib, "pathcch.lib")
 
 
 

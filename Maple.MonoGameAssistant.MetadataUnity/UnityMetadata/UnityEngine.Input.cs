@@ -1,6 +1,8 @@
+using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataUnity.UnityMetadata;
+using System.Numerics;
 
-namespace Maple.BeastSaga.Metadata
+namespace Maple.MonoGameAssistant.MetadataUnity
 {
     /// <summary>
     /// class ["UnityEngine.InputLegacyModule.dll"."UnityEngine"."Input"]
@@ -248,11 +250,11 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "ret">struct UnityEngine.Vector3&</param>
             /// <returns>struct System.Void</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mousePosition_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector3&", 0)]
-           public static partial void GET_MOUSE_POSITION_INJECTED(UnityEngine.Vector3 &ret); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mousePosition_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector3&", 0)]
+            public static partial void GET_MOUSE_POSITION_INJECTED(out Vector3.Ref_Vector3 ret);
+
             /// <summary>
             /// static  System.Boolean get_mousePresent()
             /// </summary>
@@ -274,11 +276,11 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "ret">struct UnityEngine.Vector2&</param>
             /// <returns>struct System.Void</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mouseScrollDelta_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector2&", 0)]
-           public static partial void GET_MOUSE_SCROLL_DELTA_INJECTED(UnityEngine.Vector2 &ret); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mouseScrollDelta_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector2&", 0)]
+            public static partial void GET_MOUSE_SCROLL_DELTA_INJECTED(out Vector2.Ref_Vector2 ret);
+
             /// <summary>
             /// static  System.Boolean get_multiTouchEnabled()
             /// </summary>
@@ -362,21 +364,21 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "axisName">class System.String</param>
             /// <returns>struct System.Single</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetAxis", "System.Single", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-           public static partial System.Single GET_AXIS(nint axisName); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetAxis", "System.Single", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+            public static partial System.Single GET_AXIS(PMonoString axisName);
+
             /// <summary>
             /// static  System.Single GetAxisRaw(System.String axisName)
             /// </summary>
             /// <param name = "axisName">class System.String</param>
             /// <returns>struct System.Single</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetAxisRaw", "System.Single", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-           public static partial System.Single GET_AXIS_RAW(nint axisName); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetAxisRaw", "System.Single", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+            public static partial System.Single GET_AXIS_RAW(PMonoString axisName);
+
             /// <summary>
             /// static  System.Boolean GetButton(System.String buttonName)
             /// </summary>
@@ -428,11 +430,11 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKey", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY(UnityEngine.KeyCode key); 
-*/
+
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKey", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
+            //public static partial System.Boolean GET_KEY(KeyCode key); 
+
             /// <summary>
             /// static  System.Boolean GetKey(System.String name)
             /// </summary>
@@ -448,11 +450,11 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDown", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY_DOWN(UnityEngine.KeyCode key); 
-*/
+
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDown", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
+            //public static partial System.Boolean GET_KEY_DOWN(KeyCode key); 
+
             /// <summary>
             /// static  System.Boolean GetKeyDown(System.String name)
             /// </summary>
@@ -468,51 +470,51 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDownInt", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY_DOWN_INT(UnityEngine.KeyCode key); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDownInt", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
+            public static partial System.Boolean GET_KEY_DOWN_INT(KeyCode key);
+
             /// <summary>
             /// static  System.Boolean GetKeyDownString(System.String name)
             /// </summary>
             /// <param name = "name">class System.String</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDownString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-           public static partial System.Boolean GET_KEY_DOWN_STRING(nint name); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyDownString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+            public static partial System.Boolean GET_KEY_DOWN_STRING(PMonoString name);
+
             /// <summary>
             /// static  System.Boolean GetKeyInt(UnityEngine.KeyCode key)
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyInt", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY_INT(UnityEngine.KeyCode key); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyInt", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
+            public static partial System.Boolean GET_KEY_INT(KeyCode key);
+
             /// <summary>
             /// static  System.Boolean GetKeyString(System.String name)
             /// </summary>
             /// <param name = "name">class System.String</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-           public static partial System.Boolean GET_KEY_STRING(nint name); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+            public static partial System.Boolean GET_KEY_STRING(PMonoString name);
+
             /// <summary>
             /// static  System.Boolean GetKeyUp(UnityEngine.KeyCode key)
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyUp", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY_UP(UnityEngine.KeyCode key); 
-*/
+
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyUp", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            //[Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
+            //public static partial System.Boolean GET_KEY_UP(KeyCode key);
+
             /// <summary>
             /// static  System.Boolean GetKeyUp(System.String name)
             /// </summary>
@@ -528,51 +530,51 @@ namespace Maple.BeastSaga.Metadata
             /// </summary>
             /// <param name = "key">enum UnityEngine.KeyCode</param>
             /// <returns>struct System.Boolean</returns>
-            /*
+            
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyUpInt", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.KeyCode", 0)]
-           public static partial System.Boolean GET_KEY_UP_INT(UnityEngine.KeyCode key); 
-*/
+           public static partial System.Boolean GET_KEY_UP_INT( KeyCode key); 
+
             /// <summary>
             /// static  System.Boolean GetKeyUpString(System.String name)
             /// </summary>
             /// <param name = "name">class System.String</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyUpString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
-           public static partial System.Boolean GET_KEY_UP_STRING(nint name); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetKeyUpString", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.String", 0)]
+            public static partial System.Boolean GET_KEY_UP_STRING(PMonoString name);
+
             /// <summary>
             /// static  System.Boolean GetMouseButton(System.Int32 button)
             /// </summary>
             /// <param name = "button">struct System.Int32</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButton", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
-           public static partial System.Boolean GET_MOUSE_BUTTON(System.Int32 button); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButton", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
+            public static partial System.Boolean GET_MOUSE_BUTTON(System.Int32 button);
+
             /// <summary>
             /// static  System.Boolean GetMouseButtonDown(System.Int32 button)
             /// </summary>
             /// <param name = "button">struct System.Int32</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButtonDown", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
-           public static partial System.Boolean GET_MOUSE_BUTTON_DOWN(System.Int32 button); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButtonDown", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
+            public static partial System.Boolean GET_MOUSE_BUTTON_DOWN(System.Int32 button);
+
             /// <summary>
             /// static  System.Boolean GetMouseButtonUp(System.Int32 button)
             /// </summary>
             /// <param name = "button">struct System.Int32</param>
             /// <returns>struct System.Boolean</returns>
-            /*
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButtonUp", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
-           [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
-           public static partial System.Boolean GET_MOUSE_BUTTON_UP(System.Int32 button); 
-*/
+
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("GetMouseButtonUp", "System.Boolean", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
+            [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("System.Int32", 0)]
+            public static partial System.Boolean GET_MOUSE_BUTTON_UP(System.Int32 button);
+
             /// <summary>
             /// static  UnityEngine.Touch GetTouch(System.Int32 index)
             /// </summary>

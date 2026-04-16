@@ -12,7 +12,9 @@ namespace Maple.MonoGameAssistant.Common
         [MarshalAs(UnmanagedType.SysInt)]
         readonly nint _ptr = new(Unsafe.AsPointer(ref data));
 
-        //public ref T Raw => ref Unsafe.AsRef<T>(_ptr.ToPointer());
+        public ref T Raw => ref Unsafe.AsRef<T>(_ptr.ToPointer());
+
+        public static implicit operator nint(MapleOut<T> o) => o._ptr;
 
         public static MapleOut<T> FromOut(out T data)
         {

@@ -1,38 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<LangVersion>preview</LangVersion>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>Maple.MonoGameAssistant.Common</Title>
+		<Title>Maple.MonoGameAssistant.DllProxyDobbyHook</Title>
 		<RepositoryUrl>https://github.com/blackmaple/Maple.MonoGameAssistant</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.4.1-rc</Version>
-
+		<Version>0.26.0415.20-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\Maple.MonoGameAssistant\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\..\Maple.MonoGameAssistant\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
+		<None Include="build\*.targets" Pack="true" PackagePath="buildTransitive\" />
+		<None Include="build\runtimes\win-x64\*.*" Pack="true" PackagePath="build\runtimes\win-x64\" />
+		<None Include="build\runtimes\win-x86\*.*" Pack="true" PackagePath="build\runtimes\win-x86\" />
 	</ItemGroup>
-
-
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.5" />
+		<None Include="..\LICENSE" Link="LICENSE">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Include="..\README.md" Link="README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
 	</ItemGroup>
-
+	<ItemGroup>
+	  <PackageReference Include="Maple.Hook.Imp.Dobby.Static" Version="0.26.401.3-rc" />
+	</ItemGroup>
 </Project>

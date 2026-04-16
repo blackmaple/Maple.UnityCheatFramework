@@ -1,5 +1,4 @@
-﻿using Maple.BeastSaga.Metadata;
-using Maple.MonoGameAssistant.Common;
+﻿using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector;
 using Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon;
@@ -8,12 +7,8 @@ using Maple.MonoGameAssistant.MetadataExtensions.MetadataService;
 using Maple.MonoGameAssistant.MetadataUnity.UnityMetadata;
 using Maple.MonoGameAssistant.Model;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using static Maple.MonoGameAssistant.MetadataUnity.Sprite;
 
 namespace Maple.MonoGameAssistant.MetadataUnity
 {
@@ -156,12 +151,12 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             if (ptr_Sprite == nint.Zero)
             {
                 return false;
-            } 
-            Sprite.Ptr_Sprite pSprite = new  (ptr_Sprite);
+            }
+            Sprite.Ptr_Sprite pSprite = new(ptr_Sprite);
             var pTexture2D = pSprite.GET_TEXTURE();
-            if(pTexture2D.IsNull())
+            if (pTexture2D.IsNull())
             {
-                return false;   
+                return false;
             }
             native_ptr = pTexture2D.GET_NATIVE_TEXTURE_PTR();
             if (native_ptr == nint.Zero)
@@ -195,12 +190,34 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             };
         }
 
+
+
+        public MethodAddressCallbackDelegate? MethodAddressCallback { set; get; }
     }
 
-    public sealed partial class UnityMetadataContext_MONO(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : UnityMetadataContext(logger, searchService, runtimeContext)
+    public delegate bool MethodAddressCallbackDelegate(ulong code, out nint address);
+
+    public sealed partial class UnityMetadataContext_MONO : UnityMetadataContext
     {
-        public static Dictionary<ulong, int> MethodOffsetCache { get; } = [];
+        public static Dictionary<ulong, nint> MethodOffsetCache { get; } = [];
         public static nint UnityPlayerBaseAddress { get; } = GetModuleBaseAddress("UnityPlayer.dll");
+        private static bool DefaultMethodAddressCallback(ulong code, out nint address)
+        {
+            Unsafe.SkipInit(out address);
+            if (MethodOffsetCache.TryGetValue(code, out var offset))
+            {
+                address = UnityPlayerBaseAddress + offset;
+                return true;
+            }
+            return false;
+        }
+
+        public UnityMetadataContext_MONO(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
+        : base(logger, searchService, runtimeContext)
+        {
+            this.MethodAddressCallback = DefaultMethodAddressCallback;
+        }
+
         public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
         {
             if (SearchService.TrySearchClass(code, out var descriptionClassDTO))
@@ -218,9 +235,9 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            if (MethodOffsetCache.TryGetValue(code, out var offset))
+            if (MethodAddressCallback?.Invoke(code, out var address) == true)
             {
-                return new MonoMethodDelegate(nint.Zero, offset + UnityPlayerBaseAddress);
+                return new MonoMethodDelegate(nint.Zero, address);
             }
             return base.GetMethodDelegate(code, classMetadataCollection);
 
@@ -244,8 +261,10 @@ namespace Maple.MonoGameAssistant.MetadataUnity
         }
     }
 
-    public sealed partial class UnityMetadataContext_IL2CPP(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : UnityMetadataContext(logger, searchService, runtimeContext)
+    public sealed partial class UnityMetadataContext_IL2CPP : UnityMetadataContext
     {
+        #region sign
+
         /// <summary>
         /// UnityEngine.Sprite.get_texture - 40 53                 - push rbx
         /// </summary>
@@ -324,6 +343,71 @@ namespace Maple.MonoGameAssistant.MetadataUnity
         /// </summary>
         public const string UnityEngine_Input_set_imeCompositionMode = "UnityEngine.Input::set_imeCompositionMode(UnityEngine.IMECompositionMode)";
 
+        /// <summary>
+        /// UnityEngine.Input::GetAxis(System.String)
+        /// </summary>
+        public const string UnityEngine_Input_GetAxis = "UnityEngine.Input::GetAxis(System.String)";
+        /// <summary>
+        /// UnityEngine.Input::GetAxisRaw(System.String)
+        /// </summary>
+        public const string UnityEngine_Input_GetAxisRaw = "UnityEngine.Input::GetAxisRaw(System.String)";
+
+        /// <summary>
+        /// UnityEngine.Input::GetKeyInt(UnityEngine.KeyCode)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyInt = "UnityEngine.Input::GetKeyInt(UnityEngine.KeyCode)";
+        /// <summary>
+        /// UnityEngine.Input::GetKeyDownInt(UnityEngine.KeyCode)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyDownInt = "UnityEngine.Input::GetKeyDownInt(UnityEngine.KeyCode)";
+        /// <summary>
+        /// UnityEngine.Input::GetKeyUpInt(UnityEngine.KeyCode)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyUpInt = "UnityEngine.Input::GetKeyUpInt(UnityEngine.KeyCode)";
+
+        /// <summary>
+        /// UnityEngine.Input::GetKeyDownString(System.String)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyDownString = "UnityEngine.Input::GetKeyDownString(System.String)";
+        /// <summary>
+        /// UnityEngine.Input::GetKeyString(System.String)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyString = "UnityEngine.Input::GetKeyString(System.String)";
+        /// <summary>
+        /// UnityEngine.Input::GetKeyUpString(System.String)
+        /// </summary>
+        public const string UnityEngine_Input_GetKeyUpString = "UnityEngine.Input::GetKeyUpString(System.String)";
+
+        /// <summary>
+        /// UnityEngine.Input::GetMouseButton(System.Int32)
+        /// </summary>
+        public const string UnityEngine_Input_GetMouseButton = "UnityEngine.Input::GetMouseButton(System.Int32)";
+        /// <summary>
+        /// UnityEngine.Input::GetMouseButtonDown(System.Int32)
+        /// </summary>
+        public const string UnityEngine_Input_GetMouseButtonDown = "UnityEngine.Input::GetMouseButtonDown(System.Int32)";
+        /// <summary>
+        /// UnityEngine.Input::GetMouseButtonUp(System.Int32)
+        /// </summary>
+        public const string UnityEngine_Input_GetMouseButtonUp = "UnityEngine.Input::GetMouseButtonUp(System.Int32)";
+
+        /// <summary>
+        /// UnityEngine.Input::GetTouch_Injected(System.Int32,UnityEngine.Touch&)
+        /// </summary>
+        public const string UnityEngine_Input_GetTouch_Injected = "UnityEngine.Input::GetTouch_Injected(System.Int32,UnityEngine.Touch&)";
+
+        /// <summary>
+        /// UnityEngine.Input::get_mousePosition_Injected(UnityEngine.Vector3&)
+        /// </summary>
+        public const string UnityEngine_Input_get_mousePosition_Injected = "UnityEngine.Input::get_mousePosition_Injected(UnityEngine.Vector3&)";
+
+        /// <summary>
+        /// UnityEngine.Input::get_mouseScrollDelta_Injected(UnityEngine.Vector2&)
+        /// </summary>
+        public const string UnityEngine_Input_get_mouseScrollDelta_Injected = "UnityEngine.Input::get_mouseScrollDelta_Injected(UnityEngine.Vector2&)";
+
+
+
 
         public static Dictionary<ulong, string> MethodSignatureCache { get; } = new Dictionary<ulong, string>
         {
@@ -342,11 +426,68 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             [Maple.MonoGameAssistant.MetadataUnity.Texture2D.Code_FunctionPointerType_GET_NATIVE_TEXTURE_PTR_81841FE86C2B23E0]
                 = UnityEngine_Texture_GetNativeTexturePtr,
 
-            [Input.Code_FunctionPointerType_SET_IME_COMPOSITION_MODE_7260EEBCB4F368B1]
+            [Input.Code_FunctionPointerType_SET_IME_COMPOSITION_MODE_6F1C9D826DB1C736]
                 = UnityEngine_Input_set_imeCompositionMode,
 
+            //[Input.Code_FunctionPointerType_GET_MOUSE_POSITION_INJECTED_A036AE9527B171A8]
+            //    = UnityEngine_Input_get_mousePosition_Injected,
+
+            //[Input.Code_FunctionPointerType_GET_MOUSE_SCROLL_DELTA_INJECTED_3FE14DD45FBD4C4F]
+            //    = UnityEngine_Input_get_mouseScrollDelta_Injected,
+
+            [Input.Code_FunctionPointerType_GET_AXIS_4AACA73548ECDA60]
+                = UnityEngine_Input_GetAxis,
+            [Input.Code_FunctionPointerType_GET_AXIS_RAW_C1F891B243D66D1]
+                = UnityEngine_Input_GetAxisRaw,
+
+            [Input.Code_FunctionPointerType_GET_KEY_INT_364226C2278E06B9]
+                = UnityEngine_Input_GetKeyInt,
+            [Input.Code_FunctionPointerType_GET_KEY_DOWN_INT_49C8675AD85C932A]
+                = UnityEngine_Input_GetKeyDownInt,
+            [Input.Code_FunctionPointerType_GET_KEY_UP_INT_2E27C050DF037639]
+                = UnityEngine_Input_GetKeyUpInt,
+
+            [Input.Code_FunctionPointerType_GET_KEY_STRING_F5AA5E669534DDF0]
+                = UnityEngine_Input_GetKeyString,
+            [Input.Code_FunctionPointerType_GET_KEY_DOWN_STRING_868655107A827883]
+                = UnityEngine_Input_GetKeyDownString,
+            [Input.Code_FunctionPointerType_GET_KEY_UP_STRING_45B9708814684170]
+                = UnityEngine_Input_GetKeyUpString,
+
+            [Input.Code_FunctionPointerType_GET_MOUSE_BUTTON_25FCDA1BB1401B53]
+                = UnityEngine_Input_GetMouseButton,
+            [Input.Code_FunctionPointerType_GET_MOUSE_BUTTON_DOWN_BE6A4B41F70F23EE]
+                = UnityEngine_Input_GetMouseButtonDown,
+            [Input.Code_FunctionPointerType_GET_MOUSE_BUTTON_UP_8EE9A0C534915B11]
+                = UnityEngine_Input_GetMouseButtonUp,
+
+            [Input.Code_FunctionPointerType_GET_MOUSE_POSITION_INJECTED_A036AE9527B171A8]
+                = UnityEngine_Input_get_mousePosition_Injected,
+
+            [Input.Code_FunctionPointerType_GET_MOUSE_SCROLL_DELTA_INJECTED_3FE14DD45FBD4C4F]
+                = UnityEngine_Input_get_mouseScrollDelta_Injected,
 
         };
+        #endregion
+
+        private bool DefaultMethodAddressCallback(ulong code, out nint address)
+        {
+            Unsafe.SkipInit(out address);
+            if (MethodSignatureCache.TryGetValue(code, out var signature))
+            {
+                address = this.RuntimeContext.GetInternalCall(signature);
+                if (address != nint.Zero)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public UnityMetadataContext_IL2CPP(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : base(logger, searchService, runtimeContext)
+        {
+            this.MethodAddressCallback = DefaultMethodAddressCallback;
+        }
 
         public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
         {
@@ -366,18 +507,14 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            if (MethodSignatureCache.TryGetValue(code, out var signature))
+
+            if (MethodAddressCallback?.Invoke(code, out var address) == true)
             {
-                return new(nint.Zero, this.RuntimeContext.GetInternalCall(signature));
+                return new MonoMethodDelegate(nint.Zero, address);
             }
             return base.GetMethodDelegate(code, classMetadataCollection);
         }
     }
 
-    //partial class Sprite
-    //{
-    //    public static nint Get1() => Unsafe.As<FunctionPointerType_GET_TEXTURE_9E369564B1447B9B, nint>(ref s_FunctionPointerType_GET_TEXTURE_9E369564B1447B9B);
-    //    public static nint Get2() => Unsafe.As<FunctionPointerType_GET_TEXTURE_RECT_INJECTED_991A7878D43EDC7F, nint>(ref s_FunctionPointerType_GET_TEXTURE_RECT_INJECTED_991A7878D43EDC7F);
 
-    //}
 }

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DllProxyStaticLib.h" />
+    <ClInclude Include="HookMonoApi.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +83,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>winhttp</TargetName>
+    <OutDir>C:\Users\Black\source\repos\Maple.MonoGameAssistant\Maple.MonoGameAssistant.DllProxyDobbyHook\build\runtimes\win-x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>winhttp</TargetName>
+    <OutDir>C:\Users\Black\source\repos\Maple.MonoGameAssistant\Maple.MonoGameAssistant.DllProxyDobbyHook\build\runtimes\win-x86\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
