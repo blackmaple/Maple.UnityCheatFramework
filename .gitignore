@@ -396,3 +396,19 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Maple.MonoGameAssistant.AndroidCore/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.AndroidJNI/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.AndroidModel/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.Windows/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.GameCore/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.GameDTO/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.Core/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.Model/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.UnityCore/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.MetadataExtensions/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.MetadataSourceGenerator/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.MonoCollectorExtensionsV2/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.Logger/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.Common/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.WebApi/Properties/PublishProfiles/FolderProfile.pubxml
+/Maple.MonoGameAssistant.MonoCollectorGeneratorV2/Properties/PublishProfiles/FolderProfile.pubxml
