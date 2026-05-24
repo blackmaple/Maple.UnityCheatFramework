@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<LangVersion>preview</LangVersion>
+		<DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
 
 		<!--<PublishAot>true</PublishAot>
 		<IsAotCompatible>true</IsAotCompatible>-->
@@ -18,7 +18,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>1.5.0-rc</Version>
+		<Version>1.5.2-rc</Version>
 
 	</PropertyGroup>
 

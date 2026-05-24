@@ -47,14 +47,19 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator
 
     }
 
-    public sealed class ClassPropertyContent
+#if MetadataSourceGenerator
+    internal
+#else
+    public
+#endif
+        sealed class ClassPropertyContent
     {
         private const string DateTime_DefaultFormat = "yyyy/MM/dd HH:mm:ss";
         private const string Guid_DefaultFormat = "N";
         private const string IntPtr_DefaultFormat = "X8";
         internal const string ArgName_Key = "key";
         internal const string ArgName_Str = "str";
-     //   internal const string ArgName_Out = "val";
+        //   internal const string ArgName_Out = "val";
 
         public ClassPropertyContent(string key, string? name, string? desc, string? val)
         {

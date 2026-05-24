@@ -17,11 +17,10 @@ namespace Maple.MonoGameAssistant.Core
 
         //nint MONO_METHOD_HEADER_GET_CODE (void *methodheader, UINT32 *code_size, UINT32 *max_stack)
         //typedef void* (__cdecl *MONO_METHOD_HEADER_GET_CODE)(void *methodheader, UINT32 *code_size, UINT32 *max_stack);
-        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoMethodHeader, out uint, out uint, PMonoILCode> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoMethodHeader, out uint, out uint, PMonoILCode>)ptr;
+        readonly delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoMethodHeader, MapleOut<uint> , MapleOut<uint>, PMonoILCode> _func = (delegate* unmanaged[Cdecl, SuppressGCTransition]<PMonoMethodHeader, MapleOut<uint>, MapleOut<uint>, PMonoILCode>)ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly PMonoILCode Invoke(PMonoMethodHeader pMonoMethodHeader, out uint code_size, out uint max_stack) => _func(pMonoMethodHeader, out code_size, out max_stack);
-
+        public readonly PMonoILCode Invoke(PMonoMethodHeader pMonoMethodHeader, out uint code_size, out uint max_stack) => _func(pMonoMethodHeader, MapleOut<uint>.FromOut(out code_size), MapleOut<uint>.FromOut(out max_stack));
 
     }
 

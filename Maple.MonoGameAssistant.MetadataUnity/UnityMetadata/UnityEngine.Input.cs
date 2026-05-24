@@ -1,3 +1,4 @@
+using Maple.MonoGameAssistant.Common;
 using Maple.MonoGameAssistant.Core;
 using Maple.MonoGameAssistant.MetadataUnity.UnityMetadata;
 using System.Numerics;
@@ -253,7 +254,7 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mousePosition_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector3&", 0)]
-            public static partial void GET_MOUSE_POSITION_INJECTED(out Vector3.Ref_Vector3 ret);
+            public static partial void GET_MOUSE_POSITION_INJECTED(MapleOut<Vector3.Ref_Vector3>  ret);
 
             /// <summary>
             /// static  System.Boolean get_mousePresent()
@@ -279,7 +280,7 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodMetadataAttribute("get_mouseScrollDelta_Injected", "System.Void", CallConvs = [typeof(System.Runtime.CompilerServices.CallConvSuppressGCTransition)])]
             [Maple.MonoGameAssistant.MetadataExtensions.MetadataGenerator.ClassMethodParameterMetadataAttribute("UnityEngine.Vector2&", 0)]
-            public static partial void GET_MOUSE_SCROLL_DELTA_INJECTED(out Vector2.Ref_Vector2 ret);
+            public static partial void GET_MOUSE_SCROLL_DELTA_INJECTED(MapleOut<Vector2.Ref_Vector2> ret);
 
             /// <summary>
             /// static  System.Boolean get_multiTouchEnabled()

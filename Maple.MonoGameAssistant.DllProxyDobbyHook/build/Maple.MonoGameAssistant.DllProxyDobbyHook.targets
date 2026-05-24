@@ -14,15 +14,15 @@
 		<_NativeLibraryRuntimeIdentifier Condition="'$(_NativeLibraryRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</_NativeLibraryRuntimeIdentifier>
 	</PropertyGroup>
 
- <Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_SetAssemblyName" BeforeTargets="Publish">
+	<Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_SetAssemblyName" BeforeTargets="Publish">
 		<PropertyGroup>
 			<OutputType >$(_OutputType)</OutputType>
 			<AssemblyName>$(_AssemblyName)</AssemblyName>
 		</PropertyGroup>
-        <Message Text="[Maple.MonoGameAssistant.DllProxyDobbyHook] OutputType Reset:$(OutputType) AssemblyName Rename: $(AssemblyName)" Importance="high" />
+		<!--<Message Text="[Maple.MonoGameAssistant.DllProxyDobbyHook] OutputType Reset:$(OutputType) AssemblyName Rename: $(AssemblyName)" Importance="high" />-->
 	</Target>
 
-    <Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_SetupNativeLibraryForAot" BeforeTargets="ComputeIlcCompileInputs" Condition="'$(_NativeLibraryAotEnabled)' == 'true'">
+	<Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_SetupNativeLibraryForAot" BeforeTargets="ComputeIlcCompileInputs" Condition="'$(_NativeLibraryAotEnabled)' == 'true'">
 		<!--<Message Importance="high" Text="_MSBuildThisFileDirectory:$(_MSBuildThisFileDirectory) " />-->
 		<PropertyGroup Condition="'$(_NativeLibraryRuntimeIdentifier)' == 'win-x64'">
 			<_DllMainSymbol >$(_DllMain_X64)</_DllMainSymbol>
@@ -32,7 +32,7 @@
 		</PropertyGroup>
 
 		<PropertyGroup>
-           <_NativeLibPath>$(_MSBuildThisFileDirectory)..\build\runtimes\$(_NativeLibraryRuntimeIdentifier)\</_NativeLibPath>
+			<_NativeLibPath>$(_MSBuildThisFileDirectory)..\build\runtimes\$(_NativeLibraryRuntimeIdentifier)\</_NativeLibPath>
 		</PropertyGroup>
 		<!--<Message Importance="high" Text="_NativeLibPath:$(_NativeLibPath) " />-->
 		<Error Condition="!Exists('$(_NativeLibPath)')" Text="NOT FOUND: $(_NativeLibraryRuntimeIdentifier)=>$(_NativeLibPath)" />
@@ -53,12 +53,12 @@
 			<DirectPInvoke Include="__Internal" />
 
 		</ItemGroup>
-       <Message Importance="high" Text="[Maple.MonoGameAssistant.DllProxyDobbyHook] AOT $(_NativeLibraryRuntimeIdentifier)=>$(_NativeStaticLibs)" />
+		<Message Importance="high" Text="[Maple.MonoGameAssistant.DllProxyDobbyHook] AOT $(_NativeLibraryRuntimeIdentifier)=>$(_NativeStaticLibs)" />
 
 
 
 	</Target>
-   <Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_RemoveDllMainStub" AfterTargets="SetupOSSpecificProps">
+	<Target Name="Maple_MonoGameAssistant_DllProxyDobbyHook_RemoveDllMainStub" AfterTargets="SetupOSSpecificProps">
 
 		<PropertyGroup>
 			<_DllMainStub>$(IlcSdkPath)dllmain$(ObjectSuffix)</_DllMainStub>

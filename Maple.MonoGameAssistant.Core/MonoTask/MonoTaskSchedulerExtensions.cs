@@ -21,6 +21,10 @@ namespace Maple.MonoGameAssistant.Core
                 return taskState.Execute();
             }
         }
+        public static Task<T_RETURN> MTaskAsync<T_CONTEXT, T_ARGS, T_RETURN>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, T_ARGS args, Func<T_CONTEXT, T_ARGS, T_RETURN> func)
+            where T_CONTEXT : class
+            where T_ARGS : notnull
+            => taskScheduler.MonoTaskAsync(func, args);
 
         public static Task<T_RETURN> MonoTaskAsync<T_CONTEXT, T_RETURN>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, Func<T_CONTEXT, T_RETURN> func)
             where T_CONTEXT : class
@@ -37,6 +41,9 @@ namespace Maple.MonoGameAssistant.Core
                 return taskState.Execute();
             }
         }
+        public static Task<T_RETURN> MTaskAsync<T_CONTEXT, T_RETURN>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, Func<T_CONTEXT, T_RETURN> func)
+            where T_CONTEXT : class
+            => taskScheduler.MonoTaskAsync(func);
 
         public static Task<bool> MonoTaskAsync<T_CONTEXT>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, Action<T_CONTEXT> action)
             where T_CONTEXT : class
@@ -54,6 +61,9 @@ namespace Maple.MonoGameAssistant.Core
 
             }
         }
+        public static Task<bool> MTaskAsync<T_CONTEXT>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, Action<T_CONTEXT> action)
+            where T_CONTEXT : class
+            => taskScheduler.MonoTaskAsync(action);
 
         public static Task<bool> MonoTaskAsync<T_CONTEXT, T_ARGS>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, Action<T_CONTEXT, T_ARGS> action, T_ARGS args)
            where T_CONTEXT : class
@@ -71,9 +81,12 @@ namespace Maple.MonoGameAssistant.Core
                 return taskState.Execute();
             }
         }
+        public static Task<bool> MTaskAsync<T_CONTEXT, T_ARGS>(this IMonoTaskScheduler<T_CONTEXT> taskScheduler, T_ARGS args, Action<T_CONTEXT, T_ARGS> action)
+           where T_CONTEXT : class
+           where T_ARGS : notnull
+            => taskScheduler.MonoTaskAsync(action, args);
 
 
 
-      
     }
 }

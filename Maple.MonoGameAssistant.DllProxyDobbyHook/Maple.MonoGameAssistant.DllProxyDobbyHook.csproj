@@ -4,7 +4,9 @@
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Maple.MonoGameAssistant.DllProxyDobbyHook</Title>
@@ -14,7 +16,7 @@
 		<Description>enable interoperability between C# AOT and unity game.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>unity;mono;il2cpp;c#;dotnet;AOT</PackageTags>
-		<Version>0.26.0415.20-rc</Version>
+		<Version>0.26.0417.01-rc</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

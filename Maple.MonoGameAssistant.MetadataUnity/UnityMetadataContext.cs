@@ -22,7 +22,12 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
     public partial class UnityMetadataContext : IUnityPlayerNativeMethods
     {
-
+        protected static MonoClassMetadataCollection NullMonoClassMetadataCollection { get; } = new MonoClassMetadataCollection()
+        {
+            ClassInfo = new MonoClassInfoDTO(),
+            FieldInfos = [],
+            MethodInfos = [],
+        };
         private static void CopyToTexture2D_TYPE1(Texture2D.Ptr_Texture2D pSrc, Texture2D.Ptr_Texture2D pDest)
         {
             var w = pSrc.GET_WIDTH();
@@ -173,8 +178,12 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             return true;
         }
 
+
+        public static MethodAddressCallbackDelegate? MethodAddressCallback { get; set; }
+
         public static UnityMetadataContext? CreateUnityMetadataContext(MonoRuntimeContext runtimeContext, ILogger logger)
         {
+
             var searchService = new MetadataCollectorSearchService();
             searchService.UpdateMetadata(new MonoDescriptionCollectionDTO()
             {
@@ -192,16 +201,19 @@ namespace Maple.MonoGameAssistant.MetadataUnity
 
 
 
-        public MethodAddressCallbackDelegate? MethodAddressCallback { set; get; }
     }
 
-    public delegate bool MethodAddressCallbackDelegate(ulong code, out nint address);
+    public delegate bool MethodAddressCallbackDelegate(MonoRuntimeContext context, ulong code, out nint address);
 
-    public sealed partial class UnityMetadataContext_MONO : UnityMetadataContext
+    public sealed partial class UnityMetadataContext_MONO
+        (ILogger logger,
+        MetadataCollectorSearchService searchService,
+        MonoRuntimeContext runtimeContext)
+        : UnityMetadataContext(logger, searchService, runtimeContext)
     {
         public static Dictionary<ulong, nint> MethodOffsetCache { get; } = [];
         public static nint UnityPlayerBaseAddress { get; } = GetModuleBaseAddress("UnityPlayer.dll");
-        private static bool DefaultMethodAddressCallback(ulong code, out nint address)
+        static bool DefaultMethodAddressCallback(MonoRuntimeContext runtimeContext, ulong code, out nint address)
         {
             Unsafe.SkipInit(out address);
             if (MethodOffsetCache.TryGetValue(code, out var offset))
@@ -210,12 +222,6 @@ namespace Maple.MonoGameAssistant.MetadataUnity
                 return true;
             }
             return false;
-        }
-
-        public UnityMetadataContext_MONO(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext)
-        : base(logger, searchService, runtimeContext)
-        {
-            this.MethodAddressCallback = DefaultMethodAddressCallback;
         }
 
         public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
@@ -230,12 +236,16 @@ namespace Maple.MonoGameAssistant.MetadataUnity
                     }
                 }
             }
-            return default!;
+            return NullMonoClassMetadataCollection;
         }
 
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            if (MethodAddressCallback?.Invoke(code, out var address) == true)
+            if (MethodAddressCallback?.Invoke(this.RuntimeContext, code, out var address) == true)
+            {
+                return new MonoMethodDelegate(nint.Zero, address);
+            }
+            if (DefaultMethodAddressCallback(this.RuntimeContext, code, out address))
             {
                 return new MonoMethodDelegate(nint.Zero, address);
             }
@@ -261,7 +271,11 @@ namespace Maple.MonoGameAssistant.MetadataUnity
         }
     }
 
-    public sealed partial class UnityMetadataContext_IL2CPP : UnityMetadataContext
+    public sealed partial class UnityMetadataContext_IL2CPP(
+        ILogger logger, MetadataCollectorSearchService searchService,
+        MonoRuntimeContext runtimeContext)
+        : UnityMetadataContext(logger, searchService,
+            runtimeContext)
     {
         #region sign
 
@@ -461,32 +475,27 @@ namespace Maple.MonoGameAssistant.MetadataUnity
             [Input.Code_FunctionPointerType_GET_MOUSE_BUTTON_UP_8EE9A0C534915B11]
                 = UnityEngine_Input_GetMouseButtonUp,
 
-            [Input.Code_FunctionPointerType_GET_MOUSE_POSITION_INJECTED_A036AE9527B171A8]
+            [Input.Code_FunctionPointerType_GET_MOUSE_POSITION_INJECTED_99D1FC8E163B2580]
                 = UnityEngine_Input_get_mousePosition_Injected,
 
-            [Input.Code_FunctionPointerType_GET_MOUSE_SCROLL_DELTA_INJECTED_3FE14DD45FBD4C4F]
+            [Input.Code_FunctionPointerType_GET_MOUSE_SCROLL_DELTA_INJECTED_F94FBFBA77E43F1]
                 = UnityEngine_Input_get_mouseScrollDelta_Injected,
 
         };
         #endregion
 
-        private bool DefaultMethodAddressCallback(ulong code, out nint address)
+        static bool DefaultMethodAddressCallback(MonoRuntimeContext runtimeContext, ulong code, out nint address)
         {
             Unsafe.SkipInit(out address);
             if (MethodSignatureCache.TryGetValue(code, out var signature))
             {
-                address = this.RuntimeContext.GetInternalCall(signature);
+                address = runtimeContext.GetInternalCall(signature);
                 if (address != nint.Zero)
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        public UnityMetadataContext_IL2CPP(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : base(logger, searchService, runtimeContext)
-        {
-            this.MethodAddressCallback = DefaultMethodAddressCallback;
         }
 
         public sealed override MonoClassMetadataCollection GetClassMetadataCollection(ulong code)
@@ -501,14 +510,19 @@ namespace Maple.MonoGameAssistant.MetadataUnity
                     }
                 }
             }
-            return default!;
+            return NullMonoClassMetadataCollection;
+
         }
 
 
         public sealed override MonoMethodDelegate GetMethodDelegate(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
 
-            if (MethodAddressCallback?.Invoke(code, out var address) == true)
+            if (MethodAddressCallback?.Invoke(this.RuntimeContext, code, out var address) == true)
+            {
+                return new MonoMethodDelegate(nint.Zero, address);
+            }
+            if (DefaultMethodAddressCallback(this.RuntimeContext, code, out address))
             {
                 return new MonoMethodDelegate(nint.Zero, address);
             }
