@@ -115,7 +115,12 @@ namespace Maple.MonoGameAssistant.WinForm.UI
         {
             await this.OnOpenPageCodeViewAsync(sender, e);
         }
-        private async ValueTask OnOpenPageCodeViewAsync(object? sender, EventArgs e)
+        private async void OnOpenPageCodeViewIncrement(object? sender, EventArgs e)
+        {
+            await this.OnOpenPageCodeViewAsync(sender, e, true);
+        }
+
+        private async ValueTask OnOpenPageCodeViewAsync(object? sender, EventArgs e, bool increment = false)
         {
             if (sender is not PageClassDetail page || page.ParentForm is null)
             {
@@ -127,10 +132,10 @@ namespace Maple.MonoGameAssistant.WinForm.UI
             }
             using (page.ParentForm.ShowSplashScreen())
             {
-                await this.OpenPageCodeViewAsync(page.SelectedGameClassInfo);
+                await this.OpenPageCodeViewAsync(page.SelectedGameClassInfo, increment);
             }
         }
-        private async Task OpenPageCodeViewAsync(GameClassInfo gameClassInfo)
+        private async Task OpenPageCodeViewAsync(GameClassInfo gameClassInfo, bool increment = false)
         {
             string codeView;
 
@@ -138,7 +143,7 @@ namespace Maple.MonoGameAssistant.WinForm.UI
 
             if (dialogResult == DialogResult.Yes)
             {
-                codeView = await gameClassInfo.ShowCodeV2Async(this.TxtNamespace.EditValue as string ?? "Maple.Game");
+                codeView = await gameClassInfo.ShowCodeV2Async(this.TxtNamespace.EditValue as string ?? "Maple.Game", increment);
             }
             else
             {
@@ -221,7 +226,7 @@ namespace {nameSpace}
             {
                 return;
             }
-            var fullName = Path.Combine(filePath, $"{GameRemoteDataService.MakeValidFileName(fileName)}.cs");
+            var fullName = Path.Combine(filePath, $"{GameRemoteDataService.MakeValidFileName(fileName)}_{DateTime.Now:yyyyMMddHHmmssfff}.cs");
             await File.WriteAllTextAsync(fullName, codeView);
         }
 
@@ -268,6 +273,8 @@ namespace {nameSpace}
             {
 
                 pageClassDialog.OnOpenPageCodeViewEventHandler += OnOpenPageCodeView;
+                pageClassDialog.OnOpenPageCodeViewIncrementEventHandler += OnOpenPageCodeViewIncrement;
+
                 pageClassDialog.OnOpenPageClassDetailEventHandler += OnOpenPageClassDetail;
                 pageClassDialog.OnOpenPageOrgClassesEventHandler += OnOpenPageOrgClasses;
 
@@ -276,6 +283,8 @@ namespace {nameSpace}
             finally
             {
                 pageClassDialog.OnOpenPageCodeViewEventHandler -= OnOpenPageCodeView;
+                pageClassDialog.OnOpenPageCodeViewIncrementEventHandler -= OnOpenPageCodeViewIncrement;
+
                 pageClassDialog.OnOpenPageClassDetailEventHandler -= OnOpenPageClassDetail;
                 pageClassDialog.OnOpenPageOrgClassesEventHandler -= OnOpenPageOrgClasses;
 

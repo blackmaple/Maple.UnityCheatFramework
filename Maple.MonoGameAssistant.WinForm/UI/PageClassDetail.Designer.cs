@@ -78,6 +78,7 @@
             BarTop = new DevExpress.XtraBars.Bar();
             BtnShowCode = new DevExpress.XtraBars.BarButtonItem();
             BtnShowOrg = new DevExpress.XtraBars.BarButtonItem();
+            BtnShowCodeIncrement = new DevExpress.XtraBars.BarButtonItem();
             barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
@@ -158,7 +159,7 @@
             GridMethod.MainView = ViewMethod;
             GridMethod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridMethod.Name = "GridMethod";
-            GridMethod.Size = new System.Drawing.Size(876, 530);
+            GridMethod.Size = new System.Drawing.Size(874, 526);
             GridMethod.TabIndex = 0;
             GridMethod.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewMethod, ViewParam });
             // 
@@ -170,6 +171,9 @@
             ViewMethod.GridControl = GridMethod;
             ViewMethod.Name = "ViewMethod";
             ViewMethod.OptionsEditForm.PopupEditFormWidth = 700;
+            ViewMethod.OptionsSelection.CheckBoxSelectorField = "Selected";
+            ViewMethod.OptionsSelection.MultiSelect = true;
+            ViewMethod.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CheckBoxRowSelect;
             ViewMethod.OptionsView.EnableAppearanceEvenRow = true;
             ViewMethod.OptionsView.ShowGroupPanel = false;
             // 
@@ -185,7 +189,7 @@
             colMethodReturnTypeName.OptionsColumn.AllowEdit = false;
             colMethodReturnTypeName.OptionsFilter.AllowFilter = false;
             colMethodReturnTypeName.Visible = true;
-            colMethodReturnTypeName.VisibleIndex = 0;
+            colMethodReturnTypeName.VisibleIndex = 1;
             colMethodReturnTypeName.Width = 82;
             // 
             // colMethodName
@@ -200,18 +204,18 @@
             colMethodName.OptionsColumn.AllowEdit = false;
             colMethodName.OptionsFilter.AllowFilter = false;
             colMethodName.Visible = true;
-            colMethodName.VisibleIndex = 1;
+            colMethodName.VisibleIndex = 2;
             colMethodName.Width = 82;
             // 
             // TabMgr
             // 
             TabMgr.HeaderAutoFill = DevExpress.Utils.DefaultBoolean.True;
             TabMgr.HeaderLocation = DevExpress.XtraTab.TabHeaderLocation.Bottom;
-            TabMgr.Location = new System.Drawing.Point(11, 10);
+            TabMgr.Location = new System.Drawing.Point(12, 12);
             TabMgr.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabMgr.Name = "TabMgr";
             TabMgr.SelectedTabPage = TabPageMethod;
-            TabMgr.Size = new System.Drawing.Size(878, 556);
+            TabMgr.Size = new System.Drawing.Size(876, 552);
             TabMgr.TabIndex = 0;
             TabMgr.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] { TabPageMemberField, TabPageMethod, TabPageEnumField, TabPageStaticField, TabPageConstField, TabPageParentClass, TabPageInterface });
             // 
@@ -220,7 +224,7 @@
             TabPageMethod.Controls.Add(GridMethod);
             TabPageMethod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageMethod.Name = "TabPageMethod";
-            TabPageMethod.Size = new System.Drawing.Size(876, 530);
+            TabPageMethod.Size = new System.Drawing.Size(874, 526);
             TabPageMethod.Text = "Methods";
             // 
             // TabPageMemberField
@@ -228,7 +232,7 @@
             TabPageMemberField.Controls.Add(GridMemberField);
             TabPageMemberField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageMemberField.Name = "TabPageMemberField";
-            TabPageMemberField.Size = new System.Drawing.Size(876, 530);
+            TabPageMemberField.Size = new System.Drawing.Size(874, 526);
             TabPageMemberField.Text = "MemberFields";
             // 
             // GridMemberField
@@ -239,7 +243,7 @@
             GridMemberField.MainView = ViewMemberField;
             GridMemberField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridMemberField.Name = "GridMemberField";
-            GridMemberField.Size = new System.Drawing.Size(876, 530);
+            GridMemberField.Size = new System.Drawing.Size(874, 526);
             GridMemberField.TabIndex = 1;
             GridMemberField.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewMemberField });
             // 
@@ -250,6 +254,9 @@
             ViewMemberField.GridControl = GridMemberField;
             ViewMemberField.Name = "ViewMemberField";
             ViewMemberField.OptionsEditForm.PopupEditFormWidth = 700;
+            ViewMemberField.OptionsSelection.CheckBoxSelectorField = "Selected";
+            ViewMemberField.OptionsSelection.MultiSelect = true;
+            ViewMemberField.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CheckBoxRowSelect;
             ViewMemberField.OptionsView.EnableAppearanceEvenRow = true;
             ViewMemberField.OptionsView.ShowGroupPanel = false;
             // 
@@ -265,7 +272,7 @@
             colMemberFieldTypeName.OptionsColumn.AllowEdit = false;
             colMemberFieldTypeName.OptionsFilter.AllowFilter = false;
             colMemberFieldTypeName.Visible = true;
-            colMemberFieldTypeName.VisibleIndex = 0;
+            colMemberFieldTypeName.VisibleIndex = 1;
             colMemberFieldTypeName.Width = 82;
             // 
             // colMemberFieldName
@@ -280,7 +287,7 @@
             colMemberFieldName.OptionsColumn.AllowEdit = false;
             colMemberFieldName.OptionsFilter.AllowFilter = false;
             colMemberFieldName.Visible = true;
-            colMemberFieldName.VisibleIndex = 1;
+            colMemberFieldName.VisibleIndex = 2;
             colMemberFieldName.Width = 82;
             // 
             // colMemberFieldOffset
@@ -297,7 +304,7 @@
             colMemberFieldOffset.OptionsColumn.AllowEdit = false;
             colMemberFieldOffset.OptionsFilter.AllowFilter = false;
             colMemberFieldOffset.Visible = true;
-            colMemberFieldOffset.VisibleIndex = 2;
+            colMemberFieldOffset.VisibleIndex = 3;
             colMemberFieldOffset.Width = 82;
             // 
             // TabPageEnumField
@@ -305,7 +312,7 @@
             TabPageEnumField.Controls.Add(GridEnumField);
             TabPageEnumField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageEnumField.Name = "TabPageEnumField";
-            TabPageEnumField.Size = new System.Drawing.Size(876, 530);
+            TabPageEnumField.Size = new System.Drawing.Size(874, 526);
             TabPageEnumField.Text = "EnumFields";
             // 
             // GridEnumField
@@ -316,7 +323,7 @@
             GridEnumField.MainView = ViewEnumField;
             GridEnumField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridEnumField.Name = "GridEnumField";
-            GridEnumField.Size = new System.Drawing.Size(876, 530);
+            GridEnumField.Size = new System.Drawing.Size(874, 526);
             GridEnumField.TabIndex = 1;
             GridEnumField.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewEnumField });
             // 
@@ -327,6 +334,9 @@
             ViewEnumField.GridControl = GridEnumField;
             ViewEnumField.Name = "ViewEnumField";
             ViewEnumField.OptionsEditForm.PopupEditFormWidth = 700;
+            ViewEnumField.OptionsSelection.CheckBoxSelectorField = "Selected";
+            ViewEnumField.OptionsSelection.MultiSelect = true;
+            ViewEnumField.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CheckBoxRowSelect;
             ViewEnumField.OptionsView.EnableAppearanceEvenRow = true;
             ViewEnumField.OptionsView.ShowGroupPanel = false;
             // 
@@ -342,7 +352,7 @@
             colEnumFieldTypeName.OptionsColumn.AllowEdit = false;
             colEnumFieldTypeName.OptionsFilter.AllowFilter = false;
             colEnumFieldTypeName.Visible = true;
-            colEnumFieldTypeName.VisibleIndex = 0;
+            colEnumFieldTypeName.VisibleIndex = 1;
             colEnumFieldTypeName.Width = 82;
             // 
             // colEnumFieldName
@@ -357,7 +367,7 @@
             colEnumFieldName.OptionsColumn.AllowEdit = false;
             colEnumFieldName.OptionsFilter.AllowFilter = false;
             colEnumFieldName.Visible = true;
-            colEnumFieldName.VisibleIndex = 1;
+            colEnumFieldName.VisibleIndex = 2;
             colEnumFieldName.Width = 82;
             // 
             // colEnumFieldValue
@@ -372,7 +382,7 @@
             colEnumFieldValue.OptionsColumn.AllowEdit = false;
             colEnumFieldValue.OptionsFilter.AllowFilter = false;
             colEnumFieldValue.Visible = true;
-            colEnumFieldValue.VisibleIndex = 2;
+            colEnumFieldValue.VisibleIndex = 3;
             colEnumFieldValue.Width = 82;
             // 
             // TabPageStaticField
@@ -380,7 +390,7 @@
             TabPageStaticField.Controls.Add(GridStaticField);
             TabPageStaticField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageStaticField.Name = "TabPageStaticField";
-            TabPageStaticField.Size = new System.Drawing.Size(876, 530);
+            TabPageStaticField.Size = new System.Drawing.Size(874, 526);
             TabPageStaticField.Text = "StaticFields";
             // 
             // GridStaticField
@@ -391,7 +401,7 @@
             GridStaticField.MainView = ViewStaticField;
             GridStaticField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridStaticField.Name = "GridStaticField";
-            GridStaticField.Size = new System.Drawing.Size(876, 530);
+            GridStaticField.Size = new System.Drawing.Size(874, 526);
             GridStaticField.TabIndex = 1;
             GridStaticField.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewStaticField });
             // 
@@ -402,6 +412,9 @@
             ViewStaticField.GridControl = GridStaticField;
             ViewStaticField.Name = "ViewStaticField";
             ViewStaticField.OptionsEditForm.PopupEditFormWidth = 700;
+            ViewStaticField.OptionsSelection.CheckBoxSelectorField = "Selected";
+            ViewStaticField.OptionsSelection.MultiSelect = true;
+            ViewStaticField.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CheckBoxRowSelect;
             ViewStaticField.OptionsView.EnableAppearanceEvenRow = true;
             ViewStaticField.OptionsView.ShowGroupPanel = false;
             // 
@@ -417,7 +430,7 @@
             colStaticFieldTypeName.OptionsColumn.AllowEdit = false;
             colStaticFieldTypeName.OptionsFilter.AllowFilter = false;
             colStaticFieldTypeName.Visible = true;
-            colStaticFieldTypeName.VisibleIndex = 0;
+            colStaticFieldTypeName.VisibleIndex = 1;
             colStaticFieldTypeName.Width = 82;
             // 
             // colStaticFieldName
@@ -432,7 +445,7 @@
             colStaticFieldName.OptionsColumn.AllowEdit = false;
             colStaticFieldName.OptionsFilter.AllowFilter = false;
             colStaticFieldName.Visible = true;
-            colStaticFieldName.VisibleIndex = 1;
+            colStaticFieldName.VisibleIndex = 2;
             colStaticFieldName.Width = 82;
             // 
             // colStaticFieldValue
@@ -447,7 +460,7 @@
             colStaticFieldValue.OptionsColumn.AllowEdit = false;
             colStaticFieldValue.OptionsFilter.AllowFilter = false;
             colStaticFieldValue.Visible = true;
-            colStaticFieldValue.VisibleIndex = 2;
+            colStaticFieldValue.VisibleIndex = 3;
             colStaticFieldValue.Width = 82;
             // 
             // TabPageConstField
@@ -455,7 +468,7 @@
             TabPageConstField.Controls.Add(GridConstField);
             TabPageConstField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageConstField.Name = "TabPageConstField";
-            TabPageConstField.Size = new System.Drawing.Size(876, 530);
+            TabPageConstField.Size = new System.Drawing.Size(874, 526);
             TabPageConstField.Text = "ConstFields";
             // 
             // GridConstField
@@ -466,7 +479,7 @@
             GridConstField.MainView = ViewConstField;
             GridConstField.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridConstField.Name = "GridConstField";
-            GridConstField.Size = new System.Drawing.Size(876, 530);
+            GridConstField.Size = new System.Drawing.Size(874, 526);
             GridConstField.TabIndex = 2;
             GridConstField.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewConstField });
             // 
@@ -530,7 +543,7 @@
             TabPageParentClass.Controls.Add(GridParentClass);
             TabPageParentClass.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageParentClass.Name = "TabPageParentClass";
-            TabPageParentClass.Size = new System.Drawing.Size(876, 530);
+            TabPageParentClass.Size = new System.Drawing.Size(874, 526);
             TabPageParentClass.Text = "ParentClasses";
             // 
             // GridParentClass
@@ -541,7 +554,7 @@
             GridParentClass.MainView = ViewParentClass;
             GridParentClass.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridParentClass.Name = "GridParentClass";
-            GridParentClass.Size = new System.Drawing.Size(876, 530);
+            GridParentClass.Size = new System.Drawing.Size(874, 526);
             GridParentClass.TabIndex = 1;
             GridParentClass.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewParentClass });
             // 
@@ -575,7 +588,7 @@
             TabPageInterface.Controls.Add(GridInterface);
             TabPageInterface.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             TabPageInterface.Name = "TabPageInterface";
-            TabPageInterface.Size = new System.Drawing.Size(876, 530);
+            TabPageInterface.Size = new System.Drawing.Size(874, 526);
             TabPageInterface.Text = "Interfaces";
             // 
             // GridInterface
@@ -586,7 +599,7 @@
             GridInterface.MainView = ViewInterface;
             GridInterface.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             GridInterface.Name = "GridInterface";
-            GridInterface.Size = new System.Drawing.Size(876, 530);
+            GridInterface.Size = new System.Drawing.Size(874, 526);
             GridInterface.TabIndex = 2;
             GridInterface.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { ViewInterface });
             // 
@@ -641,7 +654,7 @@
             layoutControlItem2.Control = TabMgr;
             layoutControlItem2.Location = new System.Drawing.Point(0, 0);
             layoutControlItem2.Name = "layoutControlItem2";
-            layoutControlItem2.Size = new System.Drawing.Size(882, 560);
+            layoutControlItem2.Size = new System.Drawing.Size(880, 556);
             layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
             layoutControlItem2.TextVisible = false;
             // 
@@ -653,9 +666,9 @@
             BarMgr.DockControls.Add(barDockControlLeft);
             BarMgr.DockControls.Add(barDockControlRight);
             BarMgr.Form = this;
-            BarMgr.Items.AddRange(new DevExpress.XtraBars.BarItem[] { BtnShowCode, BtnShowOrg });
+            BarMgr.Items.AddRange(new DevExpress.XtraBars.BarItem[] { BtnShowCode, BtnShowOrg, BtnShowCodeIncrement });
             BarMgr.MainMenu = BarTop;
-            BarMgr.MaxItemId = 2;
+            BarMgr.MaxItemId = 3;
             // 
             // BarTop
             // 
@@ -663,7 +676,7 @@
             BarTop.DockCol = 0;
             BarTop.DockRow = 0;
             BarTop.DockStyle = DevExpress.XtraBars.BarDockStyle.Top;
-            BarTop.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] { new DevExpress.XtraBars.LinkPersistInfo(BtnShowCode), new DevExpress.XtraBars.LinkPersistInfo(BtnShowOrg) });
+            BarTop.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] { new DevExpress.XtraBars.LinkPersistInfo(DevExpress.XtraBars.BarLinkUserDefines.PaintStyle, BtnShowCode, DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph), new DevExpress.XtraBars.LinkPersistInfo(BtnShowOrg), new DevExpress.XtraBars.LinkPersistInfo(DevExpress.XtraBars.BarLinkUserDefines.PaintStyle, BtnShowCodeIncrement, DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph) });
             BarTop.OptionsBar.AllowQuickCustomization = false;
             BarTop.OptionsBar.DrawBorder = false;
             BarTop.OptionsBar.DrawDragBorder = false;
@@ -683,6 +696,14 @@
             BtnShowOrg.ImageOptions.SvgImage = Properties.Resources.Family;
             BtnShowOrg.Name = "BtnShowOrg";
             BtnShowOrg.ItemClick += BtnShowOrg_ItemClick;
+            // 
+            // BtnShowCodeIncrement
+            // 
+            BtnShowCodeIncrement.Id = 2;
+            BtnShowCodeIncrement.ImageOptions.Image = Properties.Resources.programminglanguage_16x16;
+            BtnShowCodeIncrement.ImageOptions.LargeImage = Properties.Resources.programminglanguage_32x32;
+            BtnShowCodeIncrement.Name = "BtnShowCodeIncrement";
+            BtnShowCodeIncrement.ItemClick += BtnShowCodeIncrement_ItemClick;
             // 
             // barDockControlTop
             // 
@@ -819,5 +840,6 @@
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
         private DevExpress.XtraBars.BarButtonItem BtnShowOrg;
+        private DevExpress.XtraBars.BarButtonItem BtnShowCodeIncrement;
     }
 }

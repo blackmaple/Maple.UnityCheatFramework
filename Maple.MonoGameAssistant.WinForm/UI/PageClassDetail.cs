@@ -126,6 +126,8 @@ namespace Maple.MonoGameAssistant.WinForm
 
         public event EventHandler? OnOpenPageCodeViewEventHandler;
         public event EventHandler? OnOpenPageOrgClassesEventHandler;
+        public event EventHandler? OnOpenPageCodeViewIncrementEventHandler;
+
         public event Action<object?, GameClassInfo?, bool>? OnOpenPageClassDetailEventHandler;
         public void UnSelectedGameClassInfo()
         {
@@ -217,6 +219,11 @@ namespace Maple.MonoGameAssistant.WinForm
         private void BtnShowOrg_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             this.OnOpenPageOrgClassesEventHandler?.Invoke(this, e);
+        }
+ 
+        private void BtnShowCodeIncrement_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            this.OnOpenPageCodeViewIncrementEventHandler?.Invoke(this, e);
         }
     }
 }

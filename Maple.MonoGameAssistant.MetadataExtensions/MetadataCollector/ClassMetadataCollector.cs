@@ -11,10 +11,10 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class AbstractClassMetadataCollector(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
+    public abstract partial class AbstractClassMetadataCollector(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection? classMetadataCollection)
         : IAbstractClassMetadataCollector
     {
-        public MonoClassMetadataCollection ClassMetadata { get; } = classMetadataCollection;
+        public MonoClassMetadataCollection? ClassMetadata { get; } = classMetadataCollection;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
 
 
@@ -72,7 +72,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
     }
 
-    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
+    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection? classMetadataCollection)
         : AbstractClassMetadataCollector(contextMetadata.RuntimeContext, classMetadataCollection), IClassMetadataCollector
     {
 
@@ -80,7 +80,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
         public MonoMethodDelegate GetMethodDelegate(ulong code)
         {
-            return ContextMetadata.GetMethodDelegate(code, ClassMetadata);
+            return ContextMetadata.GetMethodDelegate_SG(code, ClassMetadata);
         }
         [Obsolete("REMOVE")]
         public MonoMethodDelegate<TFUNC> GetMethodDelegate<TFUNC>(ulong code) where TFUNC : unmanaged
@@ -95,7 +95,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
         public MonoFieldInfoDTO GetFieldMetadata(ulong code)
         {
-            return ContextMetadata.GetFieldMetadata(code, ClassMetadata);
+            return ContextMetadata.GetFieldMetadata_SG(code, ClassMetadata);
         }
         public MonoMemberFieldSource GetMemberFieldMetadata(ulong code)
         {
@@ -127,7 +127,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
     }
 
     public abstract partial class ClassMetadataCollector<T_PtrMetadata>(ContextMetadataCollector metadataCollector, ulong code)
-        : ClassMetadataCollector(metadataCollector, metadataCollector.GetClassMetadataCollection(code))
+        : ClassMetadataCollector(metadataCollector, metadataCollector.GetClassMetadataCollection_SG(code))
         , IPtrMetadataCollector<T_PtrMetadata>
         where T_PtrMetadata : unmanaged, IPtrMetadata
     {

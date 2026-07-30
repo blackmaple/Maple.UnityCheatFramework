@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Text.Json;
 
 namespace Maple.MonoGameAssistant.UILogic
@@ -124,20 +125,21 @@ namespace Maple.MonoGameAssistant.UILogic
             {
                 foreach (var field in fieldInfoDTOs)
                 {
-                    var typeName = SyntaxFactory.ParseTypeName(field.GetFieldTypeDisplayName()!);
+                    var typeSyntax = SyntaxFactory.ParseTypeName(field.GetFieldTypeDisplayName()!);
                     var name = field.GetFixedFieldName(true)!;
+                    TypeSyntax propertyType = isStatic
+                        ? typeSyntax
+                        : SyntaxFactory.RefType(SyntaxFactory.Token(SyntaxKind.RefKeyword), typeSyntax);
 
 
                     yield return
-                    SyntaxFactory.PropertyDeclaration(typeName, name)
+                    SyntaxFactory.PropertyDeclaration(propertyType, name)
                     .WithModifiers([
                         ..EnumModifiers(isStatic)
                     ])
                     .WithAccessorList(
                         SyntaxFactory.AccessorList([
                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration )
-                                .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
-                            SyntaxFactory.AccessorDeclaration( SyntaxKind.SetAccessorDeclaration)
                                 .WithSemicolonToken(SyntaxFactory.Token( SyntaxKind.SemicolonToken)),
                         ])
                     )
@@ -461,8 +463,10 @@ namespace Maple.MonoGameAssistant.UILogic
         public static MemberDeclarationSyntax CreateEnumDeclarationSyntax(MonoClassInfoDTO monoClassInfoDTO, MonoFieldInfoDTO[] fieldInfoDTOs)
         {
 
-            var member = EnumMember(monoClassInfoDTO.GetEnumFieldInfos(fieldInfoDTOs).OrderBy(p => p.Offset));
-            var baseType = SyntaxFactory.ParseTypeName(MonoCollectorExtensions.GetEnumTypeName(fieldInfoDTOs)!);
+            var enumFields = monoClassInfoDTO.GetEnumFieldInfos(fieldInfoDTOs).OrderBy(p => p.Offset);
+            var member = EnumMember(enumFields);
+            var baseType = GetEnumBaseTypeByValues(enumFields)
+                ?? SyntaxFactory.ParseTypeName(MonoCollectorExtensions.GetEnumTypeName(fieldInfoDTOs)!);
 
             return SyntaxFactory.EnumDeclaration(SyntaxFactory.Identifier(monoClassInfoDTO.Name!))
                   .WithBaseList(SyntaxFactory.BaseList([SyntaxFactory.SimpleBaseType(baseType)]))
@@ -483,6 +487,100 @@ namespace Maple.MonoGameAssistant.UILogic
                            );
                 }
             }
+        }
+
+        /// <summary>
+        /// 根据枚举成员数值大小推断底层类型: int(32) / uint(32) / long(64) / ulong(64)
+        /// </summary>
+        static TypeSyntax? GetEnumBaseTypeByValues(IEnumerable<MonoFieldInfoDTO> enumFieldInfoDTOs)
+        {
+            long? min = null;
+            long? max = null;
+            bool hasNegative = false;
+            bool needUlong = false; // 存在 > long.MaxValue 的无符号值
+
+            foreach (var field in enumFieldInfoDTOs)
+            {
+                if (!TryParseEnumValue(field.Value, out var signed, out var exceedsLong))
+                {
+                    continue;
+                }
+                if (exceedsLong)
+                {
+                    needUlong = true;
+                    continue;
+                }
+                min = min is null ? signed : Math.Min(min.Value, signed);
+                max = max is null ? signed : Math.Max(max.Value, signed);
+                if (signed < 0) hasNegative = true;
+            }
+
+            if (needUlong && !hasNegative)
+            {
+                return SyntaxFactory.ParseTypeName("System.UInt64");
+            }
+            if (min is null)
+            {
+                return null;
+            }
+
+            long lo = min.Value;
+            long hi = max!.Value;
+
+            if (hasNegative)
+            {
+                if (lo >= int.MinValue && hi <= int.MaxValue)
+                    return SyntaxFactory.ParseTypeName("System.Int32");
+                return SyntaxFactory.ParseTypeName("System.Int64");
+            }
+            if (hi <= int.MaxValue)
+                return SyntaxFactory.ParseTypeName("System.Int32");
+            if (hi <= uint.MaxValue)
+                return SyntaxFactory.ParseTypeName("System.UInt32");
+            if (hi <= long.MaxValue)
+                return SyntaxFactory.ParseTypeName("System.Int64");
+            return SyntaxFactory.ParseTypeName("System.UInt64");
+        }
+
+        static bool TryParseEnumValue(string? value, out long signed, out bool exceedsLong)
+        {
+            signed = 0;
+            exceedsLong = false;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            var s = value.Trim();
+
+            if (s.StartsWith('-'))
+            {
+                if (s.StartsWith("-0x", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (ulong.TryParse(s.AsSpan(3), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var neg))
+                    {
+                        signed = -(long)neg;
+                        return true;
+                    }
+                    return false;
+                }
+                return long.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out signed);
+            }
+
+            bool isHex = s.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+            var numSpan = isHex ? s.AsSpan(2) : s.AsSpan();
+            var style = isHex ? NumberStyles.AllowHexSpecifier : NumberStyles.Integer;
+
+            if (long.TryParse(numSpan, style, CultureInfo.InvariantCulture, out signed))
+            {
+                return true;
+            }
+            if (ulong.TryParse(numSpan, style, CultureInfo.InvariantCulture, out var u))
+            {
+                exceedsLong = true;
+                signed = (long)u;
+                return true;
+            }
+            return false;
         }
 
 

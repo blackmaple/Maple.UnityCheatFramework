@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Maple.MonoGameAssistant.UILogic;
 
-public sealed class GameClassInfo
+public sealed class GameClassInfo : GameBaseInfo
 {
     [NotNull]
     public MonoClassInfoDTO? RawClassInfo { get; set; }
@@ -95,31 +95,31 @@ public sealed class GameClassInfo
         {
             var rawClass = monoClassDetail.ClassInfoDTO;
 
-            var fieldInfoDTOs = monoClassDetail.FieldInfos;
-            gameClassInfo.FieldInfos = fieldInfoDTOs.Select(p => new GameFieldInfo() { RawFieldInfo = p }).ToArray();
-            gameClassInfo.EnumFieldInfos = MonoCollectorExtensions.GetEnumFieldInfos(rawClass, fieldInfoDTOs).Select(p => new GameFieldInfo() { RawFieldInfo = p }).ToArray();
-            gameClassInfo.StaticFieldInfos = MonoCollectorExtensions.GetStaticFieldInfos(rawClass, fieldInfoDTOs).Select(p => new GameFieldInfo() { RawFieldInfo = p }).ToArray();
-            gameClassInfo.ConstFieldInfos = MonoCollectorExtensions.GetConstFieldInfos(rawClass, fieldInfoDTOs).Select(p => new GameFieldInfo() { RawFieldInfo = p }).ToArray();
-            gameClassInfo.MemberFieldInfos = MonoCollectorExtensions.GetMemberFieldInfos(rawClass, fieldInfoDTOs).Select(p => new GameFieldInfo() { RawFieldInfo = p }).ToArray();
+            GameFieldInfo[] fieldInfoDTOs = [.. monoClassDetail.FieldInfos.Select(p => new GameFieldInfo() { RawFieldInfo = p })]; ;
+            gameClassInfo.FieldInfos = fieldInfoDTOs;
+            gameClassInfo.EnumFieldInfos = [.. fieldInfoDTOs.Where(p => MonoCollectorExtensions.IsEnumFieldInfo(rawClass, p.RawFieldInfo))];
+            gameClassInfo.StaticFieldInfos = [.. fieldInfoDTOs.Where(p => MonoCollectorExtensions.IsStaticFieldInfo(rawClass, p.RawFieldInfo))]; 
+            gameClassInfo.ConstFieldInfos = [.. fieldInfoDTOs.Where(p => MonoCollectorExtensions.IsConstFieldInfo(rawClass, p.RawFieldInfo))];
+            gameClassInfo.MemberFieldInfos = [.. fieldInfoDTOs.Where(p => MonoCollectorExtensions.IsMemberFieldInfo(rawClass, p.RawFieldInfo))];
 
         }
         if (gameClassInfo.MethodInfos is null && monoClassDetail.MethodInfos is not null)
         {
-            gameClassInfo.MethodInfos = monoClassDetail.MethodInfos.Select(p => new GameMethodInfo()
+            gameClassInfo.MethodInfos = [.. monoClassDetail.MethodInfos.Select(p => new GameMethodInfo()
             {
                 RawMethodInfo = p,
                 ParameterTypes = p.ParameterTypes.Select(p => new GameParameterType() { RawParameterType = p }).ToList()
-            }).ToArray();
+            })];
 
         }
         if (gameClassInfo.ParentClassInfos is null && monoClassDetail.ParentClassInfos is not null)
         {
-            gameClassInfo.ParentClassInfos = monoClassDetail.ParentClassInfos.Select(p => new GameParentClassInfo() { RawClassInfo = p }).ToArray();
+            gameClassInfo.ParentClassInfos = [.. monoClassDetail.ParentClassInfos.Select(p => new GameParentClassInfo() { RawClassInfo = p })];
 
         }
         if (gameClassInfo.InterfaceInfos is null && monoClassDetail.InterfaceInfos is not null)
         {
-            gameClassInfo.InterfaceInfos = monoClassDetail.InterfaceInfos.Select(p => new GameInterfaceInfo() { RawInterfaceInfo = p }).ToArray();
+            gameClassInfo.InterfaceInfos = [.. monoClassDetail.InterfaceInfos.Select(p => new GameInterfaceInfo() { RawInterfaceInfo = p })];
 
         }
         gameClassInfo.Special = SpecialClass(gameClassInfo);
@@ -187,9 +187,26 @@ namespace {containingNamespace}
 
 
     }
-    public Task<string> ShowCodeV2Async(string containingNamespace)
+
+    public string ShowCodeV2Increment(string containingNamespace)
     {
-        return Task.Run(() => this.ShowCodeV2(containingNamespace));
+        return
+           GameSourceGeneratorFactory.OutputCode(
+           this.RawClassInfo,
+           this.FieldInfos?.Where(p => p.Selected == true).Select(p => p.RawFieldInfo).ToArray() ?? [],
+           this.MethodInfos?.Where(p => p.Selected == true).Select(p => p.RawMethodInfo).ToArray() ?? [],
+            [],
+            [],
+           containingNamespace);
+
+
+    }
+
+
+    public Task<string> ShowCodeV2Async(string containingNamespace, bool increment = false)
+    {
+        return increment ? Task.Run(() => this.ShowCodeV2Increment(containingNamespace))
+            : Task.Run(() => this.ShowCodeV2(containingNamespace));
     }
 
     public Task<string> ShowCodeAsync(string containingNamespace)

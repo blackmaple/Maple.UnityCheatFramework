@@ -8,11 +8,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
     public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IMonoMetadataCollector
     {
+        static MonoFieldInfoDTO ErrorFieldInfo { get; } = new MonoFieldInfoDTO() { FieldType = new MonoFieldTypeDTO() }; 
         public ILogger Logger { get; } = logger;
         public MetadataCollectorSearchService SearchService { get; } = searchService;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
@@ -20,6 +22,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         public abstract string ApiVersion { get; }
         public MonoObjectNameDTO[] ImageNames { get; } = [.. runtimeContext.EnumMonoImageNames()];
 
+        public StringBuilder Exceptions { get; } = new(1024);
         #region Class
         public bool TryGetImageMetadata(MonoDescriptionClassDTO descriptionClassDTO, [MaybeNullWhen(false)] out MonoObjectNameDTO imageNameDTO)
         {
@@ -57,13 +60,19 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             if (false == TryGetImageMetadata(descriptionClassDTO, out var imageNameDTO))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{code:X}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetImageMetadata)}:{Encoding.UTF8.GetString(descriptionClassDTO.Utf8ImageName ?? [])}");
             }
             if (false == TryGetClassMetadata(imageNameDTO, descriptionClassDTO, out var classMetadataCollection))
             {
-                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{code:X}");
+                return MetadataCollectorException.Throw<MonoClassMetadataCollection>($"{nameof(TryGetClassMetadata)}:{Encoding.UTF8.GetString(descriptionClassDTO.Utf8Namespace ?? [])}.{Encoding.UTF8.GetString(descriptionClassDTO.Utf8ClassName ?? [])}");
             }
             return classMetadataCollection;
+        }
+
+
+        public MonoClassMetadataCollection? GetClassMetadataCollection_SG(ulong code)
+        {
+            return GetClassMetadataCollection(code);
         }
         #endregion
 
@@ -72,7 +81,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == classMetadataCollection.TryGetFieldMetadata(descriptionFieldDTO, out var fieldInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorExtensions.TryGetFieldMetadata)}:{descriptionFieldDTO.Code:X}");
+                return MetadataCollectorException.Throw<MonoFieldInfoDTO>($"{nameof(MetadataCollectorExtensions.TryGetFieldMetadata)}:{Encoding.UTF8.GetString(descriptionFieldDTO.Utf8FieldType ?? [])} {Encoding.UTF8.GetString(descriptionFieldDTO.Utf8Name ?? [])}");
             }
             return fieldInfoDTO;
         }
@@ -84,6 +93,16 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             }
             return GetFieldMetadata(classMetadataCollection, descriptionFieldDTO);
         }
+
+
+        public MonoFieldInfoDTO GetFieldMetadata_SG(ulong code, MonoClassMetadataCollection? classMetadataCollection)
+        {
+            if(classMetadataCollection is null)
+            {
+                return ErrorFieldInfo;
+            }
+            return GetFieldMetadata(code, classMetadataCollection);
+        }
         #endregion
 
         #region Method
@@ -91,11 +110,11 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         {
             if (false == classMetadataCollection.TryGetMethodMetadata(descriptionMethodDTO, out var methodInfoDTO))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code:X}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{Encoding.UTF8.GetString(descriptionMethodDTO.Utf8Name ?? [])}");
             }
             if (false == runtimeContext.TryGetMethodPointer(methodInfoDTO, out var pointer))
             {
-                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{descriptionMethodDTO.Code:X}");
+                return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(GetMethodDelegate)}:{Encoding.UTF8.GetString(descriptionMethodDTO.Utf8Name ?? [])}");
             }
             return new(methodInfoDTO.Pointer, pointer);
         }
@@ -106,6 +125,23 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
                 return MetadataCollectorException.Throw<MonoMethodDelegate>($"{nameof(MetadataCollectorSearchService.TrySearchClass)}:{code:X}");
             }
             return GetMethodDelegate(this.RuntimeContext, classMetadataCollection, descriptionMethodDTO);
+        }
+
+        public MonoMethodDelegate GetMethodDelegate_SG(ulong code, MonoClassMetadataCollection? classMetadataCollection)
+        {
+            if (classMetadataCollection is null)
+            {
+                return default;
+            }
+            try
+            {
+                return GetMethodDelegate(code, classMetadataCollection);
+            }
+            catch (Exception ex)
+            { 
+                this.Exceptions.AppendLine(ex.ToString());
+            }
+            return default;
         }
         #endregion
     }
