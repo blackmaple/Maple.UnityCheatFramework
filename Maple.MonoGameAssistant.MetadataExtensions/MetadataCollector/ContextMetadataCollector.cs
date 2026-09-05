@@ -14,7 +14,16 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
     public abstract partial class ContextMetadataCollector(ILogger logger, MetadataCollectorSearchService searchService, MonoRuntimeContext runtimeContext) : IMonoMetadataCollector
     {
-        static MonoFieldInfoDTO ErrorFieldInfo { get; } = new MonoFieldInfoDTO() { FieldType = new MonoFieldTypeDTO() }; 
+        static MonoFieldInfoDTO ErrorFieldInfo { get; } = new MonoFieldInfoDTO() { FieldType = new MonoFieldTypeDTO() };
+        static MonoClassMetadataCollection ErrorClassMetadataCollection { get; } = new MonoClassMetadataCollection()
+        {
+            IsEmpty = true,
+            ClassInfo = new MonoClassInfoDTO(),
+            FieldInfos = [],
+            MethodInfos = [],
+        };
+
+
         public ILogger Logger { get; } = logger;
         public MetadataCollectorSearchService SearchService { get; } = searchService;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
@@ -70,9 +79,17 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
 
 
-        public MonoClassMetadataCollection? GetClassMetadataCollection_SG(ulong code)
+        public MonoClassMetadataCollection GetClassMetadataCollection_SG(ulong code)
         {
-            return GetClassMetadataCollection(code);
+            try
+            {
+                return GetClassMetadataCollection(code);
+            }
+            catch (Exception ex)
+            {
+                this.Exceptions.AppendLine(ex.ToString());
+            }
+            return ErrorClassMetadataCollection;
         }
         #endregion
 
@@ -95,13 +112,21 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         }
 
 
-        public MonoFieldInfoDTO GetFieldMetadata_SG(ulong code, MonoClassMetadataCollection? classMetadataCollection)
+        public MonoFieldInfoDTO GetFieldMetadata_SG(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            if(classMetadataCollection is null)
+            if (classMetadataCollection.IsEmpty)
             {
                 return ErrorFieldInfo;
             }
-            return GetFieldMetadata(code, classMetadataCollection);
+            try
+            {
+                return GetFieldMetadata(code, classMetadataCollection);
+            }
+            catch (Exception ex)
+            {
+                this.Exceptions.AppendLine(ex.ToString());
+            }
+            return ErrorFieldInfo;
         }
         #endregion
 
@@ -127,9 +152,9 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
             return GetMethodDelegate(this.RuntimeContext, classMetadataCollection, descriptionMethodDTO);
         }
 
-        public MonoMethodDelegate GetMethodDelegate_SG(ulong code, MonoClassMetadataCollection? classMetadataCollection)
+        public MonoMethodDelegate GetMethodDelegate_SG(ulong code, MonoClassMetadataCollection classMetadataCollection)
         {
-            if (classMetadataCollection is null)
+            if (classMetadataCollection.IsEmpty)
             {
                 return default;
             }
@@ -138,7 +163,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
                 return GetMethodDelegate(code, classMetadataCollection);
             }
             catch (Exception ex)
-            { 
+            {
                 this.Exceptions.AppendLine(ex.ToString());
             }
             return default;

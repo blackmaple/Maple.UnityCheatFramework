@@ -4,6 +4,8 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCommon
 {
     public sealed class MonoClassMetadataCollection
     {
+        public bool IsEmpty { set; get; } 
+
         public required MonoClassInfoDTO ClassInfo { get; init; }
         public required MonoMethodInfoDTO[] MethodInfos { get; init; }
         public required MonoFieldInfoDTO[] FieldInfos { get; init; }

@@ -62,8 +62,9 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
         public static bool TryConvert<T_PtrMetadata>(this ClassMetadataCollector<T_PtrMetadata> @this, PMonoObject pMonoObject, out T_PtrMetadata ptrMetadata)
             where T_PtrMetadata : unmanaged, IPtrMetadata
         {
-
             Unsafe.SkipInit(out ptrMetadata);
+
+         
             var pMonoClass = @this.RuntimeContext.RuntiemProvider.GetMonoClass(pMonoObject);
             if (pMonoClass == @this.ClassMetadata.ClassInfo.Pointer)
             {

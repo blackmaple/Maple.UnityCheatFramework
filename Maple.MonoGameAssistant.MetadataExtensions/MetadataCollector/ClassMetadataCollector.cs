@@ -11,10 +11,10 @@ using System.Runtime.CompilerServices;
 
 namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 {
-    public abstract partial class AbstractClassMetadataCollector(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection? classMetadataCollection)
+    public abstract partial class AbstractClassMetadataCollector(MonoRuntimeContext runtimeContext, MonoClassMetadataCollection classMetadataCollection)
         : IAbstractClassMetadataCollector
     {
-        public MonoClassMetadataCollection? ClassMetadata { get; } = classMetadataCollection;
+        public MonoClassMetadataCollection ClassMetadata { get; } = classMetadataCollection;
         public MonoRuntimeContext RuntimeContext { get; } = runtimeContext;
 
 
@@ -72,7 +72,7 @@ namespace Maple.MonoGameAssistant.MetadataExtensions.MetadataCollector
 
     }
 
-    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection? classMetadataCollection)
+    public abstract partial class ClassMetadataCollector(ContextMetadataCollector contextMetadata, MonoClassMetadataCollection classMetadataCollection)
         : AbstractClassMetadataCollector(contextMetadata.RuntimeContext, classMetadataCollection), IClassMetadataCollector
     {
 
